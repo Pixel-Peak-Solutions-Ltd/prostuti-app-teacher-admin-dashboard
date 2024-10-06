@@ -14,5 +14,14 @@ module.exports = {
       'warn',
       { allowConstantExport: true },
     ],
+    // Code consistency
+    indent: ['error', 2],
+    quotes: ['error', 'single'],
+    semi: ['error', 'always'],
+    'comma-dangle': ['error', 'always-multiline'],
+
+    // Error prevention
+    'no-unused-vars': ['warn'],
+    'no-console': ['warn'],
   },
-}
+};
