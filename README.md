@@ -1,30 +1,77 @@
-# React + TypeScript + Vite
+# Prostuti Admin Teacher Dashboard
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+### 🛠️ Prerequisites
 
-Currently, two official plugins are available:
+Make sure you have the following installed on your machine:
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- Node.Js: [Download and install Node.js](https://nodejs.org/en)
+- Git: [Download and install Git](https://git-scm.com/)
 
-## Expanding the ESLint configuration
+### 🍴 Clone the Repo
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+1. Open a terminal or command prompt on your machine.
 
-- Configure the top-level `parserOptions` property like this:
+2. Navigate to the directory where you want to clone the project.
 
-```js
-export default {
-  // other rules...
-  parserOptions: {
-    ecmaVersion: 'latest',
-    sourceType: 'module',
-    project: ['./tsconfig.json', './tsconfig.node.json'],
-    tsconfigRootDir: __dirname,
-  },
-}
+3. Run the following command to clone the repository:
+
+```
+git clone https://github.com/Pixel-Peak-Solutions-Ltd/prostuti-app-teacher-admin-dashboard.git
 ```
 
-- Replace `plugin:@typescript-eslint/recommended` to `plugin:@typescript-eslint/recommended-type-checked` or `plugin:@typescript-eslint/strict-type-checked`
-- Optionally add `plugin:@typescript-eslint/stylistic-type-checked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and add `plugin:react/recommended` & `plugin:react/jsx-runtime` to the `extends` list
+### ⬇️ Install Dependencies
+
+1. Navigate into the project directory:
+
+```
+cd prostuti-app-teacher-admin-dashboard
+```
+
+2. Install project dependencies using `npm`:
+
+```
+npm install
+```
+
+### 💎 Set Up Environment Variables
+
+1. Create a `.env` file in the root of the project.
+2. Check out the `.env.example` file and then copy everything into the `.env` file. Then set your own PORT, BCRYPT_SALT, JWT_ACCESS_SECRET, JWT_ACCESS_EXPIRES_IN , DATABASE_URL etc in `.env`
+
+### 🦄 Start the Development Mode
+
+Use the following command to start the app in the development mode:
+
+```
+npm run dev
+```
+
+It runs the server in development mode. Open [http://localhost:PORT](http://localhost:PORT) to view it in your browser.
+
+### 🧱 Build the App for Production
+
+Use the following command to build the app for production:
+
+```
+npm run build
+```
+
+It builds the app for production in the `dist` folder. It contains all javascript files that were converted from typescript files.
+
+### 🎗️ Start the Production Mode
+
+Use the following command to start the app in the production mode:
+
+```
+npm run preview
+```
+
+### ✨ Format and lint the code
+
+Use the following command to format and lint the code:
+
+- To lint the code:
+
+```
+npm run lint
+```
