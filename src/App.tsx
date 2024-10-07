@@ -4,7 +4,7 @@ function App() {
   return (
     <>
       <h1>Hello Niggas</h1>
-      <Button>Text 3</Button>
+      <Button>Text 2</Button>
     </>
   );
 }
