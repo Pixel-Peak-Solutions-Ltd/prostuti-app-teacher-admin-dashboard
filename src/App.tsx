@@ -1,10 +1,9 @@
-import { Button } from '@mui/material';
+import MainLayout from './shared/components/layout/MainLayout';
 
 function App() {
   return (
     <>
-      <h1>Hello Niggas</h1>
-      <Button>Text 2</Button>
+      <MainLayout />
     </>
   );
 }
