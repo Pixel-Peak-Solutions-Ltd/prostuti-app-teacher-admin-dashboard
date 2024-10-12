@@ -1,11 +1,11 @@
-import MainLayout from './shared/components/layout/MainLayout';
+import { TeacherLayout } from './shared/components/layout/TeacherLayout';
 
-function App() {
+const App = () => {
   return (
     <>
-      <MainLayout />
+      <TeacherLayout />
     </>
   );
-}
+};
 
 export default App;
