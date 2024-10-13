@@ -1,12 +1,16 @@
-import { Button } from '@mui/material';
+import { useLocation } from 'react-router-dom';
+import { TeacherLayout } from './shared/components/layout/TeacherLayout';
+import AdminLayout from './shared/components/layout/AdminLayout';
 
-function App() {
+const App = () => {
+  const location = useLocation();
   return (
     <>
-      <h1>Hello Niggas</h1>
-      <Button>Text 2</Button>
+      {
+        location.pathname.includes('/admin') ? <AdminLayout /> : <TeacherLayout />
+      }
     </>
   );
-}
+};
 
 export default App;
