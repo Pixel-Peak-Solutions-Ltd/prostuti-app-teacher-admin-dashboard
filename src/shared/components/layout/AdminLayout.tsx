@@ -8,141 +8,167 @@ import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
-import DashboardIcon from '../Icons/DashboardIcon';
-import ProstutiLogo from '../Icons/ProstutiLogo';
-import FlashCardIcon from '../Icons/FlashCardIcon';
-import LogOutIcon from '../Icons/LogOutIcon';
+import DashboardIcon from '../../../assets/Dashboard-SVGs/dashboard-icon.svg?react';
+import ProstutiLogo from '../../../assets/Dashboard-SVGs/Prostuti-logo.svg?react';
+import FlashCardIcon from '../../../assets/Dashboard-SVGs/flashcard.svg?react';
+import LogOutIcon from '../../../assets/Dashboard-SVGs/logout.svg?react';
 import { NavLink, Outlet, useLocation } from 'react-router-dom';
 import Welcome from '../Welcome';
-import TeacherManagementIcon from '../Icons/TeacherManagementIcon';
-import CourseManagementIcon from '../Icons/CourseManagementIcon';
-import PracticeTestIcon from '../Icons/PracticeTestIcon';
-import PaymentManagement from '../Icons/PaymentManagement';
-import RevenueManagementIcon from '../Icons/RevenueManagementIcon';
-import ReportComplianceIcon from '../Icons/ReportComplianceIcon';
+import TeacherManagementIcon from '../../../assets/Dashboard-SVGs/profile.svg?react';
+import CourseManagementIcon from '../../../assets/Dashboard-SVGs/my-courses.svg?react';
+import PracticeTestIcon from '../../../assets/Dashboard-SVGs/practiceTest.svg?react';
+import PaymentManagement from '../../../assets/Dashboard-SVGs/paymentManagement.svg?react';
+import RevenueManagementIcon from '../../../assets/Dashboard-SVGs/revenueManagement.svg?react';
+import ReportComplianceIcon from '../../../assets/Dashboard-SVGs/reportCompliance.svg?react';
 
 const drawerWidth = 265;
 const adminDashboardMenus = [
-    {
-        path: '/admin/dashboard',
-        name: 'Dashboard',
-        icon: <DashboardIcon />
-    },
-    {
-        path: '/admin/course-management',
-        name: 'Course Management',
-        icon: <CourseManagementIcon />
-    },
-    {
-        path: '/admin/flashcard-management',
-        name: 'Flashcard Management',
-        icon: <FlashCardIcon />
-    },
-    {
-        path: '/admin/teacher-management',
-        name: 'Teacher Management',
-        icon: <TeacherManagementIcon />
-    },
-    {
-        path: '/admin/practice-test',
-        name: 'Practice Test',
-        icon: <PracticeTestIcon />
-    },
-    {
-        path: '/admin/payment-management',
-        name: 'Payment Management',
-        icon: <PaymentManagement />
-    },
-    {
-        path: '/admin/revenue-management',
-        name: 'Revenue Management',
-        icon: <RevenueManagementIcon />
-    },
-    {
-        path: '/admin/report-compliance',
-        name: 'Report & Compliance',
-        icon: <ReportComplianceIcon />
-    },
+  {
+    path: '/admin/dashboard',
+    name: 'Dashboard',
+    icon: <DashboardIcon />,
+  },
+  {
+    path: '/admin/course-management',
+    name: 'Course Management',
+    icon: <CourseManagementIcon />,
+  },
+  {
+    path: '/admin/flashcard-management',
+    name: 'Flashcard Management',
+    icon: <FlashCardIcon />,
+  },
+  {
+    path: '/admin/teacher-management',
+    name: 'Teacher Management',
+    icon: <TeacherManagementIcon />,
+  },
+  {
+    path: '/admin/practice-test',
+    name: 'Practice Test',
+    icon: <PracticeTestIcon />,
+  },
+  {
+    path: '/admin/payment-management',
+    name: 'Payment Management',
+    icon: <PaymentManagement />,
+  },
+  {
+    path: '/admin/revenue-management',
+    name: 'Revenue Management',
+    icon: <RevenueManagementIcon />,
+  },
+  {
+    path: '/admin/report-compliance',
+    name: 'Report & Compliance',
+    icon: <ReportComplianceIcon />,
+  },
 ];
 
 export const AdminLayout = () => {
-    const location = useLocation();
-    return (
-        <Box sx={{ display: 'flex' }}>
-            <CssBaseline />
-            <AppBar
-                position="fixed"
-                sx={{ width: `calc(100% - ${drawerWidth}px)`, ml: `${drawerWidth}px` }}
-            >
-            </AppBar>
-            {/* sidebar starts */}
-            <Drawer
-                sx={{
-                    width: drawerWidth,
-                    flexShrink: 0,
-                    '& .MuiDrawer-paper': {
-                        width: drawerWidth,
-                        boxSizing: 'border-box',
-                    },
-
+  const location = useLocation();
+  return (
+    <Box sx={{ display: 'flex' }}>
+      <CssBaseline />
+      <AppBar
+        position="fixed"
+        sx={{ width: `calc(100% - ${drawerWidth}px)`, ml: `${drawerWidth}px` }}
+      ></AppBar>
+      {/* sidebar starts */}
+      <Drawer
+        sx={{
+          width: drawerWidth,
+          flexShrink: 0,
+          '& .MuiDrawer-paper': {
+            width: drawerWidth,
+            boxSizing: 'border-box',
+          },
+        }}
+        variant="permanent"
+        anchor="left"
+      >
+        {/* logo */}
+        <Box
+          sx={{ display: 'flex', justifyContent: 'flex-start', p: 2, ml: 2 }}
+        >
+          <ProstutiLogo />
+        </Box>
+        {/* logo end */}
+        {/* sidebar menu start */}
+        <List sx={{ ml: 2 }}>
+          {adminDashboardMenus.map((item, index) => (
+            <ListItem key={index} disablePadding>
+              {/* navlink comes from react router dom */}
+              <NavLink
+                to={item.path as string}
+                style={({ isActive }) => {
+                  return isActive
+                    ? {
+                        textDecoration: 'none',
+                        width: '93%',
+                        color: '#2970FF',
+                        backgroundColor: '#EFF4FF',
+                        borderRadius: '10px',
+                      }
+                    : {
+                        color: '#9CA3AF',
+                        textDecoration: 'none',
+                        width: '93%',
+                      };
                 }}
-                variant="permanent"
-                anchor="left"
-            >
-                {/* logo */}
-                <Box sx={{ display: 'flex', justifyContent: 'flex-start', p: 2, ml: 2 }}>
-                    <ProstutiLogo />
-                </Box>
-                {/* logo end */}
-                {/* sidebar menu start */}
-                <List sx={{ ml: 2 }}>
-                    {adminDashboardMenus.map((item, index) => (
-                        <ListItem key={index} disablePadding >
-                            {/* navlink comes from react router dom */}
-                            <NavLink to={item.path as string} style={({ isActive }) => {
-                                return isActive ? { textDecoration: 'none', width: '93%', color: '#2970FF', backgroundColor: '#EFF4FF', borderRadius: '10px' } : { color: '#9CA3AF', textDecoration: 'none', width: '93%' };
-                            }}
-                            >
-                                <ListItemButton sx={{ '&:hover': { color: '#2970FF', backgroundColor: '#EFF4FF', borderRadius: '10px' } }}>
-                                    <ListItemIcon sx={{ mr: -3 }}>
-                                        {item.icon}
-                                    </ListItemIcon>
-                                    <ListItemText primary={item.name} />
-                                </ListItemButton>
-                            </NavLink>
-                        </ListItem>
-
-                    ))}
-                    {/* logout button */}
-                    <ListItem disablePadding>
-                        <Box sx={{ width: '93%' }}>
-                            <ListItemButton sx={{ color: '#9CA3AF', '&:hover': { color: '#2970FF', backgroundColor: '#EFF4FF', borderRadius: '10px' } }}
-                                onClick={() => console.log('Logging out')}>
-                                <ListItemIcon sx={{ mr: -3 }}>
-                                    <LogOutIcon />
-                                </ListItemIcon>
-                                <ListItemText primary='Log Out' />
-                            </ListItemButton>
-                        </Box>
-                    </ListItem>
-                </List>
-                {/* sidebar menu start */}
-            </Drawer>
-            {/* sidebar ends */}
-            {/* main content section */}
-            <Box
-                component="main"
-                sx={{ flexGrow: 1, bgcolor: 'background.default', px: 4 }}
-            >
-                <Toolbar />
-                {/* sidebar menu main content will show here */}
-                {
-                    location.pathname === '/admin' ? <Welcome /> : <Outlet />
-                }
+              >
+                <ListItemButton
+                  sx={{
+                    '&:hover': {
+                      color: '#2970FF',
+                      backgroundColor: '#EFF4FF',
+                      borderRadius: '10px',
+                    },
+                  }}
+                >
+                  <ListItemIcon sx={{ mr: -3 }}>{item.icon}</ListItemIcon>
+                  <ListItemText primary={item.name} />
+                </ListItemButton>
+              </NavLink>
+            </ListItem>
+          ))}
+          {/* logout button */}
+          <ListItem disablePadding>
+            <Box sx={{ width: '93%' }}>
+              <ListItemButton
+                sx={{
+                  color: '#9CA3AF',
+                  '&:hover': {
+                    color: '#2970FF',
+                    backgroundColor: '#EFF4FF',
+                    borderRadius: '10px',
+                  },
+                }}
+                onClick={() => console.log('Logging out')}
+              >
+                <ListItemIcon sx={{ mr: -3 }}>
+                  <LogOutIcon />
+                </ListItemIcon>
+                <ListItemText primary="Log Out" />
+              </ListItemButton>
             </Box>
-            {/* main content ends */}
-        </Box >
-    );
+          </ListItem>
+        </List>
+        {/* sidebar menu start */}
+      </Drawer>
+      {/* sidebar ends */}
+      {/* main content section */}
+      <Box
+        component="main"
+        sx={{ flexGrow: 1, bgcolor: 'background.default', px: 4 }}
+      >
+        <Toolbar />
+        {/* sidebar menu main content will show here */}
+        {location.pathname === '/admin' ? <Welcome /> : <Outlet />}
+      </Box>
+      {/* main content ends */}
+    </Box>
+  );
 };
 
 export default AdminLayout;
