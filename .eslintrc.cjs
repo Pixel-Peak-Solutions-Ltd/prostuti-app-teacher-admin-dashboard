@@ -15,10 +15,7 @@ module.exports = {
       { allowConstantExport: true },
     ],
     // Code consistency
-    // indent: ['error', 2],
-    quotes: ['error', 'single'],
     semi: ['error', 'always'],
-
     // Error prevention
     'no-unused-vars': ['warn'],
     'no-console': ['warn'],

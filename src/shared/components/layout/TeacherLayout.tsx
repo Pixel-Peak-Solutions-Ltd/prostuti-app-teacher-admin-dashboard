@@ -20,7 +20,7 @@ import { NavLink, Outlet, useLocation } from 'react-router-dom';
 import Welcome from '../Welcome';
 
 const drawerWidth = 256;
-const dashboardMenus = [
+const teacherDashboardMenus = [
     {
         path: '/teacher/dashboard',
         name: 'Dashboard',
@@ -51,11 +51,6 @@ const dashboardMenus = [
         name: 'Profile',
         icon: <ProfileIcon />
     },
-    {
-        path: '',
-        name: 'Log Out',
-        icon: <LogOutIcon />
-    }
 ];
 
 export const TeacherLayout = () => {
@@ -89,14 +84,14 @@ export const TeacherLayout = () => {
                 {/* logo end */}
                 {/* sidebar menu start */}
                 <List sx={{ ml: 2, }}>
-                    {dashboardMenus.map((item, index) => (
+                    {teacherDashboardMenus.map((item, index) => (
                         <ListItem key={index} disablePadding >
                             {/* navlink comes from react router dom */}
                             <NavLink to={item.path as string} style={({ isActive }) => {
                                 return isActive ? { textDecoration: 'none', width: '93%', color: '#2970FF', backgroundColor: '#EFF4FF', borderRadius: '10px' } : { color: '#9CA3AF', textDecoration: 'none', width: '93%' };
                             }}
                             >
-                                <ListItemButton>
+                                <ListItemButton sx={{ '&:hover': { color: '#2970FF', backgroundColor: '#EFF4FF', borderRadius: '10px' } }}>
                                     <ListItemIcon sx={{ mr: -3 }}>
                                         {item.icon}
                                     </ListItemIcon>
@@ -105,6 +100,18 @@ export const TeacherLayout = () => {
                             </NavLink>
                         </ListItem>
                     ))}
+                    {/* logout button */}
+                    <ListItem disablePadding>
+                        <Box sx={{ width: '93%' }}>
+                            <ListItemButton sx={{ color: '#9CA3AF', '&:hover': { color: '#2970FF', backgroundColor: '#EFF4FF', borderRadius: '10px' } }}
+                                onClick={() => console.log('Logging out')}>
+                                <ListItemIcon sx={{ mr: -3 }}>
+                                    <LogOutIcon />
+                                </ListItemIcon>
+                                <ListItemText primary='Log Out' />
+                            </ListItemButton>
+                        </Box>
+                    </ListItem>
                 </List>
                 {/* sidebar menu start */}
             </Drawer>
