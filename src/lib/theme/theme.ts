@@ -1,5 +1,14 @@
 import { createTheme } from '@mui/material/styles';
 
+declare module '@mui/material/styles' {
+  interface TypographyVariants {
+    body1_light: React.CSSProperties;
+  }
+  interface TypographyVariantsOptions {
+    body1_light?: React.CSSProperties;
+  }
+}
+
 const theme = createTheme({
   palette: {
     primary: {
@@ -17,8 +26,31 @@ const theme = createTheme({
   },
   typography: {
     fontFamily: 'Figtree',
+    body1_light: {
+      fontSize: '15px',
+      lineHeight: '20px',
+      fontWeight: 400,
+      color: '#344054'
+    },
+    h3: {
+      fontSize: '30px',
+      lineHeight: '38px',
+      fontWeight: '600'
+    },
     h6: {
       fontSize: '20px'
+    },
+    body2: {
+      fontSize: '1rem',
+      lineHeight: '24px',
+      fontWeight: 400,
+      color: '#475467'
+    },
+    body1: {
+      fontSize: '15px',
+      lineHeight: '20px',
+      fontWeight: 600,
+      color: '#344054'
     },
     button: {
       fontSize: '1rem',

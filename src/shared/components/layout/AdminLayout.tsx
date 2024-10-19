@@ -104,17 +104,17 @@ export const AdminLayout = () => {
                 style={({ isActive }) => {
                   return isActive
                     ? {
-                        textDecoration: 'none',
-                        width: '93%',
-                        color: '#2970FF',
-                        backgroundColor: '#EFF4FF',
-                        borderRadius: '10px',
-                      }
+                      textDecoration: 'none',
+                      width: '93%',
+                      color: '#2970FF',
+                      backgroundColor: '#EFF4FF',
+                      borderRadius: '10px',
+                    }
                     : {
-                        color: '#9CA3AF',
-                        textDecoration: 'none',
-                        width: '93%',
-                      };
+                      color: '#9CA3AF',
+                      textDecoration: 'none',
+                      width: '93%',
+                    };
                 }}
               >
                 <ListItemButton
