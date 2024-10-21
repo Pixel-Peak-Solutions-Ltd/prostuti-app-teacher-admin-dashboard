@@ -8,7 +8,7 @@ const Login = () => {
     const [credential, setCredential] = useState({
         email: '',
         password: '',
-        remember: false
+        remember: ''
     });
 
     const handleChange = (e: any) => {
@@ -67,8 +67,8 @@ const Login = () => {
                                     color: '#344054'
                                 }}
                                 label="Remember for 30 days"
-                                control={<Checkbox onChange={(e) => {
-                                    setCredential({ ...credential, remember: e.target.checked });
+                                control={<Checkbox onChange={() => {
+                                    setCredential({ ...credential, remember: '30d' });
                                 }} />}
                             />
                         </Grid>
