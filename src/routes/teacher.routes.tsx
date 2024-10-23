@@ -7,27 +7,27 @@ import TeacherDashboard from "../features/teacher/Pages/TeacherDashboard";
 
 export const teacherRoutes = [
     {
-        path: 'teacher/dashboard',
+        path: 'dashboard',
         element: <TeacherDashboard />
     },
     {
-        path: 'teacher/my-course',
+        path: 'my-course',
         element: <MyCourse />
     },
     {
-        path: 'teacher/messages',
+        path: 'messages',
         element: <Messages />
     },
     {
-        path: 'teacher/profile',
+        path: 'profile',
         element: <Profile />
     },
     {
-        path: 'teacher/question-database',
+        path: 'question-database',
         element: <QuestionDatabase />
     },
     {
-        path: 'teacher/flashcard',
+        path: 'flashcard',
         element: <FlashCard />
     },
 ];

@@ -18,6 +18,8 @@ import ProfileIcon from '../../../assets/Dashboard-SVGs/profile.svg?react';
 import LogOutIcon from '../../../assets/Dashboard-SVGs/logout.svg?react';
 import { NavLink, Outlet, useLocation } from 'react-router-dom';
 import Welcome from '../Welcome';
+import { useAppDispatch } from '../../../redux/hooks';
+import { logout } from '../../../redux/features/auth/authSlice';
 
 const drawerWidth = 256;
 const teacherDashboardMenus = [
@@ -55,6 +57,8 @@ const teacherDashboardMenus = [
 
 export const TeacherLayout = () => {
   const location = useLocation();
+  const dispatch = useAppDispatch();
+
   return (
     <Box sx={{ display: 'flex' }}>
       <CssBaseline />
@@ -92,17 +96,17 @@ export const TeacherLayout = () => {
                 style={({ isActive }) => {
                   return isActive
                     ? {
-                        textDecoration: 'none',
-                        width: '93%',
-                        color: '#2970FF',
-                        backgroundColor: '#EFF4FF',
-                        borderRadius: '10px',
-                      }
+                      textDecoration: 'none',
+                      width: '93%',
+                      color: '#2970FF',
+                      backgroundColor: '#EFF4FF',
+                      borderRadius: '10px',
+                    }
                     : {
-                        color: '#9CA3AF',
-                        textDecoration: 'none',
-                        width: '93%',
-                      };
+                      color: '#9CA3AF',
+                      textDecoration: 'none',
+                      width: '93%',
+                    };
                 }}
               >
                 <ListItemButton
@@ -132,7 +136,7 @@ export const TeacherLayout = () => {
                     borderRadius: '10px',
                   },
                 }}
-                onClick={() => console.log('Logging out')}
+                onClick={() => dispatch(logout())}
               >
                 <ListItemIcon sx={{ mr: -3 }}>
                   <LogOutIcon />
@@ -152,7 +156,7 @@ export const TeacherLayout = () => {
       >
         <Toolbar />
         {/* sidebar menu main content will show here */}
-        {location.pathname === '/' ? <Welcome /> : <Outlet />}
+        {location.pathname === '/teacher' ? <Welcome /> : <Outlet />}
       </Box>
       {/* main content ends */}
     </Box>
