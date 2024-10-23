@@ -3,9 +3,13 @@ import { createTheme } from '@mui/material/styles';
 declare module '@mui/material/styles' {
   interface TypographyVariants {
     body1_light: React.CSSProperties;
+    body2_extended: React.CSSProperties;
+    body1_extended: React.CSSProperties;
   }
   interface TypographyVariantsOptions {
     body1_light?: React.CSSProperties;
+    body2_extended?: React.CSSProperties;
+    body1_extended?: React.CSSProperties;
   }
 }
 
@@ -40,13 +44,13 @@ const theme = createTheme({
     h6: {
       fontSize: '20px'
     },
-    body2: {
+    body2_extended: {
       fontSize: '1rem',
       lineHeight: '24px',
       fontWeight: 400,
       color: '#475467'
     },
-    body1: {
+    body1_extended: {
       fontSize: '15px',
       lineHeight: '20px',
       fontWeight: 600,

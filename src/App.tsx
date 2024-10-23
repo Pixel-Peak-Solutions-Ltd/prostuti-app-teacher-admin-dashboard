@@ -1,15 +1,9 @@
-import { useLocation } from 'react-router-dom';
-import { TeacherLayout } from './shared/components/layout/TeacherLayout';
-import AdminLayout from './shared/components/layout/AdminLayout';
+
+import MainLayout from './shared/components/layout/MainLayout';
 
 const App = () => {
-  const location = useLocation();
   return (
-    <>
-      {
-        location.pathname.includes('/admin') ? <AdminLayout /> : <TeacherLayout />
-      }
-    </>
+    <MainLayout />
   );
 };
 

@@ -20,6 +20,8 @@ import PracticeTestIcon from '../../../assets/Dashboard-SVGs/practiceTest.svg?re
 import PaymentManagement from '../../../assets/Dashboard-SVGs/paymentManagement.svg?react';
 import RevenueManagementIcon from '../../../assets/Dashboard-SVGs/revenueManagement.svg?react';
 import ReportComplianceIcon from '../../../assets/Dashboard-SVGs/reportCompliance.svg?react';
+import { useAppDispatch } from '../../../redux/hooks';
+import { logout } from '../../../redux/features/auth/authSlice';
 
 const drawerWidth = 265;
 const adminDashboardMenus = [
@@ -67,6 +69,8 @@ const adminDashboardMenus = [
 
 export const AdminLayout = () => {
   const location = useLocation();
+  const dispatch = useAppDispatch();
+
   return (
     <Box sx={{ display: 'flex' }}>
       <CssBaseline />
@@ -144,7 +148,7 @@ export const AdminLayout = () => {
                     borderRadius: '10px',
                   },
                 }}
-                onClick={() => console.log('Logging out')}
+                onClick={() => dispatch(logout())}
               >
                 <ListItemIcon sx={{ mr: -3 }}>
                   <LogOutIcon />

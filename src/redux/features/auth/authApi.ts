@@ -4,7 +4,6 @@ const authApi = baseApi.injectEndpoints({
     endpoints: (builder) => ({
         login: builder.mutation({
             query: (userInfo) => {
-                console.log('From rtk query:', userInfo);
                 return {
                     url: '/auth/login',
                     method: 'POST',
