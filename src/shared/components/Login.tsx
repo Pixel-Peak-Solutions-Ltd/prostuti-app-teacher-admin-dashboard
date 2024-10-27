@@ -2,30 +2,55 @@
 import { Box, Button, Checkbox, CircularProgress, FormControlLabel, InputLabel, TextField, Typography } from "@mui/material";
 import ProstutiLogo from "../../assets/Dashboard-SVGs/ProstutiLogo";
 import Grid from '@mui/material/Grid2';
-import { useState } from "react";
-import { TLoginError, TUserInfo } from "../../types/types";
+import { useEffect, useState } from "react";
+import { TLoginError, TUser, TUserInfo } from "../../types/types";
 import { useLoginMutation } from "../../redux/features/auth/authApi";
-import { useAppDispatch } from "../../redux/hooks";
+import { useAppDispatch, useAppSelector } from "../../redux/hooks";
 import { setUser } from "../../redux/features/auth/authSlice";
 import { verifyToken } from "../../utils/verifyToken";
 import { useNavigate } from "react-router-dom";
 import Loader from "./Loader";
 import Error from "./Error";
+import { RootState } from "../../redux/store";
 
 const Login = () => {
     // state for data handling
+    const navigate = useNavigate();
+    // state for redux toolkit purposes
+    const [login, { isLoading, error }] = useLoginMutation();
+    const dispatch = useAppDispatch();
+    const existedUser = useAppSelector((state: RootState) => state.auth.user as TUser);
+
     const [credential, setCredential] = useState<TUserInfo>({
         email: '',
         password: '',
         rememberMe: ''
     });
 
-    const navigate = useNavigate();
+    // below useEffect hook lets the user enter if they are previously logged in
+    useEffect(() => {
+        const loggedInUser = localStorage.getItem("persist:auth");
+        if (loggedInUser) {
+            const foundUser = JSON.parse(loggedInUser);
+            setUser({
+                user: JSON.parse(foundUser.user),
+                token: JSON.parse(foundUser.token),
+            });
+        }
+        // error handling if no user is logged in
+        if (!existedUser) {
+            navigate('/');
+        } else {
+            // redirecting user if they are already logged in
+            if (existedUser.role === 'admin') {
+                navigate('/admin');
+            } else {
+                navigate('/teacher');
+            }
+        }
+    }, []);
 
-    // state for redux toolkit purposes
-    const [login, { isLoading, error }] = useLoginMutation();
-    const dispatch = useAppDispatch();
-
+    // loader to make sure data loads correctly
     if (isLoading) {
         return (
             <Loader />

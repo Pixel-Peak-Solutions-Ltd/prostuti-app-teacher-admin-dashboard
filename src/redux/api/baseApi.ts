@@ -1,10 +1,44 @@
-import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import { createApi, fetchBaseQuery, FetchBaseQueryError } from "@reduxjs/toolkit/query/react";
+import { RootState } from "../store"; // assuming RootState has the auth state type
+import { setUser } from "../features/auth/authSlice";
 
+// http://localhost:5000/api/v1/auth/login
+// https://prostuti-app-backend-production.up.railway.app
+const baseQuery = fetchBaseQuery({
+    baseUrl: 'https://prostuti-app-backend-production.up.railway.app/api/v1',
+    credentials: 'include',
+    prepareHeaders: (headers, { getState }) => {
+        const token = (getState() as RootState).auth.token;
+        if (token) {
+            headers.set("authorization", `Bearer ${token}`);
+        }
+        return headers;
+    },
+});
+
+const baseQueryWithRefreshToken: typeof baseQuery = async (args, api, extraOptions) => {
+    const result = await baseQuery(args, api, extraOptions);
+
+    if (result.error && (result.error as FetchBaseQueryError).status === 401) {
+        const res = await fetch('https://prostuti-app-backend-production.up.railway.app/api/v1/auth/refresh-token', {
+            method: 'POST',
+            credentials: 'include'
+        });
+
+        const data = await res.json();
+
+        const user = (api.getState() as RootState).auth.user;
+
+        api.dispatch((
+            setUser({ user, token: data.data.accessToken })
+        ));
+    }
+    return result;
+};
+
+// Use `baseQueryWithRefreshToken` in the base API
 export const baseApi = createApi({
-    reducerPath: 'baseApi',
-    baseQuery: fetchBaseQuery({
-        baseUrl: 'https://prostuti-app-backend-production.up.railway.app/api/v1',
-        credentials: 'include',
-    }),
+    reducerPath: "baseApi",
+    baseQuery: baseQueryWithRefreshToken,
     endpoints: () => ({}),
 });

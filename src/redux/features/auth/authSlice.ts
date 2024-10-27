@@ -7,7 +7,7 @@ type TAuthState = {
 
 const initialState: TAuthState = {
     user: null,
-    token: null
+    token: null,
 };
 export const authSlice = createSlice({
     name: 'auth',

@@ -25,6 +25,7 @@ const theme = createTheme({
       dark: '#890b44'
     },
     grey: {
+      500: '#70707B',
       700: '#9CA3AF',
     }
   },
@@ -39,10 +40,12 @@ const theme = createTheme({
     h3: {
       fontSize: '30px',
       lineHeight: '38px',
-      fontWeight: '600'
+      fontWeight: '600',
+      color: '#3F3F46'
     },
     h6: {
-      fontSize: '20px'
+      fontSize: '20px',
+      color: '#3F3F46'
     },
     body2_extended: {
       fontSize: '1rem',
