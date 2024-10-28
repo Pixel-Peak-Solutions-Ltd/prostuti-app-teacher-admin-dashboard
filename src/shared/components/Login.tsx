@@ -27,7 +27,7 @@ const Login = () => {
         rememberMe: ''
     });
 
-    // below useEffect hook lets the user enter if they are previously logged in
+    //* below useEffect hook lets the user enter if they are previously logged in
     useEffect(() => {
         const loggedInUser = localStorage.getItem("persist:auth");
         if (loggedInUser) {
@@ -50,14 +50,14 @@ const Login = () => {
         }
     }, []);
 
-    // loader to make sure data loads correctly
+    //^ loader to make sure data loads correctly
     if (isLoading) {
         return (
             <Loader />
         );
     }
 
-    // error handling
+    //& error handling
     if (error) {
         return (
             <Error err={error as TLoginError} />
@@ -70,6 +70,7 @@ const Login = () => {
         setCredential((prevState) => ({ ...prevState, [name]: value }));
     };
 
+    //* submit the request to the server
     const handleSubmit = async (e: any) => {
         e.preventDefault();
         const userInfo = { ...credential };
