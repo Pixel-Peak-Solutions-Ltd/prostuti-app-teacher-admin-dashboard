@@ -1,14 +1,14 @@
 import { TextField } from "@mui/material";
 
-const CustomTextField = () => {
+const CustomTextField = ({ defaultValue, name, placeholder, handleInput }: { defaultValue: string; name: string; value?: string; placeholder: string; handleInput: (e: React.ChangeEvent<HTMLInputElement>) => void; }) => {
     return (
         <TextField
-            name='email'
-            // onChange={handleChange}
-            placeholder="Enter your email"
+            name={name}
+            onChange={handleInput}
+            defaultValue={defaultValue}
+            placeholder={placeholder}
             type="text"
             size="small"
-            value="asrafuzzaman@gmail.com"
             sx={{
                 mt: 0.8,
                 "& .MuiOutlinedInput-root": {
