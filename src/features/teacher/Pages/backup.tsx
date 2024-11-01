@@ -35,3 +35,45 @@
 //     </Grid>
 //     <Divider sx={{ mt: 3 }} />
 // </Box>
+
+
+// date picker
+
+{/* <LocalizationProvider dateAdapter={AdapterDayjs}>
+    <DateField
+        size="small"
+        defaultValue={dayjs('04-17-2022')}
+        // defaultValue={joinedDate || ''}
+        format="LL"
+        fullWidth
+        // onChange={handleInput}
+        onChange={handleDateChange}
+        sx={{
+            mt: 0.8,
+            "& .MuiOutlinedInput-root": {
+                color: "grey.500",
+                "& .MuiOutlinedInput-notchedOutline": {
+                    borderRadius: "8px",
+                }
+            }
+        }}
+    />
+</LocalizationProvider> */}
+
+// //^ handling dayjs for date field
+// const handleDateChange = (date: Dayjs | null) => {
+//     if (date) {
+//         const selectedDate = date.format("YYYY-MM-DD");
+//         const month = selectedDate.slice(5, 7);
+//         const day = selectedDate.slice(8, 10);
+//         const year = selectedDate.slice(0, 4);
+//         let formattedDate: string;
+//         for (const [key, val] of Object.entries(dateFormat)) {
+//             if (key === month) {
+//                 formattedDate = `${val} ${day},${year}`;
+//                 console.log(formattedDate);
+//             }
+//         }
+//         setProfileData({ ...profileData, joinedDate: date.format("YYYY-MM-DD") }); // Adjust the format as needed
+//     }
+// };

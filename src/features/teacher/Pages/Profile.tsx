@@ -6,10 +6,10 @@ import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import { styled } from '@mui/material/styles';
 import CustomTextField from "../../../shared/components/CustomTextField";
 import CustomLabel from "../../../shared/components/CustomLabel";
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import { DateField } from '@mui/x-date-pickers/DateField';
-import dayjs, { Dayjs } from 'dayjs';
+import { useGetProfileQuery } from "../../../redux/features/auth/authApi";
+import Loader from "../../../shared/components/Loader";
+import { useUpdateTeacherMutation } from "../../../redux/features/teacher/teacherApi";
+
 
 const Profile = () => {
     // to hide the default input field for file upload
@@ -24,33 +24,35 @@ const Profile = () => {
         whiteSpace: 'nowrap',
         width: 1,
     });
+
     // below state stores the selected image url
     const [avatar, setAvatar] = useState('');
     //below state is for showing the upload button on hovering the avatar
     const [isHovering, setIsHovering] = useState(false);
     const [profileData, setProfileData] = useState({
-        email: "",
         contactNumber: "",
-        joinedDate: "",
         subject: "",
-        type: ""
+        jobType: ""
     });
-
     const [profileImg, setProfileImg] = useState<File | null>(null);
+    // redux state
+    const { data, isLoading } = useGetProfileQuery({});
+    const [updateTeacher, { data: updateData, isSuccess, isError }] = useUpdateTeacherMutation();
+
+    if (isLoading) {
+        return <Loader />;
+    }
+
+    const { teacherId, email, joinedDate, jobType, subject, name } = data.data;
+    // const teacherId = data?.data.teacherId;
+
+    console.log('teacher id found:', teacherId);
 
     // form data handler
     //^ handling non file form data
     const handleInput = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
         setProfileData((prevState) => ({ ...prevState, [name]: value }));
-    };
-
-    //^ handling dayjs for date field
-    const handleDateChange = (date: Dayjs | null) => {
-        if (date) {
-            console.log(date.format("YYYY-MM-DD"));
-            setProfileData({ ...profileData, joinedDate: date.format("YYYY-MM-DD") }); // Adjust the format as needed
-        }
     };
 
     //^handling the avatar change
@@ -64,26 +66,29 @@ const Profile = () => {
     };
 
     //* handling the submitted form data
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        console.log(profileData);
-        const formData = new FormData();
+        console.log('from handleSubmit function', profileData);
+        const teacherInfo = new FormData();
         // Append avatar if available
-        if (profileImg) formData.append("avatar", profileImg);
+        if (profileImg) teacherInfo.append("avatar", profileImg);
         // Append profileData as a JSON string
-        formData.append("profileData", JSON.stringify(profileData));
+        teacherInfo.append("profileData", JSON.stringify(profileData));
 
         // for (const [key, value] of Object.entries(profileData)) {
         //     formData.append(key, value);
         // }
 
         // Debugging: Check FormData entries
-        for (const [key, value] of formData.entries()) {
-            console.log(`${key}: ${value}`);
-        }
+        // for (const [key, value] of teacherInfo.entries()) {
+        //     console.log(`${key}: ${value}`);
+        // }
+
+        await updateTeacher({ teacherInfo, teacherId });
         // Check FormData content
-        console.log("FormData avatar:", formData.get("avatar"));
-        console.log("FormData entries:", Array.from(formData.entries()));
+        // console.log("all data together", formData);
+        // console.log("FormData avatar:", formData.get("avatar"));
+        // console.log("FormData entries:", Array.from(formData.entries()));
     };
 
     return (
@@ -127,8 +132,8 @@ const Profile = () => {
                         </Box>
                         {/* avatar section ends */}
                         <Box component="div" sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'flex-start', gap: 0.5 }}>
-                            <Typography variant="h3">Md. Ashrafuzzaman</Typography>
-                            <Typography variant="h6" sx={{ fontWeight: "650" }}>TID01001</Typography>
+                            <Typography variant="h3">{name}</Typography>
+                            <Typography variant="h6" sx={{ fontWeight: "650" }}>{teacherId}</Typography>
                         </Box>
 
                     </Box>
@@ -139,9 +144,10 @@ const Profile = () => {
                             <Grid size={6}>
                                 <CustomLabel fieldName="Email" />
                                 <CustomTextField
-                                    defaultValue="asrafuzzaman@gmail.com"
+                                    disabled={true}
+                                    defaultValue={email || ""}
                                     name="email"
-                                    placeholder="asrafuzzaman@gmail.com"
+                                    placeholder={email || ""}
                                     handleInput={handleInput}
                                 />
                             </Grid>
@@ -149,7 +155,7 @@ const Profile = () => {
                                 <CustomLabel fieldName="Contact Number" />
                                 <CustomTextField
                                     name="contactNumber"
-                                    defaultValue="+88012345678"
+                                    defaultValue=""
                                     placeholder="+88012345678"
                                     handleInput={handleInput}
                                 />
@@ -157,41 +163,29 @@ const Profile = () => {
                             {/* date field */}
                             <Grid size={4}>
                                 <CustomLabel fieldName="Joined Date" />
-                                <LocalizationProvider dateAdapter={AdapterDayjs}>
-                                    <DateField
-                                        size="small"
-                                        defaultValue={dayjs('2022-04-17')}
-                                        format="LL"
-                                        fullWidth
-                                        // onChange={handleInput}
-                                        onChange={handleDateChange}
-                                        sx={{
-                                            mt: 0.8,
-                                            "& .MuiOutlinedInput-root": {
-                                                color: "grey.500",
-                                                "& .MuiOutlinedInput-notchedOutline": {
-                                                    borderRadius: "8px",
-                                                }
-                                            }
-                                        }}
-                                    />
-                                </LocalizationProvider>
+                                <CustomTextField
+                                    disabled={true}
+                                    name="joinedDate"
+                                    defaultValue={joinedDate || ""}
+                                    placeholder={joinedDate || ""}
+                                    handleInput={handleInput}
+                                />
                             </Grid>
                             <Grid size={4}>
                                 <CustomLabel fieldName="Subject" />
                                 <CustomTextField
-                                    defaultValue="Physics"
+                                    defaultValue={subject || ''}
                                     name="subject"
-                                    placeholder="Physics"
+                                    placeholder={subject || ''}
                                     handleInput={handleInput}
                                 />
                             </Grid>
                             <Grid size={4}>
                                 <CustomLabel fieldName="Type" />
                                 <CustomTextField
-                                    defaultValue="Job"
-                                    name="type"
-                                    placeholder="Job"
+                                    defaultValue={jobType || ""}
+                                    name="jobType"
+                                    placeholder={jobType || ""}
                                     handleInput={handleInput}
                                 />
                             </Grid>

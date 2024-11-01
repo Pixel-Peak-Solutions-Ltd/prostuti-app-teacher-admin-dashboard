@@ -5,7 +5,7 @@ import { setUser } from "../features/auth/authSlice";
 // http://localhost:5000/api/v1/auth/login
 // https://prostuti-app-backend-production.up.railway.app
 const baseQuery = fetchBaseQuery({
-    baseUrl: 'https://prostuti-app-backend-production.up.railway.app/api/v1',
+    baseUrl: 'http://localhost:5000/api/v1',
     credentials: 'include',
     prepareHeaders: (headers, { getState }) => {
         const token = (getState() as RootState).auth.token;
@@ -20,7 +20,7 @@ const baseQueryWithRefreshToken: typeof baseQuery = async (args, api, extraOptio
     const result = await baseQuery(args, api, extraOptions);
 
     if (result.error && (result.error as FetchBaseQueryError).status === 401) {
-        const res = await fetch('https://prostuti-app-backend-production.up.railway.app/api/v1/auth/refresh-token', {
+        const res = await fetch('http://localhost:5000/api/v1/auth/refresh-token', {
             method: 'POST',
             credentials: 'include'
         });
@@ -33,6 +33,7 @@ const baseQueryWithRefreshToken: typeof baseQuery = async (args, api, extraOptio
             setUser({ user, token: data.data.accessToken })
         ));
     }
+    console.log('baseApi', result);
     return result;
 };
 
