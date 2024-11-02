@@ -1,7 +1,7 @@
 import { TextField } from "@mui/material";
 
 const CustomTextField = ({ defaultValue, name, placeholder, handleInput, disabled }:
-    { defaultValue: string; disabled?: boolean; name: string; value?: string; placeholder: string; handleInput: (e: React.ChangeEvent<HTMLInputElement>) => void; }
+    { defaultValue?: string; disabled?: boolean; name: string; value?: string; placeholder: string; handleInput: (e: React.ChangeEvent<HTMLInputElement>) => void; }
 ) => {
     return (
         <TextField
