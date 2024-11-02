@@ -2,21 +2,24 @@ import { baseApi } from "../../api/baseApi";
 
 const teacherAPI = baseApi.injectEndpoints({
     endpoints: (builder) => ({
+        getTeacherProfile: builder.query({
+            query: () => ({
+                url: '/user/profile',
+                method: 'GET',
+            }),
+            providesTags: ['Teacher'],
+        }),
         updateTeacher: builder.mutation({
             query: ({ teacherInfo, teacherId }) => {
-                console.log('From RTK Query function:', teacherInfo.get('avatar'));
-                console.log("Recieved in RTK Query:", Array.from(teacherInfo.entries()));
                 return {
                     url: `/teacher/profile/${teacherId}`,
                     method: 'PATCH',
-                    headers: {
-                        'Content-Type': 'multipart/form-data'
-                    },
                     body: teacherInfo,
                 };
-            }
+            },
+            invalidatesTags: ['Teacher']
         })
     })
 });
 
-export const { useUpdateTeacherMutation } = teacherAPI; 
+export const { useUpdateTeacherMutation, useGetTeacherProfileQuery } = teacherAPI; 

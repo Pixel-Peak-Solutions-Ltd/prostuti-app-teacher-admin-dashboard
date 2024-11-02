@@ -6,9 +6,8 @@ import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import { styled } from '@mui/material/styles';
 import CustomTextField from "../../../shared/components/CustomTextField";
 import CustomLabel from "../../../shared/components/CustomLabel";
-import { useGetProfileQuery } from "../../../redux/features/auth/authApi";
 import Loader from "../../../shared/components/Loader";
-import { useUpdateTeacherMutation } from "../../../redux/features/teacher/teacherApi";
+import { useGetTeacherProfileQuery, useUpdateTeacherMutation } from "../../../redux/features/teacher/teacherApi";
 
 
 const Profile = () => {
@@ -30,23 +29,25 @@ const Profile = () => {
     //below state is for showing the upload button on hovering the avatar
     const [isHovering, setIsHovering] = useState(false);
     const [profileData, setProfileData] = useState({
-        contactNumber: "",
+        name: "",
+        phone: "",
         subject: "",
         jobType: ""
     });
     const [profileImg, setProfileImg] = useState<File | null>(null);
     // redux state
-    const { data, isLoading } = useGetProfileQuery({});
-    const [updateTeacher, { data: updateData, isSuccess, isError }] = useUpdateTeacherMutation();
+    const { data, isLoading, } = useGetTeacherProfileQuery({});
+    const [updateTeacher, { data: updateData, isLoading: updateLoading, isSuccess }] = useUpdateTeacherMutation();
 
-    if (isLoading) {
+    // handling the loading instances
+    if (isLoading || updateLoading) {
         return <Loader />;
     }
 
-    const { teacherId, email, joinedDate, jobType, subject, name } = data.data;
-    // const teacherId = data?.data.teacherId;
+    // extracting teacher data from backend
+    const { teacherId, email, joinedDate, jobType, subject, name, phone, image } = data.data;
 
-    console.log('teacher id found:', teacherId);
+    console.log(data.data);
 
     // form data handler
     //^ handling non file form data
@@ -72,19 +73,21 @@ const Profile = () => {
         const teacherInfo = new FormData();
         // Append avatar if available
         if (profileImg) teacherInfo.append("avatar", profileImg);
-        // Append profileData as a JSON string
-        teacherInfo.append("profileData", JSON.stringify(profileData));
+        // Append profileData as a JSON string based on condition
+        teacherInfo.append(
+            'profileData',
+            JSON.stringify({
+                ...(profileData.name && { name: profileData.name }),
+                ...(profileData.phone && { phone: profileData.phone }),
+                ...(profileData.subject && { subject: profileData.subject }),
+                ...(profileData.jobType && { jobType: profileData.jobType }),
+            })
+        );
 
-        // for (const [key, value] of Object.entries(profileData)) {
-        //     formData.append(key, value);
-        // }
+        const updateResult = await updateTeacher({ teacherInfo, teacherId });
 
-        // Debugging: Check FormData entries
-        // for (const [key, value] of teacherInfo.entries()) {
-        //     console.log(`${key}: ${value}`);
-        // }
+        console.log(isSuccess);
 
-        await updateTeacher({ teacherInfo, teacherId });
         // Check FormData content
         // console.log("all data together", formData);
         // console.log("FormData avatar:", formData.get("avatar"));
@@ -105,7 +108,7 @@ const Profile = () => {
                     <Box component="section" sx={{ display: 'flex', justifyContent: 'flex-start', gap: 3 }}>
                         {/* avatar section */}
                         <Box sx={{ position: 'relative' }}>
-                            <Avatar alt="teacher-photo" src={avatar || ''} sx={{ width: "130px", height: "130px" }}
+                            <Avatar alt="teacher-photo" src={image.path || avatar || ''} sx={{ width: "130px", height: "130px" }}
                                 onMouseOver={() => setIsHovering(true)}
                                 onMouseOut={() => setIsHovering(false)}
                             />
@@ -132,7 +135,7 @@ const Profile = () => {
                         </Box>
                         {/* avatar section ends */}
                         <Box component="div" sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'flex-start', gap: 0.5 }}>
-                            <Typography variant="h3">{name}</Typography>
+                            <Typography variant="h3">{email}</Typography>
                             <Typography variant="h6" sx={{ fontWeight: "650" }}>{teacherId}</Typography>
                         </Box>
 
@@ -142,21 +145,20 @@ const Profile = () => {
                         <Typography variant="h5" sx={{ fontWeight: "600" }}>Generals</Typography>
                         <Grid container spacing={2} sx={{ mt: 3, }}>
                             <Grid size={6}>
-                                <CustomLabel fieldName="Email" />
+                                <CustomLabel fieldName="Name" />
                                 <CustomTextField
-                                    disabled={true}
-                                    defaultValue={email || ""}
-                                    name="email"
-                                    placeholder={email || ""}
+                                    defaultValue={name || ""}
+                                    name="name"
+                                    placeholder={name || ""}
                                     handleInput={handleInput}
                                 />
                             </Grid>
                             <Grid size={6}>
                                 <CustomLabel fieldName="Contact Number" />
                                 <CustomTextField
-                                    name="contactNumber"
-                                    defaultValue=""
-                                    placeholder="+88012345678"
+                                    name="phone"
+                                    defaultValue={phone || ""}
+                                    placeholder={phone || ""}
                                     handleInput={handleInput}
                                 />
                             </Grid>
