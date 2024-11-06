@@ -2,10 +2,11 @@ import { createApi, fetchBaseQuery, FetchBaseQueryError } from "@reduxjs/toolkit
 import { RootState } from "../store"; // assuming RootState has the auth state type
 import { setUser } from "../features/auth/authSlice";
 
-// http://localhost:5000/api/v1/auth/login
-// https://prostuti-app-backend-production.up.railway.app
+// Local url -> http://localhost:5000/
+// Production url -> https://prostuti-app-backend-production.up.railway.app
+// Development url -> https://resilient-heart-dev.up.railway.app 
 const baseQuery = fetchBaseQuery({
-    baseUrl: 'https://prostuti-app-backend-production.up.railway.app/api/v1',
+    baseUrl: 'https://resilient-heart-dev.up.railway.app/api/v1',
     credentials: 'include',
     prepareHeaders: (headers, { getState }) => {
         const token = (getState() as RootState).auth.token;
@@ -20,7 +21,7 @@ const baseQueryWithRefreshToken: typeof baseQuery = async (args, api, extraOptio
     const result = await baseQuery(args, api, extraOptions);
 
     if (result.error && (result.error as FetchBaseQueryError).status === 401) {
-        const res = await fetch('https://prostuti-app-backend-production.up.railway.app/api/v1/auth/refresh-token', {
+        const res = await fetch('https://resilient-heart-dev.up.railway.app/api/v1/auth/refresh-token', {
             method: 'POST',
             credentials: 'include'
         });
@@ -33,6 +34,7 @@ const baseQueryWithRefreshToken: typeof baseQuery = async (args, api, extraOptio
             setUser({ user, token: data.data.accessToken })
         ));
     }
+    console.log('baseApi', result);
     return result;
 };
 
@@ -40,5 +42,6 @@ const baseQueryWithRefreshToken: typeof baseQuery = async (args, api, extraOptio
 export const baseApi = createApi({
     reducerPath: "baseApi",
     baseQuery: baseQueryWithRefreshToken,
+    tagTypes: ['User', 'Teacher'],
     endpoints: () => ({}),
 });
