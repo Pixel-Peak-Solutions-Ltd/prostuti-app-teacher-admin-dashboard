@@ -1,7 +1,7 @@
 import { TextField } from "@mui/material";
 
-const CustomTextField = ({ defaultValue, name, placeholder, handleInput, disabled }:
-    { defaultValue?: string; disabled?: boolean; name: string; value?: string; placeholder: string; handleInput: (e: React.ChangeEvent<HTMLInputElement>) => void; }
+const CustomTextField = ({ defaultValue, name, placeholder, handleInput, disabled, multiline, rows }:
+    { defaultValue?: string; disabled?: boolean; name: string; value?: string; placeholder: string; handleInput: (e: React.ChangeEvent<HTMLInputElement>) => void; multiline?: boolean; rows?: number; }
 ) => {
     return (
         <TextField
@@ -12,6 +12,8 @@ const CustomTextField = ({ defaultValue, name, placeholder, handleInput, disable
             placeholder={placeholder}
             type="text"
             size="small"
+            rows={rows}
+            multiline={multiline || false}
             sx={{
                 mt: 0.8,
                 "& .MuiOutlinedInput-root": {

@@ -3,6 +3,7 @@ import Messages from "../features/teacher/Pages/Messages";
 import MyCourse from "../features/teacher/Pages/MyCourse";
 import Profile from "../features/teacher/Pages/Profile";
 import AcademicQuestion from "../features/teacher/Pages/Question Database/AcademicQuestion";
+import AddQuestion from "../features/teacher/Pages/Question Database/AddQuestion/AddQuestion";
 import AdmissionQuestion from "../features/teacher/Pages/Question Database/AdmissionQuestion";
 import JobQuestion from "../features/teacher/Pages/Question Database/JobQuestion";
 import QuestionDatabase from "../features/teacher/Pages/QuestionDatabase";
@@ -46,5 +47,9 @@ export const teacherRoutes = [
     {
         path: 'job-question',
         element: <JobQuestion />
+    },
+    {
+        path: 'add-question',
+        element: <AddQuestion />
     }
 ];

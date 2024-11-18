@@ -6,11 +6,15 @@ import { Link } from "react-router-dom";
 const QuestionDatabase = () => {
     return (
         <Box sx={{ width: '100%', height: '100vh' }}>
-            <Paper variant="outlined" sx={{ width: '100%', height: '100vh', borderRadius: '25px', p: 3, }}>
+            <Paper variant="outlined" sx={{ width: '100%', height: '100vh', borderRadius: '10px', p: 3, }}>
                 {/* top title and button section */}
-                <Box component="section" sx={{ display: 'flex', justifyContent: 'space-between', mb: 3 }}>
+                <Box component="section" sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
                     <Typography variant='h3'>Question Database</Typography>
-                    <Button variant='contained' type='submit' sx={{ width: '180px', height: '48px', borderRadius: '8px', fontSize: '16px' }}>+ Add Question</Button>
+                    <Link to='/teacher/add-question'>
+                        <Button variant='contained' sx={{ width: '179px', height: '48px', borderRadius: '8px', fontSize: '16px' }}>
+                            + Add Question
+                        </Button>
+                    </Link>
                 </Box>
                 {/* question type selection section */}
                 {/* profile information section */}
