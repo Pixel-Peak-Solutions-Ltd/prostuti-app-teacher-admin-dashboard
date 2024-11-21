@@ -123,15 +123,15 @@ const AddQuestionForm = ({ index, setQuestion, question, setCategory_id }:
                     <>
                         <Grid size={4}>
                             <CustomLabel fieldName="Division" />
-                            <CustomAutoComplete options={divisions || []} name={`division_${index}`} handleInput={handleInput} />
+                            <CustomAutoComplete options={divisions || []} name={`division_${index}`} value={question[`division_${index}`]} handleInput={handleInput} required={true} />
                         </Grid>
                         <Grid size={4}>
                             <CustomLabel fieldName="Subject" />
-                            <CustomAutoComplete options={subjects || []} name={`subject_${index}`} handleInput={handleInput} />
+                            <CustomAutoComplete options={subjects || []} name={`subject_${index}`} value={question[`subject_${index}`]} handleInput={handleInput} required={true} />
                         </Grid>
                         <Grid size={4}>
                             <CustomLabel fieldName="Chapter" />
-                            <CustomAutoComplete options={chapters || []} name={`chapter_${index}`} handleInput={handleInput} />
+                            <CustomAutoComplete options={chapters || []} name={`chapter_${index}`} value={question[`chapter_${index}`]} handleInput={handleInput} required={true} />
                         </Grid>
                     </>)
             }
@@ -141,15 +141,15 @@ const AddQuestionForm = ({ index, setQuestion, question, setCategory_id }:
                     <>
                         <Grid size={4}>
                             <CustomLabel fieldName="University Type" />
-                            <CustomAutoComplete options={universityTypes} name={`universityType_${index}`} handleInput={handleInput} required={true} />
+                            <CustomAutoComplete options={universityTypes} name={`universityType_${index}`} value={question[`universityType_${index}`]} handleInput={handleInput} required={true} />
                         </Grid>
                         <Grid size={4}>
                             <CustomLabel fieldName="University Name" />
-                            <CustomAutoComplete options={universityNames} name={`universityName_${index}`} handleInput={handleInput} required={true} />
+                            <CustomAutoComplete options={universityNames} name={`universityName_${index}`} value={question[`universityName_${index}`]} handleInput={handleInput} required={true} />
                         </Grid>
                         <Grid size={4}>
                             <CustomLabel fieldName="Subject" />
-                            <CustomAutoComplete options={subjects} name={`subject_${index}`} handleInput={handleInput} required={true} />
+                            <CustomAutoComplete options={subjects} name={`subject_${index}`} value={question[`subject_${index}`]} handleInput={handleInput} required={true} />
                         </Grid>
                     </>)
             }
@@ -160,7 +160,7 @@ const AddQuestionForm = ({ index, setQuestion, question, setCategory_id }:
                     <>
                         <Grid size={12}>
                             <CustomLabel fieldName="Subject" />
-                            <CustomAutoComplete options={subjects} name={`subject_${index}`} handleInput={handleInput} required={true} />
+                            <CustomAutoComplete options={subjects} name={`subject_${index}`} value={question[`subject_${index}`]} handleInput={handleInput} required={true} />
                         </Grid>
                     </>)
             }
