@@ -129,7 +129,7 @@ const AcademicQuestion = () => {
                                         <CustomTextField
                                             name={'question'}
                                             disabled
-                                            defaultValue={question.title}
+                                            placeholder={question.title}
                                         />
                                     </Grid>
                                     {/* options for mcq */}
@@ -139,7 +139,7 @@ const AcademicQuestion = () => {
                                                 <CustomTextField
                                                     name={option}
                                                     disabled
-                                                    defaultValue={option}
+                                                    placeholder={option}
                                                 />
                                             </Grid>
                                         )
@@ -150,7 +150,7 @@ const AcademicQuestion = () => {
                                         <CustomTextField
                                             name={'answer_description'}
                                             disabled
-                                            defaultValue={question.description}
+                                            placeholder={question.description}
                                             multiline={true}
                                             rows={4}
                                         />

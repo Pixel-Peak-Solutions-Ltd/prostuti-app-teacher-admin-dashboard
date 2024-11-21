@@ -29,13 +29,12 @@ const CustomTextField = ({ defaultValue, name, placeholder, handleInput, disable
 
                     color: '#747083',
                     WebkitTextFillColor: '#747083',
-                    opacity: 1
-
+                    opacity: 1,
                 },
-                // '& .Mui-disabled': {
-                //     color: 'black', // Additional selector for disabled state
-                //     '-webkit-text-fill-color': 'black'
-                // }
+                '& .MuiInputBase-input::placeholder': {
+                    color: '#747083',
+                    opacity: 1,
+                },
             }}
             fullWidth
         />
