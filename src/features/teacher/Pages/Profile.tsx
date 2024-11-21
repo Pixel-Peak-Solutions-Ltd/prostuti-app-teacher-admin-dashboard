@@ -125,7 +125,7 @@ const Profile = () => {
                         )
                     }
                     {/* top profile title and button section */}
-                    <Box component="section" sx={{ display: 'flex', justifyContent: 'space-between', mb: 3 }}>
+                    <Box component="section" sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
                         <Typography variant='h3'>Profile</Typography>
                         <Button variant='contained' type='submit' sx={{ width: '120px', height: '38px', borderRadius: '8px', fontSize: '14px' }}>Save</Button>
                     </Box>

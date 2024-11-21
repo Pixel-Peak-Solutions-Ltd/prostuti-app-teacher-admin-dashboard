@@ -27,3 +27,16 @@ export interface TLoginError {
     status: number;
     data: TErrorData
 }
+
+export interface ICategory {
+    subject: string;
+    type: string;
+    universityName?: string;
+    universityType?: string;
+    updatedAt?: string;
+    __v?: number;
+    _id: string
+    createdAt?: string;
+    chapter: string;
+    division: string;
+}

@@ -16,3 +16,6 @@ export const questionDatabase = [
         name: 'Job Question'
     },
 ];
+
+export const QuestionType = ['MCQ', 'Written'];
+export const QuestionCategory = ['Academic', 'Admission', 'Job'];
