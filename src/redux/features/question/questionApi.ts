@@ -45,8 +45,24 @@ const questionAPI = baseApi.injectEndpoints({
                 };
             },
             invalidatesTags: ['Questions']
+        }),
+        getAllAcademicQuestions: builder.query({
+            query: (filters) => {
+                let URL = `/question?categoryType=Academic`;
+                if (Object.keys(filters).length !== 0) {
+                    URL = Object.entries(filters).reduce((acc, [key, value]) => {
+                        const prefix = '&';
+                        return `${acc}${prefix}${key}=${value}`;
+                    }, URL);
+                }
+                return {
+                    url: URL,
+                    method: 'GET'
+                };
+            },
+            providesTags: ['Questions']
         })
     })
 });
 
-export const { useGetCategoryQuery, useCreateQuestionMutation } = questionAPI;
+export const { useGetCategoryQuery, useCreateQuestionMutation, useGetAllAcademicQuestionsQuery } = questionAPI;

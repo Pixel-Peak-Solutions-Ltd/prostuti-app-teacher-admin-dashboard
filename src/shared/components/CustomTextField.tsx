@@ -1,7 +1,7 @@
 import { TextField } from "@mui/material";
 
-const CustomTextField = ({ defaultValue, name, placeholder, handleInput, disabled, multiline, rows }:
-    { defaultValue?: string; disabled?: boolean; name: string; value?: string; placeholder: string; handleInput: (e: React.ChangeEvent<HTMLInputElement>) => void; multiline?: boolean; rows?: number; }
+const CustomTextField = ({ defaultValue, name, placeholder, handleInput, disabled, multiline, rows, required, error, helperText }:
+    { defaultValue?: string; disabled?: boolean; name: string; value?: string; placeholder?: string; handleInput?: (e: React.ChangeEvent<HTMLInputElement>) => void; multiline?: boolean; rows?: number; required?: boolean; error?: boolean; helperText?: string }
 ) => {
     return (
         <TextField
@@ -13,6 +13,9 @@ const CustomTextField = ({ defaultValue, name, placeholder, handleInput, disable
             type="text"
             size="small"
             rows={rows}
+            required={required}
+            error={error}
+            helperText={helperText}
             multiline={multiline || false}
             sx={{
                 mt: 0.8,
@@ -20,8 +23,19 @@ const CustomTextField = ({ defaultValue, name, placeholder, handleInput, disable
                     color: "grey.500",
                     "& .MuiOutlinedInput-notchedOutline": {
                         borderRadius: "8px",
-                    }
-                }
+                    },
+                },
+                '& .MuiInputBase-input.Mui-disabled': {
+
+                    color: '#747083',
+                    WebkitTextFillColor: '#747083',
+                    opacity: 1
+
+                },
+                // '& .Mui-disabled': {
+                //     color: 'black', // Additional selector for disabled state
+                //     '-webkit-text-fill-color': 'black'
+                // }
             }}
             fullWidth
         />

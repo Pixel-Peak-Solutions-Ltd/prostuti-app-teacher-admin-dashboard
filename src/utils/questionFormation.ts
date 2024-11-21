@@ -2,7 +2,7 @@
 export const formatQuestion = (questionObj: Record<string, string>, category_id: string) => {
     // taking out the filters from the question object : ESNext syntax
 
-    const clonedObj = (({ category_0, division_0, subject_0, chapter_0, ...rest }) => rest)(questionObj);
+    const clonedObj = (({ category_0, division_0, subject_0, chapter_0, universityType_0, universityName_0, ...rest }) => rest)(questionObj);
 
     // creating the question array that will be sent to the server
     const questionArr = [];

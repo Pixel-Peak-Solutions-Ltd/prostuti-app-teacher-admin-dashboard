@@ -5,8 +5,8 @@ import Grid from '@mui/material/Grid2';
 import CustomTextField from "../../../../../shared/components/CustomTextField";
 import { useGetCategoryQuery } from "../../../../../redux/features/question/questionApi";
 import Loader from "../../../../../shared/components/Loader";
-import { ICategory } from "../../../../../types/types";
 import { FormControl, MenuItem, TextField } from "@mui/material";
+import { getUniqueStrings } from "../../../../../utils/typeSafeUniqueArrays";
 
 const AddQuestionForm = ({ index, setQuestion, question, setCategory_id }:
     {
@@ -16,6 +16,7 @@ const AddQuestionForm = ({ index, setQuestion, question, setCategory_id }:
         setCategory_id: React.Dispatch<React.SetStateAction<string>>
     }) => {
 
+    //question type selection
 
     const handleInput = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
@@ -23,6 +24,7 @@ const AddQuestionForm = ({ index, setQuestion, question, setCategory_id }:
         setCategory_id(categoryId);
     };
 
+    // creating a query parameter object
     const categoryQueryParams = {
         ...(question.category_0 && { category_0: question.category_0 }),
         ...(question.division_0 && { division_0: question.division_0 }),
@@ -39,32 +41,25 @@ const AddQuestionForm = ({ index, setQuestion, question, setCategory_id }:
 
     //handling the question queries
 
-    // console.log("from add question form page:", question);
+    console.log("from add question form page:", question);
 
     if (isLoading) {
         return <Loader />;
     }
 
-    // extracting divisions from the category data
-    const allDivisions = categoryData?.data.map((item: ICategory) => (item.division));
-    const allUniversityName = categoryData?.data.map((item: ICategory) => (item.universityName));
-    const allUniversities = categoryData?.data.map((item: ICategory) => (item.universityName));
+    // extracting divisions subjects, chapter, universityType, universityName, from the category data and creating unique qrray. The getUniqueStrings is a custom function helping to provide type safety.
 
-    // creating unique arrays for each type of filter
-    const divisions = allDivisions.filter((value: string, index: number) => allDivisions.indexOf(value) === index);
-    const universityNames = allUniversityName.filter((value: string, index: number) => (allUniversityName.indexOf(value) === index));
-    const universityTypes = allUniversities.filter((value: string, index: number) => (allUniversities.indexOf(value) === index));
-
-
-    // subjects, chapter, universityType, universityName, from the category data
-    const subjects = categoryData?.data.map((item: ICategory) => (item.subject));
-    const chapter = categoryData?.data.map((item: ICategory) => (item.chapter));
+    const divisions = getUniqueStrings(categoryData?.data || [], 'division');
+    const subjects = getUniqueStrings(categoryData?.data || [], 'subject');
+    const chapters = getUniqueStrings(categoryData?.data || [], 'chapter');
+    const universityNames = getUniqueStrings(categoryData?.data || [], 'universityName');
+    const universityTypes = getUniqueStrings(categoryData?.data || [], 'universityType');
 
     // narrowed down category
     const categoryId = categoryData?.data[0]?._id || '';
 
     // console.log(questionArray)
-    // console.log('currently fetched data:', categoryData?.data,);
+    console.log('currently fetched data:', categoryData?.data,);
     // console.log('unique division', divisions);
     // console.log('unique subject', subjects);
 
@@ -111,12 +106,15 @@ const AddQuestionForm = ({ index, setQuestion, question, setCategory_id }:
                     </FormControl>
                 </Grid >)
             }
+            {/* question type selection */}
             <Grid size={index === 0 ? 6 : 12}>
                 <CustomLabel fieldName="Question Type" />
                 <CustomAutoComplete
                     options={QuestionType}
                     handleInput={handleInput}
                     name={`type_${index}`}
+                    value={question[`type_${index}`]}
+                    required={true}
                 />
             </Grid>
             {/* 2nd row filter columns */}
@@ -133,7 +131,7 @@ const AddQuestionForm = ({ index, setQuestion, question, setCategory_id }:
                         </Grid>
                         <Grid size={4}>
                             <CustomLabel fieldName="Chapter" />
-                            <CustomAutoComplete options={chapter || []} name={`chapter_${index}`} handleInput={handleInput} />
+                            <CustomAutoComplete options={chapters || []} name={`chapter_${index}`} handleInput={handleInput} />
                         </Grid>
                     </>)
             }
@@ -143,15 +141,15 @@ const AddQuestionForm = ({ index, setQuestion, question, setCategory_id }:
                     <>
                         <Grid size={4}>
                             <CustomLabel fieldName="University Type" />
-                            <CustomAutoComplete options={universityTypes} name={`universityType${index}`} handleInput={handleInput} />
+                            <CustomAutoComplete options={universityTypes} name={`universityType_${index}`} handleInput={handleInput} required={true} />
                         </Grid>
                         <Grid size={4}>
                             <CustomLabel fieldName="University Name" />
-                            <CustomAutoComplete options={universityNames} name={`universityName${index}`} handleInput={handleInput} />
+                            <CustomAutoComplete options={universityNames} name={`universityName_${index}`} handleInput={handleInput} required={true} />
                         </Grid>
                         <Grid size={4}>
                             <CustomLabel fieldName="Subject" />
-                            <CustomAutoComplete options={divisions} name={`subject_${index}`} handleInput={handleInput} />
+                            <CustomAutoComplete options={subjects} name={`subject_${index}`} handleInput={handleInput} required={true} />
                         </Grid>
                     </>)
             }
@@ -162,29 +160,29 @@ const AddQuestionForm = ({ index, setQuestion, question, setCategory_id }:
                     <>
                         <Grid size={12}>
                             <CustomLabel fieldName="Subject" />
-                            <CustomAutoComplete options={divisions} name={`subject_${index}`} handleInput={handleInput} />
+                            <CustomAutoComplete options={subjects} name={`subject_${index}`} handleInput={handleInput} required={true} />
                         </Grid>
                     </>)
             }
 
-            {/* mcq row */}
             <Grid size={12}>
                 <CustomLabel fieldName='Question' />
-                <CustomTextField name={`title_${index}`} handleInput={handleInput} placeholder='Write your question here' />
+                <CustomTextField name={`title_${index}`} handleInput={handleInput} placeholder='Write your question here' required={true} />
             </Grid>
+            {/* mcq row */}
             {
 
-                question[`type_${index}`] === 'MCQ' && (
+                (question[`type_${index}`] === 'MCQ' || '') && (
                     <>
                         {Array.from(Array(4)).map((item, optionIndex) => (
                             <Grid size={3}>
                                 <CustomLabel fieldName={`Option ${optionIndex + 1}`} />
-                                <CustomTextField name={`option${optionIndex + 1}_${index}`} handleInput={handleInput} placeholder={`Option ${optionIndex + 1}`} />
+                                <CustomTextField name={`option${optionIndex + 1}_${index}`} handleInput={handleInput} placeholder={`Option ${optionIndex + 1}`} required={true} />
                             </Grid>
                         ))}
                         < Grid size={12}>
                             <CustomLabel fieldName='Correct Answer' />
-                            <CustomTextField name={`correctOption_${index}`} handleInput={handleInput} placeholder='Write the correct answer' />
+                            <CustomTextField name={`correctOption_${index}`} handleInput={handleInput} placeholder='Write the correct answer' required={true} />
                         </ Grid>
                     </>
                 )
@@ -193,7 +191,7 @@ const AddQuestionForm = ({ index, setQuestion, question, setCategory_id }:
             {/* question description */}
             <Grid size={12}>
                 <CustomLabel fieldName='Answer Description' />
-                <CustomTextField name={`description_${index}`} handleInput={handleInput} placeholder="Explain the answer here" multiline={true} rows={4} />
+                <CustomTextField name={`description_${index}`} handleInput={handleInput} placeholder="Explain the answer here" multiline={true} rows={4} required={true} />
             </Grid>
         </>
     );

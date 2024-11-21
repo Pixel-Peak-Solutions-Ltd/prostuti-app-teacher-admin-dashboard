@@ -2,18 +2,21 @@
 import { FormControl, MenuItem, TextField, } from "@mui/material";
 
 const CustomAutoComplete = (
-    { options, handleInput, name, required, }:
-        { options: string[]; name: string; handleInput?: (e: React.ChangeEvent<HTMLInputElement>) => void; required?: boolean; }
+    { options, handleInput, name, required, value, disabled, placeholder, defaultValue }:
+        { options: string[]; name: string; handleInput?: (e: React.ChangeEvent<HTMLInputElement>) => void; required?: boolean; value?: string; disabled?: boolean; placeholder?: string; defaultValue?: string },
 ) => {
     return (
         <FormControl fullWidth>
             <TextField
                 name={name}
-                // value={age}
+                value={value || ''}
+                defaultValue={defaultValue}
                 onChange={handleInput}
+                placeholder={placeholder}
                 size="small"
                 select
                 required={required}
+                disabled={disabled}
                 sx={{
                     mt: 0.8,
                     "& .MuiOutlinedInput-root": {
@@ -24,6 +27,10 @@ const CustomAutoComplete = (
                     }
                 }}
             >
+                {/*a default empty option to allow clearing */}
+                <MenuItem value="">
+                    <em>Clear Selection</em>
+                </MenuItem>
                 {
                     options.map((itemName) => (
                         <MenuItem key={itemName} value={itemName}>

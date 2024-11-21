@@ -68,3 +68,9 @@ const defaultValues = {
         <ProInput name={`answerDescription_${index}`} placeholder="Explain the answer here" multiline={true} rows={4} type="text" />
     </Grid>
 </>
+// making an array unique
+// const divisions = [...new Set(categoryData?.data.map((item: ICategory) => (item.division)))] as string[];
+// const universityNames = [...new Set(categoryData?.data.map((item: ICategory) => (item.universityName)))];
+// const universityTypes = [...new Set(categoryData?.data.map((item: ICategory) => item.universityType))];
+// const subjects = [...new Set(categoryData?.data.map((item: ICategory) => item.subject))];
+// const chapters = [...new Set(categoryData?.data.map((item: ICategory) => item.chapter))];
