@@ -17,7 +17,6 @@ const QuestionDatabase = () => {
                     </Link>
                 </Box>
                 {/* question type selection section */}
-                {/* profile information section */}
                 <Box component="section" sx={{ mt: 3, flexGrow: 1 }}>
                     <Grid container spacing={2} sx={{ mt: 3, justifyContent: 'center' }}>
                         {questionDatabase.map((item) => (
@@ -39,7 +38,6 @@ const QuestionDatabase = () => {
                     </Grid>
                 </Box>
             </Paper>
-            {/* nested children */}
         </Box>
     );
 };

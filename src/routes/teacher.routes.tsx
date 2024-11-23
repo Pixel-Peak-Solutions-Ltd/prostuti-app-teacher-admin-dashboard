@@ -1,6 +1,6 @@
 import FlashCard from "../features/teacher/Pages/FlashCard";
 import Messages from "../features/teacher/Pages/Messages";
-import MyCourse from "../features/teacher/Pages/MyCourse";
+import MyCourse from "../features/teacher/Pages/Course/MyCourse";
 import Profile from "../features/teacher/Pages/Profile";
 import AcademicQuestion from "../features/teacher/Pages/Question Database/AcademicQuestion";
 import AddQuestion from "../features/teacher/Pages/Question Database/AddQuestion/AddQuestion";
@@ -8,6 +8,7 @@ import AdmissionQuestion from "../features/teacher/Pages/Question Database/Admis
 import JobQuestion from "../features/teacher/Pages/Question Database/JobQuestion";
 import QuestionDatabase from "../features/teacher/Pages/QuestionDatabase";
 import TeacherDashboard from "../features/teacher/Pages/TeacherDashboard";
+import CreateCourse from "../features/teacher/Pages/Course/CreateCourse";
 
 export const teacherRoutes = [
     {
@@ -51,5 +52,12 @@ export const teacherRoutes = [
     {
         path: 'add-question',
         element: <AddQuestion />
+    },
+
+    // course paths
+
+    {
+        path: 'create-course',
+        element: <CreateCourse />
     }
 ];
