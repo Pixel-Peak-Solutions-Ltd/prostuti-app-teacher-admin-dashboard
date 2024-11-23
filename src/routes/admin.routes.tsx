@@ -6,6 +6,8 @@ import ReportCompliance from '../features/admin/Pages/ReportCompliance';
 import RevenueManagement from '../features/admin/Pages/RevenueManagement';
 import TeacherManagement from '../features/admin/Pages/TeacherManagement';
 import PaymentManagement from '../features/admin/Pages/PaymentManagement';
+import Category from '../features/admin/Pages/Category/Category';
+import AddCategory from '../features/admin/Pages/Category/AddCategory/AddCategory';
 
 export const adminRoutes = [
   {
@@ -35,6 +37,14 @@ export const adminRoutes = [
   {
     path: 'revenue-management',
     element: <RevenueManagement />,
+  },
+  {
+    path: 'category',
+    element: <Category/>
+  },
+  {
+    path: 'add-category',
+    element: <AddCategory/>
   },
   {
     path: 'report-compliance',

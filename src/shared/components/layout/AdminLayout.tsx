@@ -61,6 +61,11 @@ const adminDashboardMenus = [
     icon: <RevenueManagementIcon />,
   },
   {
+    path: '/admin/category',
+    name: 'Category',
+    icon: <RevenueManagementIcon />,
+  },
+  {
     path: '/admin/report-compliance',
     name: 'Report & Compliance',
     icon: <ReportComplianceIcon />,
