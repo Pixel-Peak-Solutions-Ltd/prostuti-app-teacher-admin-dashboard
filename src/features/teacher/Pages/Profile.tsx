@@ -41,6 +41,8 @@ const Profile = () => {
         jobType: ""
     });
     const [noFieldError, setNoValidFieldError] = useState<null | string>(null);
+
+    // below state handles the selected image file and ready it to upload
     const [profileImg, setProfileImg] = useState<File | null>(null);
 
     // redux state

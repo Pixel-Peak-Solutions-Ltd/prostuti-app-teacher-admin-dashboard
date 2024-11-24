@@ -8,6 +8,7 @@ const MyCourse = () => {
             <Box sx={{ width: '100%', height: '100vh' }}>
                 <Paper variant="outlined" sx={{ width: '100%', height: '100vh', borderRadius: '10px', p: 3 }}>
                     {/* top title and button section */}
+                    {/* default section when no course is created */}
                     <Box component='section' sx={{ mt: 3 }}>
                         <Grid container spacing={2} sx={{ mt: 3, justifyContent: 'center' }}>
                             <Grid size={12} sx={{ alignItems: 'center', justifyContent: 'center' }}>

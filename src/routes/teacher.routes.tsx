@@ -9,6 +9,8 @@ import JobQuestion from "../features/teacher/Pages/Question Database/JobQuestion
 import QuestionDatabase from "../features/teacher/Pages/QuestionDatabase";
 import TeacherDashboard from "../features/teacher/Pages/TeacherDashboard";
 import CreateCourse from "../features/teacher/Pages/Course/CreateCourse";
+import CourseDetails from "../features/teacher/Pages/Course/CourseDetails";
+import CreateLessons from "../features/teacher/Pages/Course/CreateLessons";
 
 export const teacherRoutes = [
     {
@@ -58,6 +60,16 @@ export const teacherRoutes = [
 
     {
         path: 'create-course',
-        element: <CreateCourse />
+        element: <CreateCourse />,
+        children: [
+            {
+                path: 'create-course',
+                element: <CourseDetails />
+            },
+            {
+                path: 'create-lessons',
+                element: <CreateLessons />
+            },
+        ]
     }
 ];
