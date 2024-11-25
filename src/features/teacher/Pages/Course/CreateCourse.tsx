@@ -5,7 +5,28 @@ import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import Grid from '@mui/material/Grid2';
 import CustomStepper from "../../../../shared/components/CustomStepper";
 import CourseDetails from "./CourseDetails";
-import { createRef, useState } from "react";
+import { createRef, RefObject, useState } from "react";
+
+
+export type FormComponentRef = {
+    submitForm: () => void;
+};
+
+// Define valid paths as a const to get literal types
+const FORM_PATHS = {
+    COURSE_DETAILS: '/teacher/create-course',
+    LESSONS: '/teacher/create-course/create-lessons',
+} as const;
+
+// Create a type from the valid paths
+type ValidPaths = typeof FORM_PATHS[keyof typeof FORM_PATHS];
+
+
+export type OutletContextType = {
+    setActiveSteps: React.Dispatch<React.SetStateAction<number>>;
+    formRef: RefObject<FormComponentRef>;
+    // other shared props goes here
+};
 
 const CreateCourse = () => {
     // state for handling the stepper
@@ -13,8 +34,10 @@ const CreateCourse = () => {
     // to determine it's the create course route
     const location = useLocation();
 
-    // creating the form reference
-    const formRef = createRef<{ submitForm: () => void }>();
+    // Create a single ref that will be passed to both CourseDetails and outlet components
+    const formRef = createRef<FormComponentRef>();
+
+    // determining current form based on pathname
 
     const handleContinue = () => {
         if (formRef.current) {
@@ -55,8 +78,7 @@ const CreateCourse = () => {
                         </Grid>
                         {/* course detail creation components */}
                         <Grid size={12}>
-
-                            {location.pathname === '/teacher/create-course' ? <CourseDetails ref={formRef} setActiveSteps={setActiveSteps} /> : <Outlet />}
+                            {location.pathname === FORM_PATHS.COURSE_DETAILS ? <CourseDetails ref={formRef} setActiveSteps={setActiveSteps} /> : <Outlet context={{ setActiveSteps, formRef }} />}
                         </Grid>
                     </Grid>
                 </Box>

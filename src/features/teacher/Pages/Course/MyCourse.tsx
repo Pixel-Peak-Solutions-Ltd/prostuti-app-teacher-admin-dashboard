@@ -12,6 +12,7 @@ const MyCourse = () => {
                     <Box component='section' sx={{ mt: 3 }}>
                         <Grid container spacing={2} sx={{ mt: 3, justifyContent: 'center' }}>
                             <Grid size={12} sx={{ alignItems: 'center', justifyContent: 'center' }}>
+                                {/* create course button and box section */}
                                 <Box sx={{ width: '100%', height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'center', gap: 3, alignItems: 'center', py: 1, borderRadius: 4 }}>
                                     <img src={emptybox} style={{ width: '293px', height: '293px' }} />
                                     <Typography variant="h6">You don't have any courses!</Typography>
@@ -21,6 +22,7 @@ const MyCourse = () => {
                                         </Button>
                                     </Link>
                                 </Box>
+                                {/* create course button and box section ends*/}
                             </Grid>
                         </Grid>
                     </Box>

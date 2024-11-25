@@ -91,6 +91,7 @@ const CourseDetails = forwardRef<{ submitForm: () => void }, CourseDetailsProps>
 
     const handleSubmit = async (e?: React.FormEvent) => {
         e?.preventDefault();
+        console.log('Submit button clicked');
         // creating a formData variable
         const courseData = new FormData();
         // appending cover image to the courseData object
