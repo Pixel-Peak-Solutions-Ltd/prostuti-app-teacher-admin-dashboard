@@ -15,7 +15,7 @@ import { useNavigate } from "react-router-dom";
 // import { CourseState } from "../../../../types/types";
 
 type CourseDetailsProps = {
-    setActiveSteps: React.Dispatch<React.SetStateAction<number>>;
+    setActiveSteps?: React.Dispatch<React.SetStateAction<number>>;
 };
 const CourseDetails = forwardRef<{ submitForm: () => void }, CourseDetailsProps>(({ setActiveSteps }, ref) => {
     // to hide the default input field for file upload
@@ -116,7 +116,8 @@ const CourseDetails = forwardRef<{ submitForm: () => void }, CourseDetailsProps>
             dispatch(saveCourseIdToStore({ course_id: course_id }));
             //navigate user to the add lesson page once all the data has been saved
             navigate('/teacher/create-course/create-lessons');
-            setActiveSteps(prevStep => prevStep + 1);
+            // checking whether setActiveSteps is available
+            setActiveSteps?.(prevStep => prevStep + 1);
         } catch (err) {
             console.log(err);
             setError(err);
@@ -164,7 +165,10 @@ const CourseDetails = forwardRef<{ submitForm: () => void }, CourseDetailsProps>
                         <Grid container spacing={2}>
                             <Grid size={6}>
                                 <CustomLabel fieldName="Course Name" />
-                                <CustomTextField name="name" handleInput={handleInput} />
+                                <CustomTextField
+                                    name="name" handleInput={handleInput}
+                                    value={courseDetails.name}
+                                />
                             </Grid>
                             <Grid size={6}>
                                 <CustomLabel fieldName="Course Category" />
@@ -206,7 +210,13 @@ const CourseDetails = forwardRef<{ submitForm: () => void }, CourseDetailsProps>
                             {/* course details */}
                             <Grid size={12}>
                                 <CustomLabel fieldName="Course Details" />
-                                <CustomTextField name="details" multiline={true} rows={6} handleInput={handleInput} />
+                                <CustomTextField
+                                    name="details"
+                                    multiline={true}
+                                    rows={6}
+                                    handleInput={handleInput}
+                                    value={courseDetails.details}
+                                />
                             </Grid>
                         </Grid>
                         {/* <Button type="submit">

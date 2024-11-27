@@ -77,3 +77,45 @@
 //         setProfileData({ ...profileData, joinedDate: date.format("YYYY-MM-DD") }); // Adjust the format as needed
 //     }
 // };
+
+// record class dynamic url upload field
+// {
+// Array.from(Array(videoFields)).map((index) =>
+// (
+//     <>
+//         <Grid key={index} size={12}>
+//             <CustomLabel fieldName="Upload Video Class" />
+//             <CustomTextField
+//                 name='classVideoURL' placeholder="Enter Video Link Here"
+//                 handleInput={handleRecordDetailsInput}
+//                 value={recordDetails?.classVideoURL}
+//                 handlePaste={handleOnPaste}
+//                 multiline={true} rows={4}
+//             />
+//         </Grid>
+{/* <Grid size={1} sx={{ alignSelf: 'flex-end' }}>
+                                                <Button
+                                                    onClick={() => {
+                                                        if (videoFields > 1) setVideoFields(prev => prev - 1);
+                                                        // deleting the corresponding fields
+                                                        // delete lessonData[`number_${index + 1}`];
+                                                        // delete lessonData[`name_${index + 1}`];
+                                                    }}
+                                                    variant="outlined"
+                                                    size="small"
+                                                    sx={{
+                                                        height: '40px', minHeight: '40px', width: '100%', borderRadius: '8px', borderColor: "grey.700", color: "#3F3F46",
+                                                        '&:hover': {
+                                                            backgroundColor: '#e91e63',
+                                                            color: '#FFF',
+                                                            border: 'none'
+                                                        }
+                                                    }}>
+                                                    <DeleteOutlinedIcon />
+                                                </Button>
+                                            </Grid> */}
+//     </>
+
+// )
+// )
+// }

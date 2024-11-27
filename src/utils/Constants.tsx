@@ -1,6 +1,12 @@
 import academicLogo from '../assets/images/academicLogo.png';
 import admissionLogo from '../assets/images/admissionLogo.png';
 import jobLogo from '../assets/images/jobLogo.png';
+import resource from '../assets/images/resource.png';
+import test from '../assets/images/test.png';
+import assignment from '../assets/images/assignment.png';
+import video from '../assets/images/video.png';
+import routine from '../assets/images/routine.png';
+import notice from '../assets/images/notice.png';
 
 export const questionDatabase = [
     {
@@ -15,6 +21,33 @@ export const questionDatabase = [
         logo: jobLogo,
         name: 'Job Question'
     },
+];
+
+export const materials = [
+    {
+        logo: video,
+        name: 'Record Class'
+    },
+    {
+        logo: resource,
+        name: 'Resources'
+    },
+    {
+        logo: test,
+        name: 'Test Creation',
+    },
+    {
+        logo: assignment,
+        name: 'Assignment',
+    },
+    {
+        logo: routine,
+        name: 'Routine',
+    },
+    {
+        logo: notice,
+        name: 'Notice'
+    }
 ];
 
 export const QuestionType = ['MCQ', 'Written'];

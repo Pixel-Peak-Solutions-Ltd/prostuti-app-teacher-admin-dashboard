@@ -11,6 +11,13 @@ import TeacherDashboard from "../features/teacher/Pages/TeacherDashboard";
 import CreateCourse from "../features/teacher/Pages/Course/CreateCourse";
 import CourseDetails from "../features/teacher/Pages/Course/CourseDetails";
 import CreateLessons from "../features/teacher/Pages/Course/CreateLessons";
+import AddCourseMaterial from "../features/teacher/Pages/Course/AddCourseMaterial";
+import RecordClass from "../features/teacher/Pages/Materials/RecordClass";
+import AssignmentCreation from "../features/teacher/Pages/Materials/AssignmentCreation";
+import TestCreation from "../features/teacher/Pages/Materials/TestCreation";
+import ResourcesCreation from "../features/teacher/Pages/Materials/ResourcesCreation";
+import RoutineCreation from "../features/teacher/Pages/Materials/RoutineCreation";
+import NoticeCreation from "../features/teacher/Pages/Materials/NoticeCreation";
 
 export const teacherRoutes = [
     {
@@ -70,6 +77,36 @@ export const teacherRoutes = [
                 path: 'create-lessons',
                 element: <CreateLessons />
             },
+            {
+                path: 'add-course-material',
+                element: <AddCourseMaterial />
+            },
         ]
-    }
+    },
+
+    // course material routes
+    {
+        path: 'record-class',
+        element: <RecordClass />
+    },
+    {
+        path: 'assignment',
+        element: <AssignmentCreation />
+    },
+    {
+        path: 'test-creation',
+        element: <TestCreation />
+    },
+    {
+        path: 'resources',
+        element: <ResourcesCreation />
+    },
+    {
+        path: 'routine',
+        element: <RoutineCreation />
+    },
+    {
+        path: 'notice',
+        element: <NoticeCreation />
+    },
 ];

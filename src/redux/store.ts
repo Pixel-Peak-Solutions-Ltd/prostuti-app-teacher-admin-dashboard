@@ -11,13 +11,20 @@ const persistConfig = {
     whitelist: ['token', 'refreshToken', 'user']
 };
 
+const persistCourseIds = {
+    key: 'courseAndLessonId',
+    storage
+};
+
 const persistedAuthReducer = persistReducer(persistConfig, authReducer);
+const persistedCourseCreateReducer = persistReducer(persistCourseIds, courseReducer);
 
 export const store = configureStore({
     reducer: {
         auth: persistedAuthReducer,
         [baseApi.reducerPath]: baseApi.reducer,
-        courseDetails: courseReducer,
+        // courseDetails: courseReducer,
+        courseAndLessonId: persistedCourseCreateReducer
     },
     middleware: (getDefaultMiddleware) =>
         getDefaultMiddleware({

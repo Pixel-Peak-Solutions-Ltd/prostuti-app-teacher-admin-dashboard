@@ -11,9 +11,26 @@ const courseApi = baseApi.injectEndpoints({
                     body: courseData
                 };
             }
+        }),
+        saveLesson: builder.mutation({
+            query: (lessonData) => {
+                return {
+                    url: '/lesson',
+                    method: 'POST',
+                    body: lessonData
+                };
+            }
+        }),
+        getLessonsByCourseId: builder.query({
+            query: ({ courseId }) => {
+                return {
+                    url: `/lesson/course/${courseId}`,
+                    method: 'GET',
+                };
+            }
         })
     })
 });
 
 
-export const { useSaveCourseMutation } = courseApi;
+export const { useSaveCourseMutation, useSaveLessonMutation, useGetLessonsByCourseIdQuery } = courseApi;

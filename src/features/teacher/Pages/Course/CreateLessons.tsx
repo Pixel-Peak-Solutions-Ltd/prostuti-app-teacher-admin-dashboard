@@ -5,13 +5,17 @@ import { useImperativeHandle, useState } from "react";
 import CustomLabel from "../../../../shared/components/CustomLabel";
 import CustomTextField from "../../../../shared/components/CustomTextField";
 import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
-import { useOutletContext } from "react-router-dom";
+import { useNavigate, useOutletContext } from "react-router-dom";
 import { OutletContextType } from "./CreateCourse";
+import { constructLesson } from "../../../../utils/lessonDataFormation";
+import { useAppDispatch, useAppSelector } from "../../../../redux/hooks";
+import { saveCourseIdToStore } from "../../../../redux/features/course/courseSlice";
+import { useSaveLessonMutation } from "../../../../redux/features/course/courseApi";
+import Loader from "../../../../shared/components/Loader";
 
 const CreateLessons = () => {
 
     // destructuring the props
-
     const { setActiveSteps, formRef } = useOutletContext<OutletContextType>();
     // to conditionally render lesson form
     const [isCreateLessons, setIsCreateLessons] = useState<boolean>(false);
@@ -19,6 +23,16 @@ const CreateLessons = () => {
     const [noOfLessonForms, setNoOfLessonForms] = useState(1);
     // store all lesson data inside this state
     const [lessonData, setLessonData] = useState<Record<string, string>>({});
+
+    const [error, setError] = useState<any>();
+
+    const navigate = useNavigate();
+    // setting the data to local redux store
+    const course_id = useAppSelector(state => state.courseAndLessonId.id.course_id);
+
+    // calling redux mutation hook to save lesson
+
+    const [saveLesson, { isLoading, isSuccess }] = useSaveLessonMutation();
 
     // function to set all the lesson data
     const handleLessonInput = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -28,9 +42,19 @@ const CreateLessons = () => {
 
 
     // submitting the form
-    const handleSubmit = (e?: React.FormEvent) => {
+    const handleSubmit = async (e?: React.FormEvent) => {
         e?.preventDefault();
-        console.log('Lesson submit triggered');
+        const lessonDataToSubmit = constructLesson(lessonData, course_id);
+        try {
+            await saveLesson(lessonDataToSubmit);
+            navigate('/teacher/create-course/add-course-material');
+        } catch (err) {
+            setError(err);
+            console.log(err);
+        }
+        // dispatch(saveCourseIdToStore({ lesson_id: 'testid' }));
+        console.log('Lesson submit triggered', JSON.stringify(lessonDataToSubmit));
+        console.log('submittable lesson data');
     };
 
     // triggering the submit button through parent's continue button
@@ -48,6 +72,17 @@ const CreateLessons = () => {
             <Box sx={{ width: '100%', height: '100%' }}>
                 <Paper variant="outlined" sx={{ width: '100%', height: 'auto', borderRadius: '10px', p: 3 }}>
                     {/* show empty box when create lession is not pressed yet */}
+                    {
+                        isSuccess && (
+                            <>
+                                <h1>Lesson Successfully Saved to Database</h1>
+                            </>
+                        )
+                    }
+                    {/* loading state while saving the lessons */}
+                    {
+                        isLoading && (<Loader />)
+                    }
                     {!isCreateLessons && (
                         <Box sx={{ width: '100%', height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'center', gap: 3, alignItems: 'center', py: 1, borderRadius: 4 }}>
                             <img src={emptybox} style={{ width: '293px', height: '293px' }} />
@@ -67,16 +102,22 @@ const CreateLessons = () => {
                                 {Array.from(Array(noOfLessonForms)).map((item, index) => (
                                     <Grid container spacing={4}>
                                         <Grid size={3}>
-                                            <CustomLabel fieldName={`Lesson Number ${index + 1}`} />
-                                            <CustomTextField name={`number_${index + 1}`} handleInput={handleLessonInput} />
+                                            <CustomLabel fieldName={`Lesson Number`} />
+                                            <CustomTextField name={`number_${index + 1}`} handleInput={handleLessonInput} value={lessonData[`number_${index + 1}`]} />
                                         </Grid>
                                         <Grid size={8}>
                                             <CustomLabel fieldName={`Lesson Name`} />
-                                            <CustomTextField name={`name_${index + 1}`} handleInput={handleLessonInput} />
+                                            <CustomTextField name={`name_${index + 1}`} handleInput={handleLessonInput}
+                                                value={lessonData[`name_${index + 1}`]} />
                                         </Grid>
                                         <Grid size={1} sx={{ alignSelf: 'flex-end' }}>
                                             <Button
-                                                onClick={() => setNoOfLessonForms(prev => prev - 1)}
+                                                onClick={() => {
+                                                    setNoOfLessonForms(prev => prev - 1);
+                                                    // deleting the corresponding fields
+                                                    delete lessonData[`number_${index + 1}`];
+                                                    delete lessonData[`name_${index + 1}`];
+                                                }}
                                                 variant="outlined"
                                                 size="small"
                                                 sx={{
@@ -101,7 +142,7 @@ const CreateLessons = () => {
                                         variant='contained'
                                         size='small'
                                         sx={{ width: '167px', height: '40px', borderRadius: '8px', fontSize: '14px' }}>
-                                        + Add New Question
+                                        + Add New Lesson
                                     </Button>
                                 </Box>
                             </form>

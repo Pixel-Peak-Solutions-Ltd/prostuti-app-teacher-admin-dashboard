@@ -47,7 +47,7 @@ const CreateCourse = () => {
     };
 
     return (
-        <Box sx={{ width: '100%', height: '100vh' }}>
+        <Box sx={{ width: '100%', height: 'auto' }}>
             <Paper variant="outlined" sx={{ width: '100%', height: 'auto', borderRadius: '10px', p: 3 }}>
                 {/* top title and button section */}
                 <Box component="section" sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
@@ -58,7 +58,7 @@ const CreateCourse = () => {
                                 <ArrowBackIcon fontSize='small' />
                             </Button>
                         </Link>
-                        <Typography variant='h3'>Create Course</Typography>
+                        <Typography variant='h3'>{location.pathname === FORM_PATHS.LESSONS ? 'Create Lessons' : 'Create Course'}</Typography>
                     </Box>
                     {/* continue button */}
                     {/* <Link to='/teacher/create-course/create-lessons'> */}
