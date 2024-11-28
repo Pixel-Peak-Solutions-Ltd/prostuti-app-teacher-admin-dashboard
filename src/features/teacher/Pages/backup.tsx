@@ -119,3 +119,9 @@
 // )
 // )
 // }
+
+// print the FormData for debugging
+// console.log('Logging formData');
+// for (const [key, value] of courseData.entries()) {
+//     console.log(`FormData: ${key}:`, value);
+// }

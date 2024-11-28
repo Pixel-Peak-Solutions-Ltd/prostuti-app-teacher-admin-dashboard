@@ -91,7 +91,6 @@ const CourseDetails = forwardRef<{ submitForm: () => void }, CourseDetailsProps>
 
     const handleSubmit = async (e?: React.FormEvent) => {
         e?.preventDefault();
-        console.log('Submit button clicked');
         // creating a formData variable
         const courseData = new FormData();
         // appending cover image to the courseData object
@@ -103,13 +102,8 @@ const CourseDetails = forwardRef<{ submitForm: () => void }, CourseDetailsProps>
         };
         // appending course details data to the courseDetails object
         courseData.append('courseData', JSON.stringify(updatedCourseDetails));
-        // print the FormData for debugging
-        // console.log('Logging formData');
-        for (const [key, value] of courseData.entries()) {
-            console.log(`FormData: ${key}:`, value);
-        }
-        // sending the course details to backend through redux toolkit
 
+        // sending the course details to backend through redux toolkit
         try {
             const courseResponse = await saveCourse(courseData);
             const course_id = courseResponse?.data.data?._id;
@@ -122,8 +116,6 @@ const CourseDetails = forwardRef<{ submitForm: () => void }, CourseDetailsProps>
             console.log(err);
             setError(err);
         }
-        // sending form data to redux store
-        // dispatch(saveCourseIdToStore({ course_id: userId }));
     };
 
     // calling the imerative handle to execute submit handler from the parent component

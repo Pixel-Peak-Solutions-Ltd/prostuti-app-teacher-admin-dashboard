@@ -31,7 +31,6 @@ const StyledDatePicker = styled(DatePicker)({
 const RecordClass = () => {
     // local states
     const [recordDetails, setRecordDetails] = useState<Record<string, string>>({});
-    const [submittableDetails, setSubmittableDetails] = useState<Record<string, string | string[]>>({});
     const [openSnackbar, setOpenSnackbar] = useState(false);
 
 
@@ -49,7 +48,6 @@ const RecordClass = () => {
     // console.log(lessonData);
     // data filtering
     const lessonNames = lessonData?.data.map((item: typeof lessonData) => item.name);
-    const lessonNumbers = lessonData?.data.map((item: typeof lessonData) => item.number);
     const lesson_id = lessonData?.data.filter((item: typeof lessonData) => item.name === recordDetails?.lessonName);
 
     // handling all the inputs
@@ -62,7 +60,7 @@ const RecordClass = () => {
     // //^ handling dayjs for date field
     const handleDateChange = (date: Dayjs | null) => {
         if (date) {
-            setRecordDetails({ ...recordDetails, classDate: date.toISOString() }); // Adjust the format as needed
+            setRecordDetails({ ...recordDetails, classDate: date.toISOString() }); // converting date to iso string
         }
     };
 
@@ -85,6 +83,8 @@ const RecordClass = () => {
         const urlArray = createValidUrlArray(recordDetails?.classVideoURL as string);
 
         // taking out the unwanted fields from the details object : ESNext syntax
+
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const refinedDetails = (({ lessonName, ...rest }) => rest)(recordDetails);
         // constructing the final object
         const submissionData = {
@@ -116,9 +116,6 @@ const RecordClass = () => {
         setOpenSnackbar(false);
     };
 
-    // console.log(recordDetails);
-    console.log('Submittable details', submittableDetails);
-    // console.log('Selected Lesson object', lesson_id);
     return (
         <>
 
@@ -128,7 +125,7 @@ const RecordClass = () => {
                     <Box component="section" sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
                         {/* back button and title */}
                         <Box component="section" sx={{ display: 'flex', gap: '20px' }}>
-                            <Link to={location.pathname === "/teacher/create-course" ? '/teacher/my-course' : "/teacher/create-course"}>
+                            <Link to='/teacher/create-course/add-course-material'>
                                 <Button variant='outlined' sx={{ width: '36px', height: '36px', minWidth: '36px', borderRadius: '8px', borderColor: "grey.700", color: "#3F3F46" }}>
                                     <ArrowBackIcon fontSize='small' />
                                 </Button>
@@ -146,7 +143,7 @@ const RecordClass = () => {
                         {/* </Link> */}
                     </Box>
                     {/* form section starts here */}
-                    <Box sx={{ display: "flex", flexDirection: 'column', gap: '20px', position: 'relative' }}>
+                    <Box sx={{ display: "flex", flexDirection: 'column', gap: '20px' }}>
                         <form onSubmit={handleSubmit}>
                             <Paper variant='outlined' sx={{ width: '100%', height: '100%', p: 2, borderRadius: '8px', mb: 3 }}>
                                 <Grid container spacing={3} >

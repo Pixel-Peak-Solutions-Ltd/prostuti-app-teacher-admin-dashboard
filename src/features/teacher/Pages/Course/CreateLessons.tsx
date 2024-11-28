@@ -8,15 +8,13 @@ import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
 import { useNavigate, useOutletContext } from "react-router-dom";
 import { OutletContextType } from "./CreateCourse";
 import { constructLesson } from "../../../../utils/lessonDataFormation";
-import { useAppDispatch, useAppSelector } from "../../../../redux/hooks";
-import { saveCourseIdToStore } from "../../../../redux/features/course/courseSlice";
+import { useAppSelector } from "../../../../redux/hooks";
 import { useSaveLessonMutation } from "../../../../redux/features/course/courseApi";
 import Loader from "../../../../shared/components/Loader";
 
 const CreateLessons = () => {
-
     // destructuring the props
-    const { setActiveSteps, formRef } = useOutletContext<OutletContextType>();
+    const { formRef } = useOutletContext<OutletContextType>();
     // to conditionally render lesson form
     const [isCreateLessons, setIsCreateLessons] = useState<boolean>(false);
     // to create dynamic form this state helps to determine number of input fields
