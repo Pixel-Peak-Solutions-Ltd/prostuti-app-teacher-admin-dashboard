@@ -52,9 +52,6 @@ const CreateLessons = () => {
             setError(err);
             console.log(err);
         }
-        // dispatch(saveCourseIdToStore({ lesson_id: 'testid' }));
-        console.log('Lesson submit triggered', JSON.stringify(lessonDataToSubmit));
-        console.log('submittable lesson data');
     };
 
     // triggering the submit button through parent's continue button
@@ -63,9 +60,6 @@ const CreateLessons = () => {
             handleSubmit();
         },
     }));
-
-    console.log(lessonData);
-
 
     return (
         <>
