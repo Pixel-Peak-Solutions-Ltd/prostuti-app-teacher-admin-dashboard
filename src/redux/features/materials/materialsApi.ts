@@ -14,8 +14,18 @@ const materialApi = baseApi.injectEndpoints({
                     body: recordClassData
                 };
             }
+        }),
+        createResource: builder.mutation({
+            query: (resourceData) => {
+                console.log('Data received in API call:', resourceData.get('files'));
+                return {
+                    url: '/resource',
+                    method: 'POST',
+                    body: resourceData
+                };
+            }
         })
     })
 });
 
-export const { useCreateRecordClassMutation } = materialApi;
+export const { useCreateRecordClassMutation, useCreateResourceMutation } = materialApi;

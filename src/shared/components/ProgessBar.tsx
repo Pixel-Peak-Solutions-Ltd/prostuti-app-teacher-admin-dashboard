@@ -42,7 +42,7 @@ export default function LinearWithValueLabel() {
                 }
                 return newProgress;
             });
-        }, 500);
+        }, 100);
 
         return () => {
             clearTimeout(timer);

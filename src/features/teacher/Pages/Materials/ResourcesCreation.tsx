@@ -1,4 +1,4 @@
-import { Box, Button, IconButton, Paper, Typography, styled } from "@mui/material";
+import { Box, Button, IconButton, Paper, SnackbarCloseReason, Typography, styled } from "@mui/material";
 import { Link } from "react-router-dom";
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
@@ -18,6 +18,8 @@ import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import PDF from '../../../../assets/images/PDF.png';
 import LinearWithValueLabel from "../../../../shared/components/ProgessBar";
+import { useCreateResourceMutation } from "../../../../redux/features/materials/materialsApi";
+import Alert from "../../../../shared/components/Alert";
 
 const StyledDatePicker = styled(DatePicker)({
     width: '100%',
@@ -49,6 +51,7 @@ const ResourcesCreation = () => {
     const courseId = useAppSelector((state) => state.courseAndLessonId.id.course_id);
     // getting all the lessons of the corresponding course
     const { data: lessonData, isLoading: courseLoading } = useGetLessonsByCourseIdQuery({ courseId });
+    const [createResource, { isLoading: resourceCreationLoading, isSuccess }] = useCreateResourceMutation();
 
     if (courseLoading) {
         return (<Loader />);
@@ -61,17 +64,17 @@ const ResourcesCreation = () => {
     // //^ handling dayjs for date field
     const handleDateChange = (date: Dayjs | null) => {
         if (date) {
-            setResourceDetails({ ...resourceDetails, classDate: date.toISOString() }); // converting date to iso string
+            setResourceDetails({ ...resourceDetails, resourceDate: date.toISOString() }); // converting date to iso string
         }
     };
 
-    // handling all the inputs
+    //~ handling all the inputs
     const handleResourceDetailsInput = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
         setResourceDetails((prevState) => ({ ...prevState, [name]: value }));
     };
 
-    //deleting a file from the local state
+    //~deleting a file from the local state
 
     const handleDeleteFile = (passedIndex: number) => {
         const copiedArray = [...files];
@@ -96,166 +99,230 @@ const ResourcesCreation = () => {
                     existingFile.name === newFile.name && existingFile.size === newFile.size
                 )
             );
-
             setFiles(prevFiles => [...prevFiles, ...uniqueNewFiles]);
-            console.log(newFiles);
-
         }
+    };
+
+    //* handling the submit function
+    const handleResourceSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+        // removing lessonName field as it's not necessary
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        const selectedResourceDetails = (({ lessonName, ...rest }) => rest)(resourceDetails);
+        selectedResourceDetails.lesson_id = lesson_id[0]._id;
+        selectedResourceDetails.course_id = courseId;
+        // creating a new form data
+        const resourceData = new FormData();
+
+        resourceData.append('data', JSON.stringify(selectedResourceDetails));
+
+        // inserting pdf files to the files key inside the formData
+
+        if (Array.isArray(files)) {
+            for (const pdf of files) {
+                resourceData.append('files', pdf);
+            }
+        }
+        else {
+            console.error('Expected files to be an array of File objects');
+        }
+        // resourceData.append('files', files);
+
+        // printing the formData
+
+        for (const [key, value] of resourceData.entries()) {
+            console.log(resourceData.get(key));
+        }
+
+        try {
+            await createResource(resourceData);
+            setOpenSnackbar(true);
+        } catch (err) {
+            console.log(err);
+        }
+
+        console.log(selectedResourceDetails);
     };
     console.log(files);
     console.log(resourceDetails);
 
+    // close snackbar automatically
+    const handleCloseSnackbar = (
+        event: React.SyntheticEvent | Event,
+        reason?: SnackbarCloseReason
+    ) => {
+        if (reason === 'clickaway') {
+            return;
+        }
+        setOpenSnackbar(false);
+    };
+
     return (
-        <Box sx={{ width: '100%', height: 'auto' }}>
-            <Paper variant="outlined" sx={{ width: '100%', height: 'auto', borderRadius: '10px', p: 3 }}>
-                {/* top title and button section */}
-                <Box component="section" sx={{ display: 'flex', gap: '20px', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
-                    {/* back button and title */}
-                    <Box component="section" sx={{ display: 'flex', gap: '20px' }}>
-                        <Link to='/teacher/create-course/add-course-material'>
-                            <Button variant='outlined' sx={{ width: '36px', height: '36px', minWidth: '36px', borderRadius: '8px', borderColor: "grey.700", color: "#3F3F46" }}>
-                                <ArrowBackIcon fontSize='small' />
-                            </Button>
-                        </Link>
-                        <Typography variant='h3'>Resource Creation</Typography>
+        <>
+
+            <Box sx={{ width: '100%', height: files.length > 3 ? 'auto' : '100vh' }}>
+                <Paper variant="outlined" sx={{ width: '100%', height: 'auto', borderRadius: '10px', p: 3 }}>
+                    {/* top title and button section */}
+                    <Box component="section" sx={{ display: 'flex', gap: '20px', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
+                        {/* back button and title */}
+                        <Box component="section" sx={{ display: 'flex', gap: '20px' }}>
+                            <Link to='/teacher/create-course/add-course-material'>
+                                <Button variant='outlined' sx={{ width: '36px', height: '36px', minWidth: '36px', borderRadius: '8px', borderColor: "grey.700", color: "#3F3F46" }}>
+                                    <ArrowBackIcon fontSize='small' />
+                                </Button>
+                            </Link>
+                            <Typography variant='h3'>Resource Creation</Typography>
+                        </Box>
+                        {/* continue button */}
+                        {/* <Link to='/teacher/create-course/create-lessons'> */}
+                        <Button
+                            // onClick={handleContinue}
+                            variant='contained'
+                            sx={{ borderRadius: '8px', width: '140px', height: '48px' }}>
+                            Continue <ChevronRightIcon />
+                        </Button>
+                        {/* </Link> */}
                     </Box>
-                    {/* continue button */}
-                    {/* <Link to='/teacher/create-course/create-lessons'> */}
-                    <Button
-                        // onClick={handleContinue}
-                        variant='contained'
-                        sx={{ borderRadius: '8px', width: '140px', height: '48px' }}>
-                        Continue <ChevronRightIcon />
-                    </Button>
-                    {/* </Link> */}
-                </Box>
-                {/* form section starts here */}
-                <Box sx={{ display: "flex", flexDirection: 'column', gap: '20px' }}>
-                    <form>
-                        <Paper variant='outlined' sx={{ width: '100%', height: '100%', p: 2, borderRadius: '8px', mb: 3 }}>
-                            <Grid container spacing={3} >
-                                {/* 1st row - lesson name */}
-                                <Grid size={12}>
-                                    <CustomLabel fieldName="Lesson Name" />
-                                    <CustomAutoComplete
-                                        name='lessonName' options={lessonNames || []}
-                                        handleInput={handleResourceDetailsInput}
-                                        value={resourceDetails?.lessonName}
-                                        required
-                                    />
-                                </Grid>
-                                {/* 2nd row - resource name & date picker */}
-                                <Grid size={8}>
-                                    <CustomLabel fieldName="Resource Name" />
-                                    <CustomTextField
-                                        name='name'
-                                        handleInput={handleResourceDetailsInput}
-                                        value={resourceDetails?.recodeClassName}
-                                        placeholder="Enter Resource Name"
-                                        required
-                                    />
-                                </Grid>
-                                {/* date picker */}
-                                <Grid size={4} sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
-                                    <CustomLabel fieldName="Class Date" />
-                                    <LocalizationProvider dateAdapter={AdapterDayjs}>
-                                        <StyledDatePicker onChange={handleDateChange} />
-                                    </LocalizationProvider>
-                                </Grid>
-                                {/* 3rd row */}
-                                {/* Resource file upload field */}
-                                <Grid size={12}>
-                                    {
-                                        files.length !== 0 && (
-                                            <Box>
-                                                {
-                                                    files.map((file, index) => (
-                                                        <>
-                                                            <Paper variant='outlined' sx={{
-                                                                display: 'flex', flexDirection: 'column', justifyContent: 'center', mb: 1, alignItems: 'center', p: 1, borderRadius: '8px', gap: 1
-                                                            }}>
-                                                                <Box sx={{ width: '100%', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                                                                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                                                                        <img src={PDF} style={{ width: '40px', height: '40px' }} />
-                                                                        <Typography key={index} color='grey.700'>
-                                                                            {file.name}
-                                                                        </Typography>
+                    {/* form section starts here */}
+                    {
+                        resourceCreationLoading && (
+                            <Loader />
+                        )
+                    }
+                    <Box sx={{ display: "flex", flexDirection: 'column', gap: '20px' }}>
+                        <form onSubmit={handleResourceSubmit}>
+                            <Paper variant='outlined' sx={{ width: '100%', height: '100%', p: 2, borderRadius: '8px', mb: 3 }}>
+                                <Grid container spacing={3} >
+                                    {/* 1st row - lesson name */}
+                                    <Grid size={12}>
+                                        <CustomLabel fieldName="Lesson Name" />
+                                        <CustomAutoComplete
+                                            name='lessonName' options={lessonNames || []}
+                                            handleInput={handleResourceDetailsInput}
+                                            value={resourceDetails?.lessonName}
+                                            required
+                                        />
+                                    </Grid>
+                                    {/* 2nd row - resource name & date picker */}
+                                    <Grid size={8}>
+                                        <CustomLabel fieldName="Resource Name" />
+                                        <CustomTextField
+                                            name='name'
+                                            handleInput={handleResourceDetailsInput}
+                                            value={resourceDetails?.name}
+                                            placeholder="Enter Resource Name"
+                                            required
+                                        />
+                                    </Grid>
+                                    {/* date picker */}
+                                    <Grid size={4} sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+                                        <CustomLabel fieldName="Class Date" />
+                                        <LocalizationProvider dateAdapter={AdapterDayjs}>
+                                            <StyledDatePicker onChange={handleDateChange} />
+                                        </LocalizationProvider>
+                                    </Grid>
+                                    {/* 3rd row */}
+                                    {/* Resource file upload field */}
+                                    <Grid size={12}>
+                                        {
+                                            files.length !== 0 && (
+                                                <Box>
+                                                    {
+                                                        files.map((file, index) => (
+                                                            <>
+                                                                <Paper variant='outlined' sx={{
+                                                                    display: 'flex', flexDirection: 'column', justifyContent: 'center', mb: 1, alignItems: 'center', p: 1, borderRadius: '8px', gap: 1
+                                                                }}>
+                                                                    <Box sx={{ width: '100%', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                                                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                                                                            <img src={PDF} style={{ width: '40px', height: '40px' }} />
+                                                                            <Typography key={index} color='grey.700'>
+                                                                                {file.name}
+                                                                            </Typography>
+                                                                        </Box>
+
+                                                                        <IconButton onClick={() => handleDeleteFile(index)}>
+                                                                            <DeleteForeverIcon />
+                                                                        </IconButton>
                                                                     </Box>
 
-                                                                    <IconButton onClick={() => handleDeleteFile(index)}>
-                                                                        <DeleteForeverIcon />
-                                                                    </IconButton>
-                                                                </Box>
+                                                                    {/* progression bar */}
+                                                                    <Box sx={{ width: '90%' }}>
 
-                                                                {/* progression bar */}
-                                                                <Box sx={{ width: '90%' }}>
+                                                                        <LinearWithValueLabel />
+                                                                    </Box>
+                                                                </Paper>
 
-                                                                    <LinearWithValueLabel />
-                                                                </Box>
-                                                            </Paper>
-
-                                                        </>
-                                                    ))
-                                                }
+                                                            </>
+                                                        ))
+                                                    }
+                                                </Box>
+                                            )
+                                        }
+                                        {/* </Card> */}
+                                        <Grid size={12} sx={{ display: 'flex', justifyContent: 'center', mt: 1 }}>
+                                            <Box>
+                                                {/* new image upload button */}
+                                                <Button component="label"
+                                                    size="small"
+                                                    variant="text"
+                                                    tabIndex={-1}
+                                                    startIcon={<CloudUploadIcon />}
+                                                    sx={{
+                                                        color: "gray.700", borderRadius: "8px", cursor: "pointer",
+                                                        // backgroundColor: tempCover ? "white" : 'transparent'
+                                                    }}
+                                                >
+                                                    {/* {tempCover ? 'Change Cover Image' : 'Click to Upload'} */}
+                                                    Upload File
+                                                    <VisuallyHiddenInput
+                                                        type="file"
+                                                        multiple
+                                                        onChange={handleFileChange}
+                                                        onClick={() => setFileError(null)}
+                                                    />
+                                                </Button>
                                             </Box>
-                                        )
-                                    }
-                                    {/* </Card> */}
-                                    <Grid size={12} sx={{ display: 'flex', justifyContent: 'center', mt: 1 }}>
-                                        <Box>
-                                            {/* new image upload button */}
-                                            <Button component="label"
-                                                size="small"
-                                                variant="text"
-                                                tabIndex={-1}
-                                                startIcon={<CloudUploadIcon />}
-                                                sx={{
-                                                    color: "gray.700", borderRadius: "8px", cursor: "pointer",
-                                                    // backgroundColor: tempCover ? "white" : 'transparent'
-                                                }}
-                                            >
-                                                {/* {tempCover ? 'Change Cover Image' : 'Click to Upload'} */}
-                                                Upload File
-                                                <VisuallyHiddenInput
-                                                    type="file"
-                                                    multiple
-                                                    onChange={handleFileChange}
-                                                    onClick={() => setFileError(null)}
-                                                />
-                                            </Button>
-                                        </Box>
-                                    </Grid>
-                                </Grid>
-
-                                {/* error message for incorrect file format */}
-                                {
-
-                                    fileError && (
-                                        <Grid size={12}>
-                                            <Typography color="error" align='center' variant="body2">
-                                                {fileError}
-                                            </Typography>
                                         </Grid>
-                                    )
+                                    </Grid>
 
-                                }
+                                    {/* error message for incorrect file format */}
+                                    {
 
-                            </Grid>
-                            <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: "20px", mt: 3 }}>
-                                <Button
-                                    type='submit'
-                                    variant='contained'
-                                    size='small'
-                                    startIcon={<CloudUploadIcon />}
-                                    sx={{ width: '170px', height: '40px', borderRadius: '8px', fontSize: '14px' }}>
-                                    Upload Class
-                                </Button>
-                            </Box>
-                        </Paper>
-                    </form>
-                </Box>
-            </Paper>
-        </Box>
+                                        fileError && (
+                                            <Grid size={12}>
+                                                <Typography color="error" align='center' variant="body2">
+                                                    {fileError}
+                                                </Typography>
+                                            </Grid>
+                                        )
+
+                                    }
+
+                                </Grid>
+                                <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: "20px", mt: 3 }}>
+                                    <Button
+                                        type='submit'
+                                        variant='contained'
+                                        size='small'
+                                        startIcon={<CloudUploadIcon />}
+                                        sx={{ width: '170px', height: '40px', borderRadius: '8px', fontSize: '14px' }}>
+                                        Upload Class
+                                    </Button>
+                                </Box>
+                            </Paper>
+                        </form>
+                    </Box>
+                </Paper>
+            </Box>
+            {/* showing alert for what happened after submitting the request */}
+            <Alert
+                openSnackbar={openSnackbar}
+                autoHideDuration={5000}
+                handleCloseSnackbar={handleCloseSnackbar}
+                isSuccess={isSuccess}
+            />
+        </>
     );
 };
 
