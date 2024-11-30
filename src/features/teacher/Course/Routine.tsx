@@ -20,7 +20,7 @@ import TimelineItem, { timelineItemClasses } from "@mui/lab/TimelineItem";
 import TimelineSeparator from "@mui/lab/TimelineSeparator";
 import { Paper } from "@mui/material";
 import dayjs from "dayjs";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Calendar, EventPropGetter, dayjsLocalizer } from "react-big-calendar";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import isSameOrAfter from "dayjs/plugin/isSameOrAfter";
@@ -105,6 +105,12 @@ const Routine = () => {
     []
   );
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
+
+
+  useEffect(() => {
+    const today = new Date();
+    handleDayClick(today);  
+  }, []);
 
   const handleDayClick = (date: Date) => {
     const selectedDay = dayjs(date).startOf("day");
