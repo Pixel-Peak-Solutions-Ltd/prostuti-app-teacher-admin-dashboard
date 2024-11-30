@@ -40,7 +40,7 @@ const Category = () => {
           </Grid2>
         </Box>
       </Paper>
-      {/* nested children */}a
+      {/* nested children */}
     </Box>
   );
 };

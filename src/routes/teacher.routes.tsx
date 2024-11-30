@@ -1,3 +1,4 @@
+import Routine from "../features/teacher/Course/Routine";
 import FlashCard from "../features/teacher/Pages/FlashCard";
 import Messages from "../features/teacher/Pages/Messages";
 import MyCourse from "../features/teacher/Pages/MyCourse";
@@ -51,5 +52,9 @@ export const teacherRoutes = [
     {
         path: 'add-question',
         element: <AddQuestion />
+    },
+    {
+        path: 'routine',
+        element: <Routine/>
     }
 ];
