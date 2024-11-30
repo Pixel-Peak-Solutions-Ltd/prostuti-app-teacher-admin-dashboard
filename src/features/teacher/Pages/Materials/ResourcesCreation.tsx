@@ -75,14 +75,13 @@ const ResourcesCreation = () => {
     };
 
     //~deleting a file from the local state
-
     const handleDeleteFile = (passedIndex: number) => {
         const copiedArray = [...files];
         const remainingFiles = copiedArray.filter((file, index) => index !== passedIndex);
         setFiles([...remainingFiles]);
     };
 
-    //^handling the cover image change
+    //^handling file change
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         if (e.target.files && e.target.files.length > 0) {
             // first checking whether the file is a PDF
@@ -126,14 +125,8 @@ const ResourcesCreation = () => {
         else {
             console.error('Expected files to be an array of File objects');
         }
-        // resourceData.append('files', files);
 
-        // printing the formData
-
-        for (const [key, value] of resourceData.entries()) {
-            console.log(resourceData.get(key));
-        }
-
+        // sending the request to the server via redux tooklit
         try {
             await createResource(resourceData);
             setOpenSnackbar(true);
@@ -141,10 +134,7 @@ const ResourcesCreation = () => {
             console.log(err);
         }
 
-        console.log(selectedResourceDetails);
     };
-    console.log(files);
-    console.log(resourceDetails);
 
     // close snackbar automatically
     const handleCloseSnackbar = (
@@ -159,7 +149,6 @@ const ResourcesCreation = () => {
 
     return (
         <>
-
             <Box sx={{ width: '100%', height: files.length > 3 ? 'auto' : '100vh' }}>
                 <Paper variant="outlined" sx={{ width: '100%', height: 'auto', borderRadius: '10px', p: 3 }}>
                     {/* top title and button section */}
@@ -174,7 +163,7 @@ const ResourcesCreation = () => {
                             <Typography variant='h3'>Resource Creation</Typography>
                         </Box>
                         {/* continue button */}
-                        {/* <Link to='/teacher/create-course/create-lessons'> */}
+                        {/* <Link to='/teacher/create-course/add-course-lessons'> */}
                         <Button
                             // onClick={handleContinue}
                             variant='contained'

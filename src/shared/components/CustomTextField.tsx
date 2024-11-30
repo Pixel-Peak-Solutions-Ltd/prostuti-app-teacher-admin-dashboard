@@ -1,7 +1,7 @@
 import { TextField } from "@mui/material";
 
-const CustomTextField = ({ defaultValue, name, value, placeholder, handleInput, disabled, multiline, rows, required, error, helperText, handlePaste }:
-    { defaultValue?: string; disabled?: boolean; name: string; value?: string; placeholder?: string; handleInput?: (e: React.ChangeEvent<HTMLInputElement>) => void; multiline?: boolean; rows?: number; required?: boolean; error?: boolean; helperText?: string; handlePaste?: (e: React.ClipboardEvent) => void; }
+const CustomTextField = ({ defaultValue, name, value, placeholder, handleInput, disabled, multiline, rows, required, error, helperText, handlePaste, type }:
+    { defaultValue?: string; disabled?: boolean; name: string; value?: string | number; placeholder?: string; handleInput?: (e: React.ChangeEvent<HTMLInputElement>) => void; multiline?: boolean; rows?: number; required?: boolean; error?: boolean; helperText?: string; handlePaste?: (e: React.ClipboardEvent) => void; type?: string }
 ) => {
     return (
         <TextField
@@ -11,7 +11,7 @@ const CustomTextField = ({ defaultValue, name, value, placeholder, handleInput, 
             value={value || ''}
             defaultValue={defaultValue}
             placeholder={placeholder}
-            type="text"
+            type={type || 'text'}
             size="small"
             rows={rows}
             required={required}

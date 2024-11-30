@@ -24,8 +24,17 @@ const materialApi = baseApi.injectEndpoints({
                     body: resourceData
                 };
             }
+        }),
+        createAssignment: builder.mutation({
+            query: (assignmentData) => {
+                return {
+                    url: '/assignment',
+                    method: 'POST',
+                    body: assignmentData
+                };
+            }
         })
     })
 });
 
-export const { useCreateRecordClassMutation, useCreateResourceMutation } = materialApi;
+export const { useCreateRecordClassMutation, useCreateResourceMutation, useCreateAssignmentMutation } = materialApi;

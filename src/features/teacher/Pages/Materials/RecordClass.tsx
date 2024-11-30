@@ -33,7 +33,6 @@ const RecordClass = () => {
     const [recordDetails, setRecordDetails] = useState<Record<string, string>>({});
     const [openSnackbar, setOpenSnackbar] = useState(false);
 
-
     // fetching courseId from the local redux store
     const courseId = useAppSelector((state) => state.courseAndLessonId.id.course_id);
     // getting all the lessons of the corresponding course
@@ -45,12 +44,10 @@ const RecordClass = () => {
         return (<Loader />);
     }
 
-    // console.log(lessonData);
-    // data filtering
     const lessonNames = lessonData?.data.map((item: typeof lessonData) => item.name);
     const lesson_id = lessonData?.data.filter((item: typeof lessonData) => item.name === recordDetails?.lessonName);
 
-    // handling all the inputs
+    //* handling all the inputs
     const handleRecordDetailsInput = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
         setRecordDetails((prevState) => ({ ...prevState, [name]: value }));
@@ -64,7 +61,7 @@ const RecordClass = () => {
         }
     };
 
-    // handling a onPaste event
+    //* handling a onPaste event
     const handleOnPaste = (e: React.ClipboardEvent) => {
         e.preventDefault();
         setRecordDetails((prevState) => (
@@ -77,7 +74,7 @@ const RecordClass = () => {
         ));
     };
 
-    // handling the submit event
+    //^ handling the submit event
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         const urlArray = createValidUrlArray(recordDetails?.classVideoURL as string);
@@ -104,8 +101,8 @@ const RecordClass = () => {
         }
     };
 
-    // handling the custom snackbar to help user know whether request is successful
-    // close snackbar automatically
+    //~ handling the custom snackbar to help user know whether request is successful
+    //~ close snackbar automatically
     const handleCloseSnackbar = (
         event: React.SyntheticEvent | Event,
         reason?: SnackbarCloseReason
