@@ -41,61 +41,61 @@ const events: RoutineEvent[] = [
   {
     title: "Class",
     name: "Physics Class",
-    start: new Date(2024, 11, 2, 9, 0), // December 2, 2024
+    start: new Date("2024-12-02T09:00:00.000Z"),
     end: new Date(2024, 11, 2, 10, 0),
   },
   {
     title: "Assignment",
     name: "Math Assignment Due",
-    start: new Date(2024, 11, 2, 11, 0), // December 2, 2024
+    start: new Date(2024, 11, 2, 11, 0),
     end: new Date(2024, 11, 2, 12, 0),
   },
   {
     title: "Class",
     name: "Chemistry Class",
-    start: new Date(2024, 11, 3, 10, 0), // December 3, 2024
+    start: new Date(2024, 11, 3, 10, 0),
     end: new Date(2024, 11, 3, 11, 30),
   },
   {
     title: "Exam",
     name: "History Exam",
-    start: new Date(2024, 11, 4, 9, 0), // December 4, 2024
+    start: new Date(2024, 11, 4, 9, 0),
     end: new Date(2024, 11, 4, 12, 0),
   },
   {
     title: "Class",
     name: "Biology Lab",
-    start: new Date(2024, 11, 4, 14, 0), // December 4, 2024
+    start: new Date(2024, 11, 4, 14, 0),
     end: new Date(2024, 11, 4, 16, 0),
   },
   {
     title: "Class",
     name: "Computer Science Lecture",
-    start: new Date(2024, 11, 5, 8, 30), // December 5, 2024
+    start: new Date(2024, 11, 5, 8, 30),
     end: new Date(2024, 11, 5, 10, 0),
   },
   {
     title: "Assignment",
     name: "English Literature Assignment",
-    start: new Date(2024, 11, 5, 11, 0), // December 5, 2024
+    start: new Date(2024, 11, 5, 11, 0),
     end: new Date(2024, 11, 5, 12, 30),
   },
   {
     title: "Class",
     name: "Physics Lab",
-    start: new Date(2024, 11, 6, 13, 0), // December 6, 2024
+    start: new Date(2024, 11, 6, 13, 0),
     end: new Date(2024, 11, 6, 15, 0),
   },
   {
     title: "Exam",
     name: "Math Exam",
-    start: new Date(2024, 11, 6, 16, 0), // December 6, 2024
+    start: new Date(2024, 11, 6, 16, 0),
     end: new Date(2024, 11, 6, 18, 0),
   },
   {
     title: "Class",
     name: "Group Study Session (Chemistry)",
-    start: new Date(2024, 11, 7, 10, 0), // December 7, 2024
+    start: new Date(2024, 11, 7, 10, 0),
     end: new Date(2024, 11, 7, 12, 0),
   },
 ];
@@ -105,9 +105,9 @@ const Routine = () => {
     []
   );
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
-  // Handle day click and show events for that day
+
   const handleDayClick = (date: Date) => {
-    const selectedDay = dayjs(date).startOf("day"); // Get the start of the day
+    const selectedDay = dayjs(date).startOf("day");
     const filteredEvents = events.filter((event) =>
       dayjs(event.start).isSame(selectedDay, "day")
     );
@@ -161,7 +161,10 @@ const Routine = () => {
             <CalendarComponent onDayClick={handleDayClick} />
           </Grid2>
           <Grid2 size={4}>
-            <Sidebar selectedDayEvents={selectedDayEvents} selectedDate={selectedDate} />
+            <Sidebar
+              selectedDayEvents={selectedDayEvents}
+              selectedDate={selectedDate}
+            />
           </Grid2>
         </Grid2>
       </Box>
@@ -178,20 +181,22 @@ const CalendarComponent = ({
 }: {
   onDayClick: (date: Date) => void;
 }) => {
-  const eventPropGetter: EventPropGetter<RoutineEvent> = (event: RoutineEvent) => {
+  const eventPropGetter: EventPropGetter<RoutineEvent> = (
+    event: RoutineEvent
+  ) => {
     let backgroundColor =
       event.title === "Class"
         ? "#d4f7dc"
         : event.title === "Assignment"
-        ? "#fff4d4"
-        : "#f7d4d4";
+          ? "#fff4d4"
+          : "#f7d4d4";
     let color =
       event.title === "Class"
         ? "#14802d"
         : event.title === "Assignment"
-        ? "#8a690a"
-        : "#800808";
-  
+          ? "#8a690a"
+          : "#800808";
+
     return {
       style: {
         backgroundColor,
@@ -199,10 +204,10 @@ const CalendarComponent = ({
         borderRadius: "4px",
         padding: "4px 5px",
         fontSize: "14px",
-        textAlign: "center", // Explicitly set a valid TextAlign value like "center"
+        textAlign: "center",
       },
     };
-  }
+  };
 
   return (
     <Paper
@@ -227,7 +232,7 @@ interface SidebarProps {
   selectedEvent: RoutineEvent | null;
 }
 
-const Sidebar=({
+const Sidebar = ({
   selectedDayEvents,
   selectedDate,
 }: {
@@ -235,10 +240,9 @@ const Sidebar=({
   selectedDate: Date | null;
 }) => {
   const getUpcomingEvents = (events: RoutineEvent[]) => {
-    const today = dayjs().startOf("day"); // Start of today
-    const twoDaysLater = today.add(3, "day"); // 2 days after today
+    const today = dayjs().startOf("day");
+    const twoDaysLater = today.add(3, "day");
 
-    // Filter events happening today or in the next 2 days
     return events.filter((event) => {
       const eventStart = dayjs(event.start);
       return (
@@ -248,8 +252,8 @@ const Sidebar=({
   };
 
   const formattedDate = selectedDate
-  ? dayjs(selectedDate).format("dddd, MMMM D, YYYY")
-  : "Day Events";
+    ? dayjs(selectedDate).format("dddd, MMMM D, YYYY")
+    : "Day Events";
 
   const upcomingEvents = getUpcomingEvents(events);
   return (
@@ -304,7 +308,7 @@ const Sidebar=({
               }}
             >
               {selectedDayEvents.length > 0 ? (
-                selectedDayEvents.map((event:RoutineEvent, index:any) => (
+                selectedDayEvents.map((event: RoutineEvent, index: any) => (
                   <TimelineItem key={index}>
                     <TimelineSeparator>
                       <TimelineDot color="primary" />{" "}
