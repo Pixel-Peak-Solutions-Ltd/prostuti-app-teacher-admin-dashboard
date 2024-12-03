@@ -3,7 +3,7 @@ import { FormControl, MenuItem, TextField, } from "@mui/material";
 
 const CustomAutoComplete = (
     { options, handleInput, name, required, value, disabled, placeholder, defaultValue }:
-        { options: string[]; name: string; handleInput?: (e: React.ChangeEvent<HTMLInputElement>) => void; required?: boolean; value?: string; disabled?: boolean; placeholder?: string; defaultValue?: string },
+        { options: string[]; name: string; handleInput?: (e: React.ChangeEvent<HTMLInputElement>) => void; required?: boolean; value?: string | number; disabled?: boolean; placeholder?: string; defaultValue?: string },
 ) => {
     return (
         <FormControl fullWidth>

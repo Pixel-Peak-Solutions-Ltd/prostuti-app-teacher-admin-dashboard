@@ -28,9 +28,15 @@ const courseApi = baseApi.injectEndpoints({
                     method: 'GET',
                 };
             }
+        }),
+        getCourseById: builder.query({
+            query: ({ courseId }) => ({
+                url: `/course/${courseId}`,
+                method: 'GET',
+            })
         })
     })
 });
 
 
-export const { useSaveCourseMutation, useSaveLessonMutation, useGetLessonsByCourseIdQuery } = courseApi;
+export const { useSaveCourseMutation, useSaveLessonMutation, useGetLessonsByCourseIdQuery, useGetCourseByIdQuery } = courseApi;

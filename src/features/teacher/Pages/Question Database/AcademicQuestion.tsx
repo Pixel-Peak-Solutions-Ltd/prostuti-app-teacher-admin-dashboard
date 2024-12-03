@@ -82,6 +82,7 @@ const AcademicQuestion = () => {
                                 name={'Category'}
                                 disabled
                                 defaultValue={'Academic'}
+                                value='Academic'
                             />
                         </Grid>
                         {

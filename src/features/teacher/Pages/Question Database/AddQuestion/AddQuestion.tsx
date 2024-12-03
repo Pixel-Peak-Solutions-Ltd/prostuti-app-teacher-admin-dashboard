@@ -79,7 +79,12 @@ const AddQuestion = () => {
                                                 sx={{ borderRadius: '5px', width: '15px', minWidth: '15px', height: '15px', borderColor: "grey.700", color: "#3F3F46", position: 'absolute', right: '20px', p: 1, }}>
                                                 X
                                             </Button>
-                                            <AddQuestionForm index={index} question={question} setQuestion={setQuestion} setCategory_id={setCategory_id} />
+                                            <AddQuestionForm
+                                                index={index}
+                                                question={question}
+                                                setQuestion={setQuestion}
+                                                setCategory_id={setCategory_id}
+                                            />
                                         </Grid>
                                     </Paper>
 

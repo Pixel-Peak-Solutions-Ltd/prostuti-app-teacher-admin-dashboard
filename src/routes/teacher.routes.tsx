@@ -14,7 +14,7 @@ import CreateLessons from "../features/teacher/Pages/Course/CreateLessons";
 import AddCourseMaterial from "../features/teacher/Pages/Course/AddCourseMaterial";
 import RecordClass from "../features/teacher/Pages/Materials/RecordClass";
 import AssignmentCreation from "../features/teacher/Pages/Materials/AssignmentCreation";
-import TestCreation from "../features/teacher/Pages/Materials/TestCreation";
+import TestCreation from "../features/teacher/Pages/Materials/Create Test/TestCreation";
 import ResourcesCreation from "../features/teacher/Pages/Materials/ResourcesCreation";
 import RoutineCreation from "../features/teacher/Pages/Materials/RoutineCreation";
 import NoticeCreation from "../features/teacher/Pages/Materials/NoticeCreation";

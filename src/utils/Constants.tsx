@@ -50,5 +50,6 @@ export const materials = [
     }
 ];
 
+export const testTime = ['10 Minutes', '15 Minutes', '20 Minutes', '30 Minutes', '45 Minutes', '60 Minutes'];
 export const QuestionType = ['MCQ', 'Written'];
 export const QuestionCategory = ['Academic', 'Admission', 'Job'];

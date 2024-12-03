@@ -2,15 +2,6 @@ import { createSlice } from "@reduxjs/toolkit";
 import { CourseState } from "../../../types/types";
 
 const initialState: CourseState = {
-    courseDetails: {
-        name: "",
-        category: "",
-        details: "",
-        isPending: true,
-        isPublished: false,
-        teacherId: "",
-        coverImg: null,
-    },
     id: {
         course_id: '',
         lesson_id: '',

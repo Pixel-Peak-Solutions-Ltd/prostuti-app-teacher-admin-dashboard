@@ -59,7 +59,7 @@ const AddQuestionForm = ({ index, setQuestion, question, setCategory_id }:
     const categoryId = categoryData?.data[0]?._id || '';
 
     // console.log(questionArray)
-    console.log('currently fetched data:', categoryData?.data,);
+    // console.log('currently fetched data:', categoryData?.data,);
     // console.log('unique division', divisions);
     // console.log('unique subject', subjects);
 
@@ -160,14 +160,26 @@ const AddQuestionForm = ({ index, setQuestion, question, setCategory_id }:
                     <>
                         <Grid size={12}>
                             <CustomLabel fieldName="Subject" />
-                            <CustomAutoComplete options={subjects} name={`subject_${index}`} value={question[`subject_${index}`]} handleInput={handleInput} required={true} />
+                            <CustomAutoComplete
+                                options={subjects}
+                                name={`subject_${index}`}
+                                value={question[`subject_${index}`]}
+                                handleInput={handleInput}
+                                required={true}
+                            />
                         </Grid>
                     </>)
             }
 
             <Grid size={12}>
                 <CustomLabel fieldName='Question' />
-                <CustomTextField name={`title_${index}`} handleInput={handleInput} placeholder='Write your question here' required={true} />
+                <CustomTextField
+                    name={`title_${index}`}
+                    handleInput={handleInput}
+                    placeholder='Write your question here'
+                    required={true}
+                    value={question[`title_${index}`]}
+                />
             </Grid>
             {/* mcq row */}
             {
@@ -177,12 +189,24 @@ const AddQuestionForm = ({ index, setQuestion, question, setCategory_id }:
                         {Array.from(Array(4)).map((item, optionIndex) => (
                             <Grid size={3}>
                                 <CustomLabel fieldName={`Option ${optionIndex + 1}`} />
-                                <CustomTextField name={`option${optionIndex + 1}_${index}`} handleInput={handleInput} placeholder={`Option ${optionIndex + 1}`} required={true} />
+                                <CustomTextField
+                                    name={`option${optionIndex + 1}_${index}`}
+                                    value={question[`option${optionIndex + 1}_${index}`]}
+                                    handleInput={handleInput}
+                                    placeholder={`Option ${optionIndex + 1}`}
+                                    required={true}
+                                />
                             </Grid>
                         ))}
                         < Grid size={12}>
                             <CustomLabel fieldName='Correct Answer' />
-                            <CustomTextField name={`correctOption_${index}`} handleInput={handleInput} placeholder='Write the correct answer' required={true} />
+                            <CustomTextField
+                                name={`correctOption_${index}`}
+                                value={question[`correctOption_${index}`]}
+                                handleInput={handleInput}
+                                placeholder='Write the correct answer'
+                                required={true}
+                            />
                         </ Grid>
                     </>
                 )
@@ -191,7 +215,14 @@ const AddQuestionForm = ({ index, setQuestion, question, setCategory_id }:
             {/* question description */}
             <Grid size={12}>
                 <CustomLabel fieldName='Answer Description' />
-                <CustomTextField name={`description_${index}`} handleInput={handleInput} placeholder="Explain the answer here" multiline={true} rows={4} required={true} />
+                <CustomTextField
+                    name={`description_${index}`}
+                    value={question[`description_${index}`]}
+                    handleInput={handleInput}
+                    placeholder="Explain the answer here"
+                    multiline={true}
+                    rows={4}
+                    required={true} />
             </Grid>
         </>
     );

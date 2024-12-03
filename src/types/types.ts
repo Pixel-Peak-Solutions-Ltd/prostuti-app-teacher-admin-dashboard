@@ -42,15 +42,6 @@ export interface ICategory {
 }
 
 export interface CourseState {
-    courseDetails?: {
-        name: string;
-        category: string;
-        details: string;
-        isPending: boolean;
-        isPublished: boolean;
-        teacherId: string;
-        coverImg: File | null;
-    },
     id: {
         course_id: string;
         lesson_id: string;

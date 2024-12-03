@@ -61,8 +61,24 @@ const questionAPI = baseApi.injectEndpoints({
                 };
             },
             providesTags: ['Questions']
+        }),
+        getAllQuestions: builder.query({
+            query: (filters) => {
+                let URL = `/question`;
+                console.log('filters sent to redux:', filters);
+                if (Object.keys(filters).length !== 0) {
+                    URL = Object.entries(filters).reduce((acc, [key, value], index) => {
+                        const prefix = index === 0 ? '?' : '&';
+                        return `${acc}${prefix}${key}=${value}`;
+                    }, URL);
+                }
+                return {
+                    url: URL,
+                    method: 'GET'
+                };
+            }
         })
     })
 });
 
-export const { useGetCategoryQuery, useCreateQuestionMutation, useGetAllAcademicQuestionsQuery } = questionAPI;
+export const { useGetCategoryQuery, useCreateQuestionMutation, useGetAllAcademicQuestionsQuery, useGetAllQuestionsQuery } = questionAPI;

@@ -11,7 +11,6 @@ const categoryApi = baseApi.injectEndpoints({
             }
         })
     })
-
 });
 
 export const { useGetAllCategoryTypesQuery } = categoryApi; 
