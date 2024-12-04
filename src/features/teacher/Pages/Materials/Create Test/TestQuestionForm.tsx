@@ -8,16 +8,16 @@ import AlertDialog from './AlertDialog';
 import { useAppSelector } from '../../../../../redux/hooks';
 
 
-const TestQuestionForm = ({ index, handleTestQuestionInput, setQuestion, question, testDetails, formArray, setNumOfForms, numOfForms }:
+const TestQuestionForm = ({ index, handleTestQuestionInput, question, testDetails, formArray, setNumOfForms, numOfForms, type }:
     {
         handleTestQuestionInput?: (e: React.ChangeEvent<HTMLInputElement>) => void;
-        setQuestion: React.Dispatch<React.SetStateAction<Record<string, string>>>;
         question: Record<string, string>;
         index: number;
         testDetails: Record<string, string>;
         formArray?: number[];
         numOfForms?: number;
-        setNumOfForms?: React.Dispatch<React.SetStateAction<number>>
+        setNumOfForms?: React.Dispatch<React.SetStateAction<number>>;
+        type: string;
     }
 ) => {
     // modal state
@@ -52,6 +52,7 @@ const TestQuestionForm = ({ index, handleTestQuestionInput, setQuestion, questio
                         name={`title_${index}`}
                         handleInput={handleTestQuestionInput}
                         placeholder='Write your question here'
+                        value={question[`title_${index}`]}
                         required={true}
                     />
                 </Grid>
@@ -92,12 +93,24 @@ const TestQuestionForm = ({ index, handleTestQuestionInput, setQuestion, questio
                         {Array.from(Array(4)).map((item, optionIndex) => (
                             <Grid size={3}>
                                 <CustomLabel fieldName={`Option ${optionIndex + 1}`} />
-                                <CustomTextField name={`option${optionIndex + 1}_${index}`} handleInput={handleTestQuestionInput} placeholder={`Option ${optionIndex + 1}`} required={true} />
+                                <CustomTextField
+                                    name={`option${optionIndex + 1}_${index}`}
+                                    handleInput={handleTestQuestionInput}
+                                    placeholder={`Option ${optionIndex + 1}`}
+                                    value={question[`option${optionIndex + 1}_${index}`]}
+                                    required={true}
+                                />
                             </Grid>
                         ))}
                         < Grid size={12}>
                             <CustomLabel fieldName='Correct Answer' />
-                            <CustomTextField name={`correctOption_${index}`} handleInput={handleTestQuestionInput} placeholder='Write the correct answer' required={true} />
+                            <CustomTextField
+                                name={`correctOption_${index}`}
+                                handleInput={handleTestQuestionInput}
+                                placeholder='Write the correct answer'
+                                value={question[`correctOption_${index}`]}
+                                required={true}
+                            />
                         </ Grid>
                     </>
                 )
@@ -106,7 +119,15 @@ const TestQuestionForm = ({ index, handleTestQuestionInput, setQuestion, questio
             {/* question description */}
             <Grid size={12}>
                 <CustomLabel fieldName='Answer Description' />
-                <CustomTextField name={`description_${index}`} handleInput={handleTestQuestionInput} placeholder="Explain the answer here" multiline={true} rows={4} required={true} />
+                <CustomTextField
+                    name={`description_${index}`}
+                    handleInput={handleTestQuestionInput}
+                    placeholder="Explain the answer here"
+                    value={question[`description_${index}`]}
+                    multiline={true}
+                    rows={4}
+                    required={true}
+                />
             </Grid>
 
             {/* question added from database */}
@@ -117,6 +138,7 @@ const TestQuestionForm = ({ index, handleTestQuestionInput, setQuestion, questio
 
             {/* modal for question adding */}
             <AlertDialog
+                type={type}
                 open={open}
                 handleClose={handleClose}
                 academicFields={academicFields}

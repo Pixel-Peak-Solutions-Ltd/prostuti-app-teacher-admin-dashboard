@@ -1,4 +1,4 @@
-import { Box, Button, Paper, Typography, styled } from "@mui/material";
+import { Box, Button, Paper, SnackbarCloseReason, Typography, styled } from "@mui/material";
 import Grid from '@mui/material/Grid2';
 import { Link } from "react-router-dom";
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
@@ -18,6 +18,11 @@ import TestQuestionForm from "./TestQuestionForm";
 import Loader from "../../../../../shared/components/Loader";
 import { useAppSelector } from "../../../../../redux/hooks";
 import { useGetLessonsByCourseIdQuery } from "../../../../../redux/features/course/courseApi";
+import DatabaseQuestionViewer from "./DatabaseQuestionViewer";
+import { testQuestionFormation } from "../../../../../utils/testQuestionFormation";
+import { questionIdArrayFormation } from "../../../../../utils/questionIdArrayFormation";
+import { useCreateTestMutation } from "../../../../../redux/features/materials/materialsApi";
+import Alert from "../../../../../shared/components/Alert";
 
 const StyledDatePicker = styled(DatePicker)({
     width: '100%',
@@ -28,19 +33,26 @@ const StyledDatePicker = styled(DatePicker)({
     }
 });
 const TestCreation = () => {
+    // local states
     const [testDetails, setTestDetails] = useState<Record<string, string>>({});
     const [numOfForms, setNumOfForms] = useState(1);
     const [question, setQuestion] = useState<Record<string, string>>({});
-
+    const [openSnackbar, setOpenSnackbar] = useState(false);
     // fetching courseId from the local redux store
     const courseId = useAppSelector((state) => state.courseAndLessonId.id.course_id);
+    const questionsSelectedFromDatabase = useAppSelector((state) => state.pickedQuestions.questions);
+    const selectedDatabaseQuestionId = questionsSelectedFromDatabase.map((question) => question._id);
     // getting all the lessons of the corresponding course
     const { data: lessonData, isLoading: courseLoading } = useGetLessonsByCourseIdQuery({ courseId });
+    const [createTest, { isLoading: testCreationLoader, isSuccess }] = useCreateTestMutation();
 
     if (courseLoading) {
         return <Loader />;
     }
 
+    if (testCreationLoader) {
+        return <Loader />;
+    }
     // data filtering
     const lessonNames = lessonData?.data.map((item: typeof lessonData) => item.name);
     const lesson_id = lessonData?.data.filter((item: typeof lessonData) => item.name === testDetails?.lessonName);
@@ -62,8 +74,48 @@ const TestCreation = () => {
         setQuestion((prevState) => ({ ...prevState, [name]: value }));
     };
 
-    console.log(testDetails);
-    console.log('lesson id:', lesson_id);
+    const handleTestSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+        const questionList = testQuestionFormation(question, testDetails?.type);
+        const questionsFromDatabase = questionIdArrayFormation(selectedDatabaseQuestionId);
+
+        const finalQuestionList = [...questionsFromDatabase, ...questionList];
+        const convertedTime = Number(testDetails?.time.slice(0, 2));
+
+        const submittableData = {
+            name: testDetails?.name,
+            course_id: courseId,
+            lesson_id: lesson_id[0]._id,
+            type: testDetails?.type,
+            time: convertedTime,
+            publishDate: testDetails?.publishDate,
+            questionList: finalQuestionList
+        };
+
+        try {
+            await createTest(submittableData);
+            setOpenSnackbar(true);
+            setTestDetails({});
+            setQuestion({});
+        } catch (err) {
+            console.log(err);
+        }
+        console.log(submittableData);
+    };
+
+    //! close snackbar automatically
+    const handleCloseSnackbar = (
+        event: React.SyntheticEvent | Event,
+        reason?: SnackbarCloseReason
+    ) => {
+        if (reason === 'clickaway') {
+            return;
+        }
+        setOpenSnackbar(false);
+    };
+    console.log('test details:', testDetails);
+    console.log('test details:', testDetails);
+    console.log('question ids:', selectedDatabaseQuestionId);
     return (
         <>
             <Box sx={{ width: '100%', height: numOfForms === 1 ? '100vh' : 'auto' }}>
@@ -91,7 +143,7 @@ const TestCreation = () => {
                     </Box>
                     {/* form section starts here */}
                     <Box sx={{ display: "flex", flexDirection: 'column', gap: '20px' }}>
-                        <form>
+                        <form onSubmit={handleTestSubmit}>
                             <Paper variant='outlined' sx={{ width: '100%', height: '100%', p: 2, borderRadius: '8px', mb: 3 }}>
                                 <Grid container spacing={3}>
                                     {/* first row-> lesson name */}
@@ -118,7 +170,11 @@ const TestCreation = () => {
                                     {/* test type */}
                                     <Grid size={3}>
                                         <CustomLabel fieldName="Test Type" />
-                                        <CustomAutoComplete name="type" options={QuestionType} value={testDetails?.type} handleInput={handleTestDetailsInput} />
+                                        <CustomAutoComplete name="type"
+                                            options={QuestionType}
+                                            value={testDetails?.type}
+                                            handleInput={handleTestDetailsInput}
+                                        />
                                     </Grid>
                                     {/* test time */}
                                     <Grid size={3}>
@@ -145,8 +201,8 @@ const TestCreation = () => {
                                     {
                                         Array.from(Array(numOfForms)).map((_, index) => (
                                             <TestQuestionForm
+                                                type={testDetails?.type}
                                                 key={index}
-                                                setQuestion={setQuestion}
                                                 question={question}
                                                 handleTestQuestionInput={handleTestQuestionInput}
                                                 index={index}
@@ -156,7 +212,9 @@ const TestCreation = () => {
                                             />
                                         ))
                                     }
-
+                                    <Grid size={12}>
+                                        <Divider />
+                                    </Grid>
                                 </Grid>
                                 {/* form buttons */}
                                 <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: "20px", mt: 3 }}>
@@ -169,6 +227,17 @@ const TestCreation = () => {
                                         sx={{ width: '167px', height: '40px', borderRadius: '8px', fontSize: '14px' }}>
                                         + Add New Question
                                     </Button>
+                                </Box>
+                                <Grid size={12} sx={{ my: 3 }}>
+                                    <Divider />
+                                </Grid>
+                                {/* question selected from database */}
+                                <Box sx={{ mt: 2 }}>
+                                    <Typography variant='h5' align="center">Questions Selected From Database</Typography>
+                                    <DatabaseQuestionViewer questionArr={questionsSelectedFromDatabase} />
+                                </Box>
+                                {/* upload test */}
+                                <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: "20px", mt: 3 }}>
                                     <Button
                                         variant='contained'
                                         size='small'
@@ -184,6 +253,13 @@ const TestCreation = () => {
                     </Box>
                 </Paper>
             </Box>
+            {/* showing alert for what happened after submitting the request */}
+            <Alert
+                openSnackbar={openSnackbar}
+                autoHideDuration={5000}
+                handleCloseSnackbar={handleCloseSnackbar}
+                isSuccess={isSuccess}
+            />
         </>
     );
 };

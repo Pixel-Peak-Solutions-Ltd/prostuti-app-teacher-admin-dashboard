@@ -14,12 +14,12 @@ import Loader from '../../../../../shared/components/Loader';
 import { useState } from 'react';
 import { useGetAllQuestionsQuery } from '../../../../../redux/features/question/questionApi';
 import Checkbox from '@mui/material/Checkbox';
-import { ISingleQuestion, saveQuestionToStore } from '../../../../../redux/features/question/questionSlice';
+import { saveQuestionToStore } from '../../../../../redux/features/question/questionSlice';
 
 const label = { inputProps: { 'aria-label': 'Checkbox demo' } };
 
 export default function AlertDialog(
-    { open, handleClose, academicFields, jobFields, admissionFields, databaseQuestionIdArray }:
+    { open, handleClose, academicFields, jobFields, admissionFields, databaseQuestionIdArray, type }:
         {
             open: boolean;
             handleClose: () => void;
@@ -27,6 +27,7 @@ export default function AlertDialog(
             jobFields: string[];
             admissionFields: string[];
             databaseQuestionIdArray: string[];
+            type: string;
         }
 ) {
     //local states
@@ -35,6 +36,7 @@ export default function AlertDialog(
     // creating a query parameter object
     const questionQueryParams = {
         ...(filters.categoryType && { categoryType: filters.categoryType }),
+        ...(filters.type && { type: type }),
         ...(filters.division && { division: filters.division }),
         ...(filters.subject && { subject: filters.subject }),
         ...(filters.chapter && { chapter: filters.chapter }),
@@ -47,6 +49,8 @@ export default function AlertDialog(
     const { data: courseData, isLoading } = useGetCourseByIdQuery({ courseId });
     // first category filter applied when page loads
     questionQueryParams.categoryType = courseData?.data.category;
+    // type received as a prop from it's parent component
+    questionQueryParams.type = type;
 
     // fetching all questions
     const { data: questions, isLoading: questionLoader } = useGetAllQuestionsQuery(questionQueryParams);
@@ -75,12 +79,12 @@ export default function AlertDialog(
         }
     };
 
-    console.log('selected question ids:', databaseQuestionIdArray);
-    console.log('All Subjects', subject);
+    // console.log('selected question ids:', databaseQuestionIdArray);
+    // console.log('All Subjects', subject);
 
-    console.log('All questions', questions?.data?.data);
+    // console.log('All questions', questions?.data?.data);
 
-    console.log('fetching course category', courseData?.data.category);
+    // console.log('fetching course category', courseData?.data.category);
 
     return (
         <>
@@ -180,7 +184,7 @@ export default function AlertDialog(
                                                     checked={databaseQuestionIdArray.includes(question._id) || false}
                                                     disabled={databaseQuestionIdArray.includes(question._id) || false}
                                                     {...label}
-                                                    onChange={(e) => e.target.checked ? dispatch(saveQuestionToStore(question)) : console.log('Removed')}
+                                                    onChange={(e) => e.target.checked && dispatch(saveQuestionToStore(question))}
                                                 />
                                             </Grid>
                                             {/* question title  */}
@@ -227,13 +231,13 @@ export default function AlertDialog(
                                     </>
                                 ))
                             }
+
                         </Paper>
                     </Box>
                 </DialogContent>
                 <DialogActions>
-                    <Button onClick={handleClose} size='small' variant='outlined'>Disagree</Button>
                     <Button onClick={handleClose} autoFocus size='small'>
-                        Agree
+                        Close
                     </Button>
                 </DialogActions>
             </Dialog>
