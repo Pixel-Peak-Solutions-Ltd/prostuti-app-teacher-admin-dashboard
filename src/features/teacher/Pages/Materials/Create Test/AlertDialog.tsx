@@ -5,23 +5,17 @@ import DialogContent from '@mui/material/DialogContent';
 import { Box, Divider, Paper, Typography } from '@mui/material';
 import Grid from '@mui/material/Grid2';
 import CustomLabel from '../../../../../shared/components/CustomLabel';
-import CustomTextField from '../../../../../shared/components/CustomTextField';
 import CustomAutoComplete from '../../../../../shared/components/CustomAutoComplete';
 import SearchIcon from '@mui/icons-material/Search';
 import { useGetCourseByIdQuery } from '../../../../../redux/features/course/courseApi';
-import { useAppDispatch, useAppSelector } from '../../../../../redux/hooks';
+import { useAppSelector } from '../../../../../redux/hooks';
 import Loader from '../../../../../shared/components/Loader';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useGetAllQuestionsQuery } from '../../../../../redux/features/question/questionApi';
-import Checkbox from '@mui/material/Checkbox';
-import { saveQuestionToStore } from '../../../../../redux/features/question/questionSlice';
-import { useGetCategoryByIdQuery } from '../../../../../redux/features/category/categoryApi';
 import { fieldNameGenerator } from '../../../../../utils/fieldNameGenerator';
 import { ISingleCategory } from '../../../../../types/types';
 import { QuestionType } from '../../../../../utils/Constants';
-import ViewQuestion from '../../../../../shared/components/ViewQuestion';
-
-const label = { inputProps: { 'aria-label': 'Checkbox demo' } };
+import ViewQuestion from './ViewQuestion';
 
 export default function AlertDialog(
     { open, handleClose, academicFields, jobFields, admissionFields, databaseQuestionIdArray, type, categoryType, singleCategory }:
@@ -42,7 +36,6 @@ export default function AlertDialog(
     const [filterToSubmit, setFilterToSubmit] = useState<Record<string, string | undefined>>({});
     // getting courseId from local redux store
     const courseId = useAppSelector((state) => state.courseAndLessonId.id.course_id);
-    const dispatch = useAppDispatch();
     // fetching the course from the id
     const { data: courseData, isLoading: courseLoading } = useGetCourseByIdQuery({ courseId });
 
@@ -195,7 +188,7 @@ export default function AlertDialog(
                             {
                                 isFetching && (<Loader />)
                             }
-                            <ViewQuestion questionArr={questions?.data?.data} />
+                            <ViewQuestion questionArr={questions?.data?.data} databaseQuestionIdArray={databaseQuestionIdArray} />
                         </Paper>
                     </Box>
                 </DialogContent>
