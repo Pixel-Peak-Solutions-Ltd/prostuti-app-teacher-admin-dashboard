@@ -4,6 +4,8 @@ export interface ICategory {
     subject: string;
     type: string;
     _id: string;
+    division?: string;
+    chapter?: string;
 }
 
 export interface ISingleQuestion {
@@ -16,6 +18,7 @@ export interface ISingleQuestion {
     type: string;
     _id: string;
 }
+
 interface IQuestion {
     questions: ISingleQuestion[];
 }
@@ -33,10 +36,13 @@ export const questionSlice = createSlice({
         },
         removeQuestionFromStore: (state, action) => {
             state.questions = state.questions.filter((item) => item._id !== action.payload); //send only the _id of the question
+        },
+        resetStoredQuestions: (state) => {
+            state.questions = [];
         }
     }
 });
 
-export const { saveQuestionToStore, removeQuestionFromStore } = questionSlice.actions;
+export const { saveQuestionToStore, removeQuestionFromStore, resetStoredQuestions } = questionSlice.actions;
 
 export default questionSlice.reducer;

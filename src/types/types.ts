@@ -48,3 +48,30 @@ export interface CourseState {
     }
 
 }
+
+export interface ISingleCategory {
+    _id: string;
+    type: string;
+    subject?: string;
+    division?: string;
+    chapter?: string;
+    universityType?: string;
+    universityName?: string;
+    createdAt?: string;
+    updatedAt?: string;
+    __v?: number;
+}
+
+export interface ISingleQuestion {
+    _id: string;
+    type: string;
+    category_id: string;
+    title: string;
+    description: string;
+    createdBy: string;
+    updatedBy: string;
+    createdAt?: string;
+    updatedAt?: string;
+    __v?: number;
+    category?: ISingleCategory[];
+}

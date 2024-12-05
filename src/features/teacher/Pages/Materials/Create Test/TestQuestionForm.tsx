@@ -6,6 +6,9 @@ import { Box, Button, Divider, IconButton } from '@mui/material';
 import { useState } from 'react';
 import AlertDialog from './AlertDialog';
 import { useAppSelector } from '../../../../../redux/hooks';
+import { useGetCategoryByIdQuery } from '../../../../../redux/features/category/categoryApi';
+import { useGetCourseByIdQuery } from '../../../../../redux/features/course/courseApi';
+import Loader from '../../../../../shared/components/Loader';
 
 
 const TestQuestionForm = ({ index, handleTestQuestionInput, question, testDetails, formArray, setNumOfForms, numOfForms, type }:
@@ -29,11 +32,24 @@ const TestQuestionForm = ({ index, handleTestQuestionInput, question, testDetail
     const admissionFields = ['Subject', 'University Name', 'University Type', 'Chapter'];
 
     // fetching added questions from the database
-
+    const courseId = useAppSelector((state) => state.courseAndLessonId.id.course_id);
     const questionsFromDatabase = useAppSelector((state) => state.pickedQuestions.questions);
+    // fetching the course from the id
+    const { data: courseData, isLoading } = useGetCourseByIdQuery({ courseId });
+    const { data: singleCategory, isLoading: categoryLoading } = useGetCategoryByIdQuery({ id: courseData?.data?.category_id });
 
     // array id for question added from database
     const databaseQuestionIdArray = questionsFromDatabase.map((item) => item._id);
+
+
+    if (categoryLoading) {
+        return (<Loader />);
+    }
+
+    if (isLoading) {
+        return (<Loader />);
+    }
+    const categoryType = singleCategory?.data.type;
 
     //* handler functions
     const handleClickOpen = () => {
@@ -43,6 +59,7 @@ const TestQuestionForm = ({ index, handleTestQuestionInput, question, testDetail
         setOpen(false);
     };
 
+    console.log('Category data:', singleCategory.data);
     return (
         <>
             <Box sx={{ width: '100%', display: 'flex', justifyContent: 'space-between' }}>
@@ -91,7 +108,7 @@ const TestQuestionForm = ({ index, handleTestQuestionInput, question, testDetail
                 (testDetails?.type === 'MCQ') && (
                     <>
                         {Array.from(Array(4)).map((item, optionIndex) => (
-                            <Grid size={3}>
+                            <Grid size={3} key={optionIndex}>
                                 <CustomLabel fieldName={`Option ${optionIndex + 1}`} />
                                 <CustomTextField
                                     name={`option${optionIndex + 1}_${index}`}
@@ -138,7 +155,9 @@ const TestQuestionForm = ({ index, handleTestQuestionInput, question, testDetail
 
             {/* modal for question adding */}
             <AlertDialog
+                singleCategory={singleCategory.data}
                 type={type}
+                categoryType={categoryType}
                 open={open}
                 handleClose={handleClose}
                 academicFields={academicFields}

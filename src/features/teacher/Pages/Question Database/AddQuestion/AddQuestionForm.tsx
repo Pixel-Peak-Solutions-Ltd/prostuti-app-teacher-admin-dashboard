@@ -47,7 +47,7 @@ const AddQuestionForm = ({ index, setQuestion, question, setCategory_id }:
         return <Loader />;
     }
 
-    // extracting divisions subjects, chapter, universityType, universityName, from the category data and creating unique qrray. The getUniqueStrings is a custom function helping to provide type safety.
+    // extracting divisions subjects, chapter, universityType, universityName, from the category data and creating unique array. The getUniqueStrings is a custom function helping to provide type safety.
 
     const divisions = getUniqueStrings(categoryData?.data || [], 'division');
     const subjects = getUniqueStrings(categoryData?.data || [], 'subject');

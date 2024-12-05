@@ -18,7 +18,7 @@ const AcademicQuestion = () => {
     // Initial data fetch without any filters
     const { data: initialQuestionData, isLoading } = useGetAllAcademicQuestionsQuery({});
     // filtered data fetching
-    const { data: questionData, isLoading: filteredDataLoading } = useGetAllAcademicQuestionsQuery(filterToSubmit);
+    const { data: questionData, isLoading: filteredDataLoading, refetch, isFetching } = useGetAllAcademicQuestionsQuery(filterToSubmit);
 
     // selecting the filters
     const handleFilter = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -35,6 +35,7 @@ const AcademicQuestion = () => {
     const confirmFilter = (e: React.MouseEvent) => {
         e.preventDefault();
         setFilterToSubmit({ ...filter });
+        refetch();
         setFilter({});
     };
 
@@ -114,7 +115,7 @@ const AcademicQuestion = () => {
                     <Paper variant='outlined' sx={{ width: '100%', height: '100%', p: 2, borderRadius: '8px', mb: 3 }}>
                         {/* fetching the questions */}
                         {
-                            filteredDataLoading && (<Loader />)
+                            isFetching && (<Loader />)
                         }
                         {
                             questionData?.data?.data.length === 0 && (

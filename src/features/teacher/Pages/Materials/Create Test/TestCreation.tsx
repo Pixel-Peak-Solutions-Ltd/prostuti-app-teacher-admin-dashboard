@@ -16,13 +16,14 @@ import Divider from '@mui/material/Divider';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import TestQuestionForm from "./TestQuestionForm";
 import Loader from "../../../../../shared/components/Loader";
-import { useAppSelector } from "../../../../../redux/hooks";
+import { useAppDispatch, useAppSelector } from "../../../../../redux/hooks";
 import { useGetLessonsByCourseIdQuery } from "../../../../../redux/features/course/courseApi";
 import DatabaseQuestionViewer from "./DatabaseQuestionViewer";
 import { testQuestionFormation } from "../../../../../utils/testQuestionFormation";
 import { questionIdArrayFormation } from "../../../../../utils/questionIdArrayFormation";
 import { useCreateTestMutation } from "../../../../../redux/features/materials/materialsApi";
 import Alert from "../../../../../shared/components/Alert";
+import { resetStoredQuestions } from "../../../../../redux/features/question/questionSlice";
 
 const StyledDatePicker = styled(DatePicker)({
     width: '100%',
@@ -41,8 +42,9 @@ const TestCreation = () => {
     // fetching courseId from the local redux store
     const courseId = useAppSelector((state) => state.courseAndLessonId.id.course_id);
     const questionsSelectedFromDatabase = useAppSelector((state) => state.pickedQuestions.questions);
+    const dispatch = useAppDispatch();
     const selectedDatabaseQuestionId = questionsSelectedFromDatabase.map((question) => question._id);
-    // getting all the lessons of the corresponding course
+    // api calls via redux toolkit
     const { data: lessonData, isLoading: courseLoading } = useGetLessonsByCourseIdQuery({ courseId });
     const [createTest, { isLoading: testCreationLoader, isSuccess }] = useCreateTestMutation();
 
@@ -97,6 +99,7 @@ const TestCreation = () => {
             setOpenSnackbar(true);
             setTestDetails({});
             setQuestion({});
+            dispatch(resetStoredQuestions());
         } catch (err) {
             console.log(err);
         }
@@ -113,7 +116,7 @@ const TestCreation = () => {
         }
         setOpenSnackbar(false);
     };
-    console.log('test details:', testDetails);
+    console.log('lessonId:', lesson_id);
     console.log('test details:', testDetails);
     console.log('question ids:', selectedDatabaseQuestionId);
     return (
@@ -154,6 +157,7 @@ const TestCreation = () => {
                                             options={lessonNames}
                                             value={testDetails?.lessonName}
                                             handleInput={handleTestDetailsInput}
+                                            required
                                         />
                                     </Grid>
                                     {/* 2nd row --> , , total question, test date */}

@@ -11,15 +11,20 @@ import SearchIcon from '@mui/icons-material/Search';
 import { useGetCourseByIdQuery } from '../../../../../redux/features/course/courseApi';
 import { useAppDispatch, useAppSelector } from '../../../../../redux/hooks';
 import Loader from '../../../../../shared/components/Loader';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useGetAllQuestionsQuery } from '../../../../../redux/features/question/questionApi';
 import Checkbox from '@mui/material/Checkbox';
 import { saveQuestionToStore } from '../../../../../redux/features/question/questionSlice';
+import { useGetCategoryByIdQuery } from '../../../../../redux/features/category/categoryApi';
+import { fieldNameGenerator } from '../../../../../utils/fieldNameGenerator';
+import { ISingleCategory } from '../../../../../types/types';
+import { QuestionType } from '../../../../../utils/Constants';
+import ViewQuestion from '../../../../../shared/components/ViewQuestion';
 
 const label = { inputProps: { 'aria-label': 'Checkbox demo' } };
 
 export default function AlertDialog(
-    { open, handleClose, academicFields, jobFields, admissionFields, databaseQuestionIdArray, type }:
+    { open, handleClose, academicFields, jobFields, admissionFields, databaseQuestionIdArray, type, categoryType, singleCategory }:
         {
             open: boolean;
             handleClose: () => void;
@@ -28,64 +33,68 @@ export default function AlertDialog(
             admissionFields: string[];
             databaseQuestionIdArray: string[];
             type: string;
+            categoryType: string;
+            singleCategory: ISingleCategory
         }
 ) {
     //local states
     const [filters, setFilters] = useState<Record<string, string>>({});
+    const [filterToSubmit, setFilterToSubmit] = useState<Record<string, string | undefined>>({});
     // getting courseId from local redux store
-    // creating a query parameter object
-    const questionQueryParams = {
-        ...(filters.categoryType && { categoryType: filters.categoryType }),
-        ...(filters.type && { type: type }),
-        ...(filters.division && { division: filters.division }),
-        ...(filters.subject && { subject: filters.subject }),
-        ...(filters.chapter && { chapter: filters.chapter }),
-        ...(filters.universityName && { universityName: filters.universityName }),
-        ...(filters.universityType && { universityType: filters.universityType }),
-    };
-
     const courseId = useAppSelector((state) => state.courseAndLessonId.id.course_id);
+    const dispatch = useAppDispatch();
     // fetching the course from the id
-    const { data: courseData, isLoading } = useGetCourseByIdQuery({ courseId });
+    const { data: courseData, isLoading: courseLoading } = useGetCourseByIdQuery({ courseId });
+
     // first category filter applied when page loads
-    questionQueryParams.categoryType = courseData?.data.category;
+    // questionQueryParams.categoryType = courseData?.data.category;
     // type received as a prop from it's parent component
-    questionQueryParams.type = type;
+    // questionQueryParams.type = type;
 
     // fetching all questions
-    const { data: questions, isLoading: questionLoader } = useGetAllQuestionsQuery(questionQueryParams);
+    const { data: questions, isLoading: questionLoader, refetch, isFetching } = useGetAllQuestionsQuery(filterToSubmit, {
+        refetchOnMountOrArgChange: true,  // Ensures fresh data on filter change
+        skip: false  // Do not skip the query on mount
+    });
 
-    const dispatch = useAppDispatch();
-
-    if (isLoading) {
+    if (courseLoading) {
         return (<Loader />);
     }
     if (questionLoader) {
         return (<Loader />);
     }
 
+    // questionQueryParams.categoryType = categoryType;
+
     const subject = questions?.data?.data.map((question) => question.category[0].subject);
+
     // const uniqueSubjectArray = subject.filter((item, index) =>  )
 
     const arraysForFilterFields = {
         Subject: subject
     };
 
-    // handling checkbox functionality
-    const handleCheckBox = (e: React.ChangeEvent<HTMLInputElement>) => {
-        if (e.target.checked) {
-            console.log('Question selected:');
-            // dispatch(saveQuestionToStore(question));
-        }
+
+    // selecting the filters
+    const handleFilter = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const { name, value } = e.target;
+        setFilters((prevState) => ({ ...prevState, [name]: value === '' ? undefined : value }));
     };
 
-    // console.log('selected question ids:', databaseQuestionIdArray);
-    // console.log('All Subjects', subject);
 
-    // console.log('All questions', questions?.data?.data);
+    // confirming the filters to fetch data based on that
+    const confirmFilter = (e: React.MouseEvent) => {
+        e.preventDefault(); // Manually clear questions
+        setFilterToSubmit({ ...filters });
+        refetch();  // This will trigger a new request to fetch filtered questions
+        setFilters({});
+    };
 
-    // console.log('fetching course category', courseData?.data.category);
-
+    // Debugging logs
+    console.log(singleCategory);
+    console.log('Filters:', filters);
+    console.log('Filter to Submit:', filterToSubmit);
+    console.log('Fetched Questions:', questions?.data?.data);
     return (
         <>
             <Dialog
@@ -100,7 +109,7 @@ export default function AlertDialog(
                     <Box sx={{ width: '100%', height: 'auto' }}>
                         {/* top title and button section */}
                         <Box component="section" sx={{ display: 'flex', gap: '20px', justifyContent: 'flex-start', alignItems: 'center', mb: 3 }}>
-                            <Typography variant='h3'>{courseData?.data.category} Questions</Typography>
+                            <Typography variant='h3'>{categoryType} Questions</Typography>
                         </Box>
                         {/* filter and question database section */}
                         <Box sx={{ display: "flex", flexDirection: 'column', gap: '20px', position: 'relative' }}>
@@ -108,38 +117,47 @@ export default function AlertDialog(
                             <Grid container spacing={2}>
                                 <Grid size={2}>
                                     <CustomLabel fieldName={'Category'} />
-                                    <CustomTextField
-                                        name={'Category'}
-                                        disabled
-                                        value={courseData?.data.category}
+                                    <CustomAutoComplete
+                                        name='categoryType'
+                                        options={[singleCategory['type']]}
+                                        handleInput={handleFilter}
+                                        value={filters['categoryType']}
                                     />
                                 </Grid>
+                                <Grid size={2}>
+                                    <CustomLabel fieldName={'Type'} />
+                                    <CustomAutoComplete
+                                        name='type'
+                                        options={QuestionType}
+                                        handleInput={handleFilter}
+                                        value={filters['type']}
+                                    />
+                                </Grid>
+
                                 {/* academic filters */}
-                                {courseData?.data.category === 'academic' &&
+                                {categoryType === 'Academic' &&
                                     (academicFields.map((name, index) => (
-                                        <Grid size={2} key={index}>
+                                        <Grid size={2} key={index + 1}>
                                             <CustomLabel fieldName={name} />
                                             <CustomAutoComplete
-                                                key={index}
-                                                options={[]}
-                                                // value={filter[name.toLowerCase()]}
-                                                // handleInput={handleFilter}
-                                                name={name.toLowerCase()}
+                                                options={[singleCategory[fieldNameGenerator(name)]]}
+                                                value={filters[fieldNameGenerator(name)]}
+                                                handleInput={handleFilter}
+                                                name={fieldNameGenerator(name)}
                                             />
                                         </Grid>
                                     )))
                                 }
                                 {/* job filters */}
                                 {
-                                    courseData?.data.category === 'Job' &&
+                                    categoryType === 'Job' &&
                                     (jobFields.map((name, index) => (
-                                        <Grid size={2} key={index}>
+                                        <Grid size={2} key={index + 2}>
                                             <CustomLabel fieldName={name} />
                                             <CustomAutoComplete
-                                                key={index}
                                                 options={arraysForFilterFields[name] || []}
-                                                // value={filter[name.toLowerCase()]}
-                                                // handleInput={handleFilter}
+                                                value={filters[fieldNameGenerator(name)]}
+                                                handleInput={handleFilter}
                                                 name={name.toLowerCase()}
                                             />
                                         </Grid>
@@ -147,15 +165,14 @@ export default function AlertDialog(
                                 }
                                 {/* admission filters */}
                                 {
-                                    courseData?.data.category === 'Admission' &&
+                                    categoryType === 'Admission' &&
                                     (admissionFields.map((name, index) => (
-                                        <Grid size={2} key={index}>
+                                        <Grid size={2} key={index + 3}>
                                             <CustomLabel fieldName={name} />
                                             <CustomAutoComplete
-                                                key={index}
                                                 options={[]}
-                                                // value={filter[name.toLowerCase()]}
-                                                // handleInput={handleFilter}
+                                                value={filters[fieldNameGenerator(name)]}
+                                                handleInput={handleFilter}
                                                 name={name.toLowerCase()}
                                             />
                                         </Grid>
@@ -164,7 +181,8 @@ export default function AlertDialog(
                                 <Grid size={2} sx={{ alignSelf: 'flex-end' }}>
                                     {/* <CustomLabel fieldName='' /> */}
                                     <Button variant='contained' sx={{ width: '100%', height: '44px', borderRadius: '8px', fontSize: '14px', display: 'flex', justifyContent: 'center', alignItems: 'center', gap: 1 }}
-                                    // onClick={(e) => confirmFilter(e)}
+                                        // onClick={(e) => confirmFilter(e)}
+                                        onClick={confirmFilter}
                                     >
                                         Search <SearchIcon />
                                     </Button>
@@ -175,63 +193,9 @@ export default function AlertDialog(
                         <Divider sx={{ my: 3 }} />
                         <Paper variant="outlined" sx={{ width: '100%', height: 'auto', borderRadius: '10px', p: 3 }}>
                             {
-                                questions?.data?.data.map((question: typeof questions, index: number) => (
-                                    <>
-                                        <Grid container spacing={2} key={index}>
-                                            {/* check box to select the question */}
-                                            <Grid size={1}>
-                                                <Checkbox
-                                                    checked={databaseQuestionIdArray.includes(question._id) || false}
-                                                    disabled={databaseQuestionIdArray.includes(question._id) || false}
-                                                    {...label}
-                                                    onChange={(e) => e.target.checked && dispatch(saveQuestionToStore(question))}
-                                                />
-                                            </Grid>
-                                            {/* question title  */}
-                                            <Grid size={11}>
-                                                <Grid container spacing={2}>
-                                                    <Grid size={12}>
-                                                        <CustomLabel fieldName={`Question-${index + 1}`} />
-                                                        <CustomTextField
-                                                            name={'question'}
-                                                            disabled
-                                                            placeholder={question.title}
-                                                        />
-                                                    </Grid>
-                                                    {/* options for mcq */}
-                                                    {
-                                                        question?.type === 'MCQ' && question?.options.map((option: string) => (
-                                                            <Grid size={3} key={index}>
-                                                                <CustomTextField
-                                                                    name={option}
-                                                                    disabled
-                                                                    placeholder={option}
-                                                                />
-                                                            </Grid>
-                                                        )
-                                                        )
-                                                    }
-                                                    <Grid size={12}>
-                                                        <CustomLabel fieldName={'Answer Description'} />
-                                                        <CustomTextField
-                                                            name={'answer_description'}
-                                                            disabled
-                                                            placeholder={question.description}
-                                                            multiline={true}
-                                                            rows={4}
-                                                        />
-                                                    </Grid>
-                                                </Grid>
-
-                                            </Grid>
-                                            <Grid size={12} sx={{ mb: 2 }}>
-                                                <Divider />
-                                            </Grid>
-                                        </Grid>
-                                    </>
-                                ))
+                                isFetching && (<Loader />)
                             }
-
+                            <ViewQuestion questionArr={questions?.data?.data} />
                         </Paper>
                     </Box>
                 </DialogContent>

@@ -9,8 +9,16 @@ const categoryApi = baseApi.injectEndpoints({
                     method: 'GET',
                 };
             }
+        }),
+        getCategoryById: builder.query({
+            query: ({ id }) => {
+                return {
+                    url: `/category/${id}`,
+                    method: 'GET',
+                };
+            }
         })
     })
 });
 
-export const { useGetAllCategoryTypesQuery } = categoryApi; 
+export const { useGetAllCategoryTypesQuery, useGetCategoryByIdQuery } = categoryApi; 
