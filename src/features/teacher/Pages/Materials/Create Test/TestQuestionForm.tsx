@@ -11,16 +11,14 @@ import { useGetCourseByIdQuery } from '../../../../../redux/features/course/cour
 import Loader from '../../../../../shared/components/Loader';
 
 
-const TestQuestionForm = ({ index, handleTestQuestionInput, question, testDetails, formArray, setNumOfForms, numOfForms, type }:
+const TestQuestionForm = ({ index, handleTestQuestionInput, question, testDetails, setNumOfForms, numOfForms }:
     {
         handleTestQuestionInput?: (e: React.ChangeEvent<HTMLInputElement>) => void;
         question: Record<string, string>;
         index: number;
         testDetails: Record<string, string>;
-        formArray?: number[];
         numOfForms?: number;
         setNumOfForms?: React.Dispatch<React.SetStateAction<number>>;
-        type: string;
     }
 ) => {
     // modal state
@@ -59,7 +57,6 @@ const TestQuestionForm = ({ index, handleTestQuestionInput, question, testDetail
         setOpen(false);
     };
 
-    console.log('Category data:', singleCategory.data);
     return (
         <>
             <Box sx={{ width: '100%', display: 'flex', justifyContent: 'space-between' }}>
@@ -156,7 +153,6 @@ const TestQuestionForm = ({ index, handleTestQuestionInput, question, testDetail
             {/* modal for question adding */}
             <AlertDialog
                 singleCategory={singleCategory.data}
-                type={type}
                 categoryType={categoryType}
                 open={open}
                 handleClose={handleClose}

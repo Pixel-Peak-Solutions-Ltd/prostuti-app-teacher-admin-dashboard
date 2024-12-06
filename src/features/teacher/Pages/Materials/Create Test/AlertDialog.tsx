@@ -7,8 +7,6 @@ import Grid from '@mui/material/Grid2';
 import CustomLabel from '../../../../../shared/components/CustomLabel';
 import CustomAutoComplete from '../../../../../shared/components/CustomAutoComplete';
 import SearchIcon from '@mui/icons-material/Search';
-import { useGetCourseByIdQuery } from '../../../../../redux/features/course/courseApi';
-import { useAppSelector } from '../../../../../redux/hooks';
 import Loader from '../../../../../shared/components/Loader';
 import { useState } from 'react';
 import { useGetAllQuestionsQuery } from '../../../../../redux/features/question/questionApi';
@@ -18,7 +16,7 @@ import { QuestionType } from '../../../../../utils/Constants';
 import ViewQuestion from './ViewQuestion';
 
 export default function AlertDialog(
-    { open, handleClose, academicFields, jobFields, admissionFields, databaseQuestionIdArray, type, categoryType, singleCategory }:
+    { open, handleClose, academicFields, jobFields, admissionFields, databaseQuestionIdArray, categoryType, singleCategory }:
         {
             open: boolean;
             handleClose: () => void;
@@ -26,7 +24,6 @@ export default function AlertDialog(
             jobFields: string[];
             admissionFields: string[];
             databaseQuestionIdArray: string[];
-            type: string;
             categoryType: string;
             singleCategory: ISingleCategory
         }
@@ -34,15 +31,6 @@ export default function AlertDialog(
     //local states
     const [filters, setFilters] = useState<Record<string, string>>({});
     const [filterToSubmit, setFilterToSubmit] = useState<Record<string, string | undefined>>({});
-    // getting courseId from local redux store
-    const courseId = useAppSelector((state) => state.courseAndLessonId.id.course_id);
-    // fetching the course from the id
-    const { data: courseData, isLoading: courseLoading } = useGetCourseByIdQuery({ courseId });
-
-    // first category filter applied when page loads
-    // questionQueryParams.categoryType = courseData?.data.category;
-    // type received as a prop from it's parent component
-    // questionQueryParams.type = type;
 
     // fetching all questions
     const { data: questions, isLoading: questionLoader, refetch, isFetching } = useGetAllQuestionsQuery(filterToSubmit, {
@@ -50,23 +38,9 @@ export default function AlertDialog(
         skip: false  // Do not skip the query on mount
     });
 
-    if (courseLoading) {
-        return (<Loader />);
-    }
     if (questionLoader) {
         return (<Loader />);
     }
-
-    // questionQueryParams.categoryType = categoryType;
-
-    const subject = questions?.data?.data.map((question) => question.category[0].subject);
-
-    // const uniqueSubjectArray = subject.filter((item, index) =>  )
-
-    const arraysForFilterFields = {
-        Subject: subject
-    };
-
 
     // selecting the filters
     const handleFilter = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -83,11 +57,6 @@ export default function AlertDialog(
         setFilters({});
     };
 
-    // Debugging logs
-    console.log(singleCategory);
-    console.log('Filters:', filters);
-    console.log('Filter to Submit:', filterToSubmit);
-    console.log('Fetched Questions:', questions?.data?.data);
     return (
         <>
             <Dialog
@@ -148,10 +117,10 @@ export default function AlertDialog(
                                         <Grid size={2} key={index + 2}>
                                             <CustomLabel fieldName={name} />
                                             <CustomAutoComplete
-                                                options={arraysForFilterFields[name] || []}
+                                                options={[singleCategory[fieldNameGenerator(name)]]}
                                                 value={filters[fieldNameGenerator(name)]}
                                                 handleInput={handleFilter}
-                                                name={name.toLowerCase()}
+                                                name={fieldNameGenerator(name)}
                                             />
                                         </Grid>
                                     )))
@@ -163,10 +132,10 @@ export default function AlertDialog(
                                         <Grid size={2} key={index + 3}>
                                             <CustomLabel fieldName={name} />
                                             <CustomAutoComplete
-                                                options={[]}
+                                                options={[singleCategory[fieldNameGenerator(name)]]}
                                                 value={filters[fieldNameGenerator(name)]}
                                                 handleInput={handleFilter}
-                                                name={name.toLowerCase()}
+                                                name={fieldNameGenerator(name)}
                                             />
                                         </Grid>
                                     )))
@@ -184,6 +153,7 @@ export default function AlertDialog(
                         </Box>
                         {/* filters end */}
                         <Divider sx={{ my: 3 }} />
+                        {/* view questions */}
                         <Paper variant="outlined" sx={{ width: '100%', height: 'auto', borderRadius: '10px', p: 3 }}>
                             {
                                 isFetching && (<Loader />)

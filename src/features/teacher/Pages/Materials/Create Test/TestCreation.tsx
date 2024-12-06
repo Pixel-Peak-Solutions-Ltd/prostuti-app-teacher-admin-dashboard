@@ -45,10 +45,10 @@ const TestCreation = () => {
     const dispatch = useAppDispatch();
     const selectedDatabaseQuestionId = questionsSelectedFromDatabase.map((question) => question._id);
     // api calls via redux toolkit
-    const { data: lessonData, isLoading: courseLoading } = useGetLessonsByCourseIdQuery({ courseId });
+    const { data: lessonData, isLoading: lessonLoading } = useGetLessonsByCourseIdQuery({ courseId });
     const [createTest, { isLoading: testCreationLoader, isSuccess }] = useCreateTestMutation();
 
-    if (courseLoading) {
+    if (lessonLoading) {
         return <Loader />;
     }
 
@@ -65,6 +65,7 @@ const TestCreation = () => {
             setTestDetails({ ...testDetails, publishDate: date.toISOString() }); // converting date to iso string
         }
     };
+
     //~ handling all the inputs
     const handleTestDetailsInput = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
@@ -76,6 +77,7 @@ const TestCreation = () => {
         setQuestion((prevState) => ({ ...prevState, [name]: value }));
     };
 
+    //*handle submit function
     const handleTestSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         const questionList = testQuestionFormation(question, testDetails?.type);
@@ -103,7 +105,6 @@ const TestCreation = () => {
         } catch (err) {
             console.log(err);
         }
-        console.log(submittableData);
     };
 
     //! close snackbar automatically
@@ -116,9 +117,7 @@ const TestCreation = () => {
         }
         setOpenSnackbar(false);
     };
-    console.log('lessonId:', lesson_id);
-    console.log('test details:', testDetails);
-    console.log('question ids:', selectedDatabaseQuestionId);
+
     return (
         <>
             <Box sx={{ width: '100%', height: numOfForms === 1 ? '100vh' : 'auto' }}>
@@ -205,7 +204,6 @@ const TestCreation = () => {
                                     {
                                         Array.from(Array(numOfForms)).map((_, index) => (
                                             <TestQuestionForm
-                                                type={testDetails?.type}
                                                 key={index}
                                                 question={question}
                                                 handleTestQuestionInput={handleTestQuestionInput}
