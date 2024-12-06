@@ -58,6 +58,8 @@ const AcademicQuestion = () => {
         return (<Loader />);
     }
 
+    // console.log('existing refreshToken:', refreshToken);
+
     return (
         <Box sx={{ width: '100%', height: 'auto' }}>
             <Paper variant="outlined" sx={{ width: '100%', height: 'auto', borderRadius: '10px', p: 3 }}>

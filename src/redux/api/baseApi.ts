@@ -1,6 +1,6 @@
 import { createApi, fetchBaseQuery, FetchBaseQueryError } from "@reduxjs/toolkit/query/react";
 import { RootState } from "../store"; // assuming RootState has the auth state type
-import { setUser } from "../features/auth/authSlice";
+import { logout, setUser } from "../features/auth/authSlice";
 
 // Local url -> http://localhost:5000/
 // Production url -> https://prostuti-app-backend-production.up.railway.app
@@ -30,9 +30,17 @@ const baseQueryWithRefreshToken: typeof baseQuery = async (args, api, extraOptio
 
         const user = (api.getState() as RootState).auth.user;
 
+        // if user token expires this if block will trigger and redirect to login page
+        if (!data.success) {
+            api.dispatch((
+                logout()
+            ));
+        }
+
         api.dispatch((
             setUser({ user, token: data.data.accessToken })
         ));
+
     }
     console.log('baseApi', result);
     return result;
