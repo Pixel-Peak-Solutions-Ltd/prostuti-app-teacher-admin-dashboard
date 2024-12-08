@@ -131,6 +131,7 @@ const AssignmentCreation = () => {
             await createAssignment(assignmentData);
             setOpenSnackbar(true);
             setAssignmentDetails({});
+            setFiles([]);
         } catch (err) {
             console.log(err);
         }

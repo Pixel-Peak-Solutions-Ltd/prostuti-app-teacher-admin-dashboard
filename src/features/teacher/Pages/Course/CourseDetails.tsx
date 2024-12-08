@@ -90,12 +90,9 @@ const CourseDetails = forwardRef<{ submitForm: () => void }, CourseDetailsProps>
         },
     }));
 
-    if (isLoading) {
-        return <Loader />;
-    }
-
     // when calling the mutation api
-    if (creationLoader) {
+
+    if (isLoading || categoryLoading || creationLoader) {
         return <Loader />;
     }
 
@@ -107,7 +104,7 @@ const CourseDetails = forwardRef<{ submitForm: () => void }, CourseDetailsProps>
     const universityNames = getUniqueStrings(categoryData?.data || [], 'universityName');
     const universityTypes = getUniqueStrings(categoryData?.data || [], 'universityType');
 
-    const categoryId = categoryData?.data[0]._id;
+    const categoryId = categoryData?.data[0]?._id;
     //~ close snackbar automatically
     const handleCloseSnackbar = (
         event: React.SyntheticEvent | Event,
@@ -269,7 +266,7 @@ const CourseDetails = forwardRef<{ submitForm: () => void }, CourseDetailsProps>
                                                 name={`universityName`}
                                                 handleInput={handleCategory}
                                                 required={true}
-                                                value={categoryParams.universityType}
+                                                value={categoryParams.universityName}
                                             />
                                         </Grid>
                                         <Grid size={4}>

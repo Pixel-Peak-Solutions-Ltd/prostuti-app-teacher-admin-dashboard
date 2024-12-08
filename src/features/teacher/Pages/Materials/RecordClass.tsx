@@ -38,7 +38,7 @@ const RecordClass = () => {
     // getting all the lessons of the corresponding course
     const { data: lessonData, isLoading: courseLoading } = useGetLessonsByCourseIdQuery({ courseId });
     // making api call to save the record class
-    const [createRecordClass, { isSuccess }] = useCreateRecordClassMutation();
+    const [createRecordClass, { isSuccess, isLoading: recordClassCreationLoader }] = useCreateRecordClassMutation();
 
     if (courseLoading) {
         return (<Loader />);
@@ -53,8 +53,7 @@ const RecordClass = () => {
         setRecordDetails((prevState) => ({ ...prevState, [name]: value }));
     };
 
-
-    // //^ handling dayjs for date field
+    //^ handling dayjs for date field
     const handleDateChange = (date: Dayjs | null) => {
         if (date) {
             setRecordDetails({ ...recordDetails, classDate: date.toISOString() }); // converting date to iso string
@@ -140,85 +139,86 @@ const RecordClass = () => {
                         {/* </Link> */}
                     </Box>
                     {/* form section starts here */}
-                    <Box sx={{ display: "flex", flexDirection: 'column', gap: '20px' }}>
-                        <form onSubmit={handleSubmit}>
-                            <Paper variant='outlined' sx={{ width: '100%', height: '100%', p: 2, borderRadius: '8px', mb: 3 }}>
-                                <Grid container spacing={3} >
-                                    {/* 1st row */}
-                                    <Grid size={12}>
-                                        <CustomLabel fieldName="Lesson Name" />
-                                        <CustomAutoComplete
-                                            name='lessonName' options={lessonNames || []}
-                                            handleInput={handleRecordDetailsInput}
-                                            value={recordDetails?.lessonName}
-                                            required
-                                        />
-                                    </Grid>
-                                    {/* <Grid size={4}>
-                                    <CustomLabel fieldName="Lesson Number" />
-                                    <CustomAutoComplete
-                                        name='number' options={lessonNumbers || []}
-                                        handleInput={handleRecordDetailsInput}
-                                        value={recordDetails?.number}
-                                    // required
-                                    />
-                                </Grid> */}
-                                    {/* 2nd row */}
-                                    <Grid size={8}>
-                                        <CustomLabel fieldName="Record Class Name" />
-                                        <CustomTextField
-                                            name='recodeClassName'
-                                            handleInput={handleRecordDetailsInput}
-                                            value={recordDetails?.recodeClassName}
-                                            placeholder="Enter Record Class Name"
-                                            required
-                                        />
-                                    </Grid>
-                                    {/* date picker */}
-                                    <Grid size={4} sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
-                                        <CustomLabel fieldName="Record Class Date" />
-                                        <LocalizationProvider dateAdapter={AdapterDayjs}>
-                                            {/* <DatePicker sx={{ width: '100%', height: '40px', borderRadius: "10px" }} /> */}
-                                            <StyledDatePicker onChange={handleDateChange} />
-                                        </LocalizationProvider>
-                                    </Grid>
-                                    {/* 3rd row */}
-                                    <Grid size={12}>
-                                        <CustomLabel fieldName="Class Details" />
-                                        <CustomTextField
-                                            name='classDetails' multiline={true} rows={6}
-                                            placeholder="Enter Class Details"
-                                            handleInput={handleRecordDetailsInput}
-                                            value={recordDetails?.classDetails}
-                                        />
-                                    </Grid>
-                                    {/* 4th row */}
-                                    {/* dynamic field */}
-                                    <Grid size={12}>
-                                        <CustomLabel fieldName="Upload Video Class" />
-                                        <CustomTextField
-                                            name='classVideoURL' placeholder="Enter Video Link Here"
-                                            handleInput={handleRecordDetailsInput}
-                                            value={recordDetails?.classVideoURL}
-                                            handlePaste={handleOnPaste}
-                                            multiline={true} rows={4}
-                                        />
-                                    </Grid>
-                                </Grid>
-                                <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: "20px", mt: 3 }}>
-                                    <Button
-                                        type='submit'
-                                        variant='contained'
-                                        size='small'
-                                        startIcon={<CloudUploadIcon />}
-                                        sx={{ width: '170px', height: '40px', borderRadius: '8px', fontSize: '14px' }}>
-                                        Upload Class
-                                    </Button>
-                                </Box>
-                            </Paper>
-                        </form>
-                    </Box>
-                    {/* form section starts here */}
+                    {
+                        recordClassCreationLoader && (
+                            <Loader />
+                        )
+                    }
+                    {
+                        !recordClassCreationLoader && (
+                            <Box sx={{ display: "flex", flexDirection: 'column', gap: '20px' }}>
+                                <form onSubmit={handleSubmit}>
+                                    <Paper variant='outlined' sx={{ width: '100%', height: '100%', p: 2, borderRadius: '8px', mb: 3 }}>
+                                        <Grid container spacing={3} >
+                                            {/* 1st row */}
+                                            <Grid size={12}>
+                                                <CustomLabel fieldName="Lesson Name" />
+                                                <CustomAutoComplete
+                                                    name='lessonName' options={lessonNames || []}
+                                                    handleInput={handleRecordDetailsInput}
+                                                    value={recordDetails?.lessonName}
+                                                    required
+                                                />
+                                            </Grid>
+                                            {/* 2nd row */}
+                                            <Grid size={8}>
+                                                <CustomLabel fieldName="Record Class Name" />
+                                                <CustomTextField
+                                                    name='recodeClassName'
+                                                    handleInput={handleRecordDetailsInput}
+                                                    value={recordDetails?.recodeClassName}
+                                                    placeholder="Enter Record Class Name"
+                                                    required
+                                                />
+                                            </Grid>
+                                            {/* date picker */}
+                                            <Grid size={4} sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+                                                <CustomLabel fieldName="Record Class Date" />
+                                                <LocalizationProvider dateAdapter={AdapterDayjs}>
+                                                    {/* <DatePicker sx={{ width: '100%', height: '40px', borderRadius: "10px" }} /> */}
+                                                    <StyledDatePicker onChange={handleDateChange} />
+                                                </LocalizationProvider>
+                                            </Grid>
+                                            {/* 3rd row */}
+                                            <Grid size={12}>
+                                                <CustomLabel fieldName="Class Details" />
+                                                <CustomTextField
+                                                    name='classDetails' multiline={true} rows={6}
+                                                    placeholder="Enter Class Details"
+                                                    handleInput={handleRecordDetailsInput}
+                                                    value={recordDetails?.classDetails}
+                                                />
+                                            </Grid>
+                                            {/* 4th row */}
+                                            {/* dynamic field */}
+                                            <Grid size={12}>
+                                                <CustomLabel fieldName="Upload Video Class" />
+                                                <CustomTextField
+                                                    name='classVideoURL' placeholder="Enter Video Link Here"
+                                                    handleInput={handleRecordDetailsInput}
+                                                    value={recordDetails?.classVideoURL}
+                                                    handlePaste={handleOnPaste}
+                                                    multiline={true} rows={4}
+                                                />
+                                            </Grid>
+                                        </Grid>
+                                        <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: "20px", mt: 3 }}>
+                                            <Button
+                                                type='submit'
+                                                variant='contained'
+                                                size='small'
+                                                startIcon={<CloudUploadIcon />}
+                                                sx={{ width: '170px', height: '40px', borderRadius: '8px', fontSize: '14px' }}>
+                                                Upload Class
+                                            </Button>
+                                        </Box>
+                                    </Paper>
+                                </form>
+                            </Box>
+                        )
+                    }
+
+                    {/* form section ends here */}
                 </Paper >
             </Box >
             {/* showing alert for what happened after submitting the request */}

@@ -75,3 +75,7 @@ export interface ISingleQuestion {
     __v?: number;
     category?: ISingleCategory[];
 }
+
+export interface ICoursePreview {
+
+}
