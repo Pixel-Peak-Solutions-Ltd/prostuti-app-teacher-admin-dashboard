@@ -1,4 +1,4 @@
-import { Box, Button, Paper, SnackbarCloseReason, styled, Typography } from "@mui/material";
+import { Box, Button, Paper, SnackbarCloseReason, styled, Typography, IconButton } from "@mui/material";
 import { Link } from "react-router-dom";
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
@@ -12,13 +12,14 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { Dayjs } from "dayjs";
-import { createValidUrlArray } from "../../../../utils/recordLinkArray";
 import { useGetLessonsByCourseIdQuery } from "../../../../redux/features/course/courseApi";
 import { useAppSelector } from "../../../../redux/hooks";
 import Loader from "../../../../shared/components/Loader";
 import Alert from "../../../../shared/components/Alert";
 import { useCreateRecordClassMutation } from "../../../../redux/features/materials/materialsApi";
-
+import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
+import LinearWithValueLabel from "../../../../shared/components/ProgessBar";
+import MP4 from '../../../../assets/images/MP4-icon.png';
 
 const StyledDatePicker = styled(DatePicker)({
     width: '100%',
@@ -28,10 +29,26 @@ const StyledDatePicker = styled(DatePicker)({
         fontSize: '0.875rem',
     }
 });
+const VisuallyHiddenInput = styled('input')({
+    clip: 'rect(0 0 0 0)',
+    clipPath: 'inset(50%)',
+    height: 1,
+    overflow: 'hidden',
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    whiteSpace: 'nowrap',
+    width: 1,
+});
 const RecordClass = () => {
     // local states
     const [recordDetails, setRecordDetails] = useState<Record<string, string>>({});
     const [openSnackbar, setOpenSnackbar] = useState(false);
+    // below state handles the selected image file and ready it to upload
+    const [file, setFile] = useState<File | null>(null);
+    const [fileError, setFileError] = useState<string | null>(null);
+    // temporary file array to render it on the UI
+    const [tempFileArr, setTempFileArr] = useState<File[]>([]);
 
     // fetching courseId from the local redux store
     const courseId = useAppSelector((state) => state.courseAndLessonId.id.course_id);
@@ -47,6 +64,38 @@ const RecordClass = () => {
     const lessonNames = lessonData?.data.map((item: typeof lessonData) => item.name);
     const lesson_id = lessonData?.data.filter((item: typeof lessonData) => item.name === recordDetails?.lessonName);
 
+    //~deleting a file from the local state
+    const handleDeleteFile = (passedIndex: number) => {
+        const copiedArray = [...tempFileArr];
+        const remainingFiles = copiedArray.filter((file, index) => index !== passedIndex);
+        setTempFileArr([...remainingFiles]);
+        setFile(null);
+    };
+
+    //^handling file change
+    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (e.target.files && e.target.files.length > 0) {
+            // first checking whether the file is a PDF
+            if (e.target.files[0].type !== 'video/mp4') {
+                setFileError('Only MP4 Video Files Are Allowed');
+                return;
+            }
+            // Store the file separately for the form submission
+            setFile(e.target.files[0]);
+            // handling the file array
+            // step 1: convert fileList to an array
+            const newFiles = Array.from(e.target.files);
+            // Filter out duplicate files based on name and size
+            const uniqueNewFiles = newFiles.filter(newFile =>
+                // keep the file if NO existing files match these conditions
+                !tempFileArr.some(existingFile =>
+                    existingFile.name === newFile.name && existingFile.size === newFile.size
+                )
+            );
+            setTempFileArr(prevFiles => [...prevFiles, ...uniqueNewFiles]);
+        }
+    };
+
     //* handling all the inputs
     const handleRecordDetailsInput = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
@@ -60,44 +109,42 @@ const RecordClass = () => {
         }
     };
 
-    //* handling a onPaste event
-    const handleOnPaste = (e: React.ClipboardEvent) => {
-        e.preventDefault();
-        setRecordDetails((prevState) => (
-            {
-                ...prevState,
-                classVideoURL: prevState?.classVideoURL
-                    ? prevState?.classVideoURL + ` ${e.clipboardData.getData('text')}`
-                    : `${e.clipboardData.getData('text')}`
-            }
-        ));
-    };
-
     //^ handling the submit event
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        const urlArray = createValidUrlArray(recordDetails?.classVideoURL as string);
-
         // taking out the unwanted fields from the details object : ESNext syntax
-
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const refinedDetails = (({ lessonName, ...rest }) => rest)(recordDetails);
         // constructing the final object
-        const submissionData = {
+        const submissionJSONData = {
             ...refinedDetails,
-            classVideoURL: [...urlArray],
+            // classVideoURL: [...urlArray],
             lesson_id: lesson_id[0]._id,
             course_id: courseId
         };
 
+        // creating recordClass form data
+        const recordClassData = new FormData();
+        // appending json data
+        recordClassData.append('data', JSON.stringify(submissionJSONData));
+
+        if (!file) {
+            return setFileError('Must provide a video file');
+        } else {
+            recordClassData.append('file', file);
+        }
+
         try {
-            await createRecordClass(submissionData);
+            await createRecordClass(recordClassData);
             setOpenSnackbar(true);
             setRecordDetails({});
+            setFile(null);
+            setTempFileArr([]);
         } catch (error) {
             console.log(error);
             setOpenSnackbar(true);
         }
+
     };
 
     //~ handling the custom snackbar to help user know whether request is successful
@@ -189,18 +236,120 @@ const RecordClass = () => {
                                                     value={recordDetails?.classDetails}
                                                 />
                                             </Grid>
-                                            {/* 4th row */}
-                                            {/* dynamic field */}
+                                            {/* 3rd row */}
+                                            {/* Resource file upload field */}
                                             <Grid size={12}>
-                                                <CustomLabel fieldName="Upload Video Class" />
-                                                <CustomTextField
-                                                    name='classVideoURL' placeholder="Enter Video Link Here"
-                                                    handleInput={handleRecordDetailsInput}
-                                                    value={recordDetails?.classVideoURL}
-                                                    handlePaste={handleOnPaste}
-                                                    multiline={true} rows={4}
-                                                />
+                                                {
+                                                    tempFileArr.length !== 0 && (
+                                                        <Box>
+                                                            {
+                                                                tempFileArr.map((file, index) => (
+                                                                    <>
+                                                                        <Paper variant='outlined'
+                                                                            sx={{
+                                                                                display: 'flex',
+                                                                                flexDirection: 'column',
+                                                                                justifyContent: 'center',
+                                                                                mb: 1,
+                                                                                alignItems: 'center',
+                                                                                p: 1,
+                                                                                borderRadius: '8px',
+                                                                                gap: 1
+                                                                            }}>
+                                                                            <Box
+                                                                                sx={{
+                                                                                    width: '100%',
+                                                                                    display: 'flex',
+                                                                                    justifyContent: 'space-between', alignItems: 'center'
+                                                                                }}
+                                                                            >
+                                                                                <Box
+                                                                                    sx={{
+                                                                                        display: 'flex',
+                                                                                        alignItems: 'center',
+                                                                                        gap: 1
+                                                                                    }}
+                                                                                >
+                                                                                    <img src={MP4}
+                                                                                        style={{
+                                                                                            width: '40px',
+                                                                                            height: '40px'
+                                                                                        }}
+                                                                                    />
+                                                                                    <Typography
+                                                                                        key={index}
+                                                                                        color='grey.700'
+                                                                                    >
+                                                                                        {file.name}
+                                                                                    </Typography>
+                                                                                </Box>
+
+                                                                                <IconButton
+                                                                                    onClick={() => handleDeleteFile(index)}
+                                                                                >
+                                                                                    <DeleteForeverIcon />
+                                                                                </IconButton>
+                                                                            </Box>
+
+                                                                            {/* progression bar */}
+                                                                            <Box sx={{ width: '90%' }}>
+                                                                                <LinearWithValueLabel />
+                                                                            </Box>
+                                                                        </Paper>
+
+                                                                    </>
+                                                                ))
+                                                            }
+                                                        </Box>
+                                                    )
+                                                }
+                                                {/* </Card> */}
+                                                <Grid
+                                                    size={12}
+                                                    sx={{
+                                                        display: 'flex',
+                                                        justifyContent: 'center',
+                                                        mt: 1,
+                                                        visibility: tempFileArr.length > 0 ? 'hidden' : 'visible'
+                                                    }}
+                                                >
+                                                    <Box>
+                                                        {/* new image upload button */}
+                                                        <Button component="label"
+                                                            size="small"
+                                                            variant="text"
+                                                            tabIndex={-1}
+                                                            startIcon={<CloudUploadIcon />}
+                                                            sx={{
+                                                                color: "gray.700", borderRadius: "8px", cursor: "pointer",
+                                                                // backgroundColor: tempCover ? "white" : 'transparent'
+                                                            }}
+                                                        >
+                                                            {/* {tempCover ? 'Change Cover Image' : 'Click to Upload'} */}
+                                                            Upload File
+                                                            <VisuallyHiddenInput
+                                                                type="file"
+                                                                multiple
+                                                                onChange={handleFileChange}
+                                                                onClick={() => setFileError(null)}
+                                                            />
+                                                        </Button>
+                                                    </Box>
+                                                </Grid>
                                             </Grid>
+
+                                            {/* error message for incorrect file format */}
+                                            {
+
+                                                fileError && (
+                                                    <Grid size={12}>
+                                                        <Typography color="error" align='center' variant="body2">
+                                                            {fileError}
+                                                        </Typography>
+                                                    </Grid>
+                                                )
+
+                                            }
                                         </Grid>
                                         <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: "20px", mt: 3 }}>
                                             <Button

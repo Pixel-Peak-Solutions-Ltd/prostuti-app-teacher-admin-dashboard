@@ -125,3 +125,17 @@
 // for (const [key, value] of courseData.entries()) {
 //     console.log(`FormData: ${key}:`, value);
 // }
+// const urlArray = createValidUrlArray(recordDetails?.classVideoURL as string);
+
+//* handling a onPaste event
+// const handleOnPaste = (e: React.ClipboardEvent) => {
+//     e.preventDefault();
+//     setRecordDetails((prevState) => (
+//         {
+//             ...prevState,
+//             classVideoURL: prevState?.classVideoURL
+//                 ? prevState?.classVideoURL + ` ${e.clipboardData.getData('text')}`
+//                 : `${e.clipboardData.getData('text')}`
+//         }
+//     ));
+// };

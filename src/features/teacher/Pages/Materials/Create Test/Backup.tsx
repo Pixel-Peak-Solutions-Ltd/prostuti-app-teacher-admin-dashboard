@@ -58,6 +58,21 @@
 //     ))
 // }
 
+
+//* multiple link paste field
+{/* 4th row */ }
+{/* dynamic field */ }
+{/* <Grid size={12}>
+        <CustomLabel fieldName="Upload Video Class" />
+        <CustomTextField
+            name='classVideoURL' placeholder="Enter Video Link Here"
+            handleInput={handleRecordDetailsInput}
+            value={recordDetails?.classVideoURL}
+            handlePaste={handleOnPaste}
+            multiline={true} rows={4}
+        />
+    </Grid> 
+*/}
 // for job type filter
 // const subject = questions?.data?.data.map((question) => question.category[0].subject);
 
@@ -74,4 +89,10 @@
 
 // if (courseLoading) {
 //     return (<Loader />);
+// }
+
+//* printing the form data
+
+// for (const [key, value] of recordClassData.entries()) {
+//     console.log(key, value);
 // }
