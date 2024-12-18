@@ -101,6 +101,7 @@ const TestCreation = () => {
             setOpenSnackbar(true);
             setTestDetails({});
             setQuestion({});
+            setNumOfForms(1);
             dispatch(resetStoredQuestions());
         } catch (err) {
             console.log(err);
@@ -201,32 +202,36 @@ const TestCreation = () => {
 
                                     {/* questions forms */}
                                     {/* dynamic form of to add question for the test */}
-                                    {
-                                        Array.from(Array(numOfForms)).map((_, index) => (
-                                            <TestQuestionForm
-                                                key={index}
-                                                question={question}
-                                                handleTestQuestionInput={handleTestQuestionInput}
-                                                index={index}
-                                                testDetails={testDetails}
-                                                setNumOfForms={setNumOfForms}
-                                                numOfForms={numOfForms}
-                                            />
-                                        ))
-                                    }
+                                    <>
+                                        {
+                                            Array.from(Array(numOfForms)).map((_, index) => (
+                                                <TestQuestionForm
+                                                    key={index}
+                                                    question={question}
+                                                    handleTestQuestionInput={handleTestQuestionInput}
+                                                    index={index}
+                                                    testDetails={testDetails}
+                                                    setNumOfForms={setNumOfForms}
+                                                    numOfForms={numOfForms}
+                                                />
+                                            ))
+                                        }
+                                    </>
+                                    {/* divider after question ends */}
                                     <Grid size={12}>
                                         <Divider />
                                     </Grid>
                                 </Grid>
                                 {/* form buttons */}
-                                <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: "20px", mt: 3 }}>
+                                <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: "20px", mt: 3, }}>
                                     <Button
                                         onClick={() => {
                                             setNumOfForms((prevState) => prevState + 1);
                                         }}
                                         variant='outlined'
                                         size='small'
-                                        sx={{ width: '167px', height: '40px', borderRadius: '8px', fontSize: '14px' }}>
+                                        sx={{ width: '167px', height: '40px', borderRadius: '8px', fontSize: '14px', zIndex: 3 }}
+                                    >
                                         + Add New Question
                                     </Button>
                                 </Box>

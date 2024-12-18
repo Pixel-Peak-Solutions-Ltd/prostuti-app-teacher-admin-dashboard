@@ -40,13 +40,10 @@ const TestQuestionForm = ({ index, handleTestQuestionInput, question, testDetail
     const databaseQuestionIdArray = questionsFromDatabase.map((item) => item._id);
 
 
-    if (categoryLoading) {
+    if (categoryLoading || isLoading) {
         return (<Loader />);
     }
 
-    if (isLoading) {
-        return (<Loader />);
-    }
     const categoryType = singleCategory?.data.type;
 
     //* handler functions
@@ -59,7 +56,7 @@ const TestQuestionForm = ({ index, handleTestQuestionInput, question, testDetail
 
     return (
         <>
-            <Box sx={{ width: '100%', display: 'flex', justifyContent: 'space-between' }}>
+            <Box sx={{ width: '100%', height: '100%', display: 'flex', justifyContent: 'space-between' }}>
                 <Grid size={index > 0 ? 11 : 9}>
                     <CustomLabel fieldName={`Question ${index + 1}`} />
                     <CustomTextField
