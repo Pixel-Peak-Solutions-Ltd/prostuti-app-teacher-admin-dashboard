@@ -1,11 +1,14 @@
 import AdminDashboard from '../features/admin/Pages/AdminDashboard';
-import CourseManagement from '../features/admin/Pages/CourseManagement';
+import CourseManagement from '../features/admin/Pages/CourseManagement/CourseManagement';
 import FlashCardManagement from '../features/admin/Pages/FlashCardManagement';
 import PracticeTest from '../features/admin/Pages/PracticeTest';
 import ReportCompliance from '../features/admin/Pages/ReportCompliance';
 import RevenueManagement from '../features/admin/Pages/RevenueManagement';
 import TeacherManagement from '../features/admin/Pages/TeacherManagement';
 import PaymentManagement from '../features/admin/Pages/PaymentManagement';
+import Category from '../features/admin/Pages/Category/Category';
+import AddCategory from '../features/admin/Pages/Category/AddCategory/AddCategory';
+import CourseApproved from '../features/admin/Pages/CourseManagement/CourseApproved/CourseApproved';
 
 export const adminRoutes = [
   {
@@ -15,6 +18,10 @@ export const adminRoutes = [
   {
     path: 'course-management',
     element: <CourseManagement />,
+  },
+  {
+    path: 'course-approved/:courseId',
+    element: <CourseApproved />,
   },
   {
     path: 'flashcard-management',
@@ -35,6 +42,14 @@ export const adminRoutes = [
   {
     path: 'revenue-management',
     element: <RevenueManagement />,
+  },
+  {
+    path: 'category',
+    element: <Category />,
+  },
+  {
+    path: 'add-category',
+    element: <AddCategory />,
   },
   {
     path: 'report-compliance',
