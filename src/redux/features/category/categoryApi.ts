@@ -8,7 +8,8 @@ const categoryApi = baseApi.injectEndpoints({
                     url: '/category/type',
                     method: 'GET',
                 };
-            }
+            },
+            providesTags: ['Categories']
         }),
         getCategoryById: builder.query({
             query: ({ id }) => {
@@ -17,8 +18,18 @@ const categoryApi = baseApi.injectEndpoints({
                     method: 'GET',
                 };
             }
-        })
+        }),
+        createCategory: builder.mutation({
+            query: (questions) => {
+                return {
+                    url: '/category',
+                    method: 'POST',
+                    body: questions
+                };
+            },
+            invalidatesTags: ['Categories']
+        }),
     })
 });
 
-export const { useGetAllCategoryTypesQuery, useGetCategoryByIdQuery } = categoryApi; 
+export const { useGetAllCategoryTypesQuery, useGetCategoryByIdQuery, useCreateCategoryMutation } = categoryApi; 
