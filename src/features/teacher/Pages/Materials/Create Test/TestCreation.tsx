@@ -48,11 +48,8 @@ const TestCreation = () => {
     const { data: lessonData, isLoading: lessonLoading } = useGetLessonsByCourseIdQuery({ courseId });
     const [createTest, { isLoading: testCreationLoader, isSuccess }] = useCreateTestMutation();
 
-    if (lessonLoading) {
-        return <Loader />;
-    }
-
-    if (testCreationLoader) {
+    // loaders 
+    if (testCreationLoader || lessonLoading) {
         return <Loader />;
     }
     // data filtering
@@ -105,6 +102,7 @@ const TestCreation = () => {
             dispatch(resetStoredQuestions());
         } catch (err) {
             console.log(err);
+            return err;
         }
     };
 

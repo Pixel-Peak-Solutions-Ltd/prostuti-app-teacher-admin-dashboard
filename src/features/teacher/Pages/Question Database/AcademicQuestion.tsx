@@ -6,41 +6,60 @@ import CustomLabel from "../../../../shared/components/CustomLabel";
 import CustomAutoComplete from "../../../../shared/components/CustomAutoComplete";
 import SearchIcon from '@mui/icons-material/Search';
 import { useState } from "react";
-import { useGetAllAcademicQuestionsQuery } from "../../../../redux/features/question/questionApi";
+import { useDeleteQuestionMutation, useGetAllAcademicQuestionsQuery } from "../../../../redux/features/question/questionApi";
 import Loader from "../../../../shared/components/Loader";
 import CustomTextField from "../../../../shared/components/CustomTextField";
+import DeleteConfirmation from "../../../../shared/components/DeleteConfirmation";
+import LinearLoader from "../../../../shared/components/LinearLoader";
 
 const AcademicQuestion = () => {
     const [filter, setFilter] = useState<Record<string, string | undefined>>({});
+    const [questionId, setQuestionId] = useState<string>('');
+    const [open, setOpen] = useState(false);
     const [filterToSubmit, setFilterToSubmit] = useState<Record<string, string | undefined>>({});
     const navigate = useNavigate();
     // redux call for getting the list of questions
     // Initial data fetch without any filters
     const { data: initialQuestionData, isLoading } = useGetAllAcademicQuestionsQuery({});
     // filtered data fetching
-    const { data: questionData, isLoading: filteredDataLoading, refetch, isFetching } = useGetAllAcademicQuestionsQuery(filterToSubmit);
+    const { data: questionData, isLoading: filteredDataLoading, isFetching, refetch } = useGetAllAcademicQuestionsQuery(filterToSubmit);
+    // delete question function from redux
+    const [deleteQuestion, { isLoading: questionDeleting }] = useDeleteQuestionMutation();
 
-    // selecting the filters
+    //^ selecting the filters
     const handleFilter = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
         setFilter((prevState) => ({ ...prevState, [name]: value === '' ? undefined : value }));
     };
 
-    //go back functionality
+    //*go back functionality
     const handleGoBack = () => {
         navigate('/teacher/question-database');
     };
 
+
     // confirming the filters to fetch data based on that
     const confirmFilter = (e: React.MouseEvent) => {
         e.preventDefault();
+        // checking whether one or more filter keys value are undefined then deleting that key
+        for (const [key, value] of Object.entries(filter)) {
+            if (value === undefined || value === '') {
+                delete filter[key];
+            }
+        }
         setFilterToSubmit({ ...filter });
         refetch();
         setFilter({});
     };
 
-    // fetching all academic questions
+    //^handle delete from database
 
+    const deleteQuestionFromDatabase = async (id: string) => {
+        await deleteQuestion(id);
+        setQuestionId('');
+    };
+
+    //! fetching all academic questions
     const fieldNameObj = {
         'Division': [...new Set(initialQuestionData?.data?.data.map((item: typeof initialQuestionData) => item?.category[0].division))] as string[],
         'Type': [...new Set(initialQuestionData?.data?.data.map((item: typeof initialQuestionData) => item.type))] as string[],
@@ -54,11 +73,22 @@ const AcademicQuestion = () => {
         // using the initial full dataset for dropdown options
         return fieldNameObj[fieldName as keyof typeof fieldNameObj || []];
     };
-    if (isLoading) {
+
+    //*delete confirmation functions
+    const handleDeleteClickOpen = () => {
+        setOpen(true);
+    };
+
+    const handleDeleteClose = () => {
+        setOpen(false);
+    };
+
+    if (isLoading || filteredDataLoading || questionDeleting) {
         return (<Loader />);
     }
 
-    // console.log('existing refreshToken:', refreshToken);
+    console.log('first stage filter:', filter);
+    console.log('submitted filters', filterToSubmit);
 
     return (
         <Box sx={{ width: '100%', height: 'auto' }}>
@@ -88,6 +118,7 @@ const AcademicQuestion = () => {
                                 value='Academic'
                             />
                         </Grid>
+                        {/* subsequent filters */}
                         {
                             Object.keys(fieldNameObj).map((name, index) => (
                                 <Grid size={2}>
@@ -117,7 +148,7 @@ const AcademicQuestion = () => {
                     <Paper variant='outlined' sx={{ width: '100%', height: '100%', p: 2, borderRadius: '8px', mb: 3 }}>
                         {/* fetching the questions */}
                         {
-                            isFetching && (<Loader />)
+                            (isFetching) && (<Loader />)
                         }
                         {
                             questionData?.data?.data.length === 0 && (
@@ -126,7 +157,35 @@ const AcademicQuestion = () => {
                         }
                         {
                             questionData?.data?.data.map((question: typeof questionData, index: number) => (
-                                <Grid container spacing={2}>
+                                <Grid container spacing={2} key={index}>
+                                    {/* delete question button */}
+                                    <Button
+                                        onClick={() => {
+                                            handleDeleteClickOpen();
+                                            setQuestionId(question._id);
+                                            console.log('question to delete:', question._id);
+                                        }}
+                                        variant="outlined"
+                                        size="small"
+                                        sx={{
+                                            borderRadius: '5px',
+                                            width: '15px',
+                                            minWidth: '15px',
+                                            height: '15px',
+                                            borderColor: "grey.700",
+                                            color: "#3F3F46",
+                                            position: 'absolute',
+                                            right: '20px',
+                                            p: 1,
+                                            "&:hover": {
+                                                backgroundColor: 'red',
+                                                color: 'white',
+                                                borderColor: 'red',
+                                            }
+                                        }}>
+                                        X
+                                    </Button>
+
                                     {/* question title  */}
                                     <Grid size={12}>
                                         <CustomLabel fieldName={`Question-${index + 1}`} />
@@ -138,8 +197,8 @@ const AcademicQuestion = () => {
                                     </Grid>
                                     {/* options for mcq */}
                                     {
-                                        question?.type === 'MCQ' && question?.options.map((option: string) => (
-                                            <Grid size={3}>
+                                        question?.type === 'MCQ' && question?.options.map((option: string, index: number) => (
+                                            <Grid size={3} key={index}>
                                                 <CustomTextField
                                                     name={option}
                                                     disabled
@@ -149,7 +208,7 @@ const AcademicQuestion = () => {
                                         )
                                         )
                                     }
-                                    <Grid size={12}>
+                                    <Grid size={12} sx={{ mb: 2 }}>
                                         <CustomLabel fieldName={'Answer Description'} />
                                         <CustomTextField
                                             name={'answer_description'}
@@ -159,14 +218,23 @@ const AcademicQuestion = () => {
                                             rows={4}
                                         />
                                     </Grid>
+                                    <Grid size={12} sx={{ mb: 2 }}>
+                                        <Divider />
+                                    </Grid>
                                 </Grid>
                             ))
                         }
 
                     </Paper>
-                    <Divider sx={{ marginTop: -2 }} />
                 </Box>
             </Paper >
+            {/* delete confirmation modal */}
+            <DeleteConfirmation
+                id={questionId}
+                deleteFunction={deleteQuestionFromDatabase}
+                handleDeleteClose={handleDeleteClose}
+                open={open}
+            />
         </Box>
 
     );
