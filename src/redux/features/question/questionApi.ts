@@ -62,6 +62,23 @@ const questionAPI = baseApi.injectEndpoints({
             },
             providesTags: ['Questions']
         }),
+        // job questions
+        getAllJobQuestions: builder.query({
+            query: (filters) => {
+                let URL = `/question?categoryType=Job&limit=0`;
+                if (Object.keys(filters).length !== 0) {
+                    URL = Object.entries(filters).reduce((acc, [key, value]) => {
+                        const prefix = '&';
+                        return `${acc}${prefix}${key}=${value}`;
+                    }, URL);
+                }
+                return {
+                    url: URL,
+                    method: 'GET'
+                };
+            },
+            providesTags: ['Questions']
+        }),
         getAllQuestions: builder.query({
             query: (filters) => {
                 let URL = `/question`;
@@ -91,4 +108,4 @@ const questionAPI = baseApi.injectEndpoints({
     })
 });
 
-export const { useGetCategoryQuery, useCreateQuestionMutation, useGetAllAcademicQuestionsQuery, useGetAllQuestionsQuery, useDeleteQuestionMutation } = questionAPI;
+export const { useGetCategoryQuery, useCreateQuestionMutation, useGetAllAcademicQuestionsQuery, useGetAllQuestionsQuery, useDeleteQuestionMutation, useGetAllJobQuestionsQuery } = questionAPI;

@@ -10,7 +10,6 @@ import { useDeleteQuestionMutation, useGetAllAcademicQuestionsQuery } from "../.
 import Loader from "../../../../shared/components/Loader";
 import CustomTextField from "../../../../shared/components/CustomTextField";
 import DeleteConfirmation from "../../../../shared/components/DeleteConfirmation";
-import LinearLoader from "../../../../shared/components/LinearLoader";
 
 const AcademicQuestion = () => {
     const [filter, setFilter] = useState<Record<string, string | undefined>>({});
@@ -86,9 +85,6 @@ const AcademicQuestion = () => {
     if (isLoading || filteredDataLoading || questionDeleting) {
         return (<Loader />);
     }
-
-    console.log('first stage filter:', filter);
-    console.log('submitted filters', filterToSubmit);
 
     return (
         <Box sx={{ width: '100%', height: 'auto' }}>
