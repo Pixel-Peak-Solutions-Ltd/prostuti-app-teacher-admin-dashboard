@@ -1,4 +1,4 @@
-import { Box, Button, Divider, Paper, Typography } from "@mui/material";
+import { Box, Button, Divider, Paper, SnackbarCloseReason, Typography } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import Grid from '@mui/material/Grid2';
@@ -10,12 +10,14 @@ import { useDeleteQuestionMutation, useGetAllJobQuestionsQuery } from "../../../
 import Loader from "../../../../shared/components/Loader";
 import CustomTextField from "../../../../shared/components/CustomTextField";
 import DeleteConfirmation from "../../../../shared/components/DeleteConfirmation";
+import Alert from "../../../../shared/components/Alert";
 
 const JobQuestion = () => {
     const [filter, setFilter] = useState<Record<string, string | undefined>>({});
     const [questionId, setQuestionId] = useState<string>('');
     const [open, setOpen] = useState(false);
     const [filterToSubmit, setFilterToSubmit] = useState<Record<string, string | undefined>>({});
+    const [openSnackbar, setOpenSnackbar] = useState(false);
     const navigate = useNavigate();
     // redux call for getting the list of questions
     // Initial data fetch without any filters
@@ -23,7 +25,7 @@ const JobQuestion = () => {
     // filtered data fetching
     const { data: jobQuestionData, isLoading: filteredDataLoading, isFetching, refetch } = useGetAllJobQuestionsQuery(filterToSubmit);
     // delete question function from redux
-    const [deleteQuestion, { isLoading: questionDeleting }] = useDeleteQuestionMutation();
+    const [deleteQuestion, { isLoading: questionDeleting, isSuccess, error }] = useDeleteQuestionMutation();
 
     //^ selecting the filters
     const handleFilter = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -56,6 +58,7 @@ const JobQuestion = () => {
     const deleteQuestionFromDatabase = async (id: string) => {
         await deleteQuestion(id);
         setQuestionId('');
+        setOpenSnackbar(true);
     };
 
     //! fetching all academic questions
@@ -83,6 +86,16 @@ const JobQuestion = () => {
     if (isLoading || filteredDataLoading || questionDeleting) {
         return (<Loader />);
     }
+    //! close snackbar automatically
+    const handleCloseSnackbar = (
+        event: React.SyntheticEvent | Event,
+        reason?: SnackbarCloseReason
+    ) => {
+        if (reason === 'clickaway') {
+            return;
+        }
+        setOpenSnackbar(false);
+    };
 
     return (
         <Box sx={{ width: '100%', height: 'auto' }}>
@@ -226,6 +239,14 @@ const JobQuestion = () => {
                 deleteFunction={deleteQuestionFromDatabase}
                 handleDeleteClose={handleDeleteClose}
                 open={open}
+            />
+            {/* Alert message */}
+            <Alert
+                message={error?.data?.message as string}
+                openSnackbar={openSnackbar}
+                autoHideDuration={5000}
+                handleCloseSnackbar={handleCloseSnackbar}
+                isSuccess={isSuccess}
             />
         </Box>
 
