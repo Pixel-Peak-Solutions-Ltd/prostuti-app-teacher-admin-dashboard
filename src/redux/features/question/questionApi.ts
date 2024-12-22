@@ -46,9 +46,10 @@ const questionAPI = baseApi.injectEndpoints({
             },
             invalidatesTags: ['Questions']
         }),
+        // academic questions
         getAllAcademicQuestions: builder.query({
             query: (filters) => {
-                let URL = `/question?categoryType=Academic`;
+                let URL = `/question?categoryType=Academic&limit=0`;
                 if (Object.keys(filters).length !== 0) {
                     URL = Object.entries(filters).reduce((acc, [key, value]) => {
                         const prefix = '&';
@@ -61,8 +62,68 @@ const questionAPI = baseApi.injectEndpoints({
                 };
             },
             providesTags: ['Questions']
+        }),
+        // job questions
+        getAllJobQuestions: builder.query({
+            query: (filters) => {
+                let URL = `/question?categoryType=Job&limit=0`;
+                if (Object.keys(filters).length !== 0) {
+                    URL = Object.entries(filters).reduce((acc, [key, value]) => {
+                        const prefix = '&';
+                        return `${acc}${prefix}${key}=${value}`;
+                    }, URL);
+                }
+                return {
+                    url: URL,
+                    method: 'GET'
+                };
+            },
+            providesTags: ['Questions']
+        }),
+        // admission questions
+        getAllAdmissionQuestions: builder.query({
+            query: (filters) => {
+                let URL = `/question?categoryType=Admission&limit=0`;
+                if (Object.keys(filters).length !== 0) {
+                    URL = Object.entries(filters).reduce((acc, [key, value]) => {
+                        const prefix = '&';
+                        return `${acc}${prefix}${key}=${value}`;
+                    }, URL);
+                }
+                return {
+                    url: URL,
+                    method: 'GET'
+                };
+            },
+            providesTags: ['Questions']
+        }),
+        getAllQuestions: builder.query({
+            query: (filters) => {
+                let URL = `/question`;
+                console.log('filters sent to redux:', filters);
+                if (Object.keys(filters).length !== 0) {
+                    URL = Object.entries(filters).reduce((acc, [key, value], index) => {
+                        const prefix = index === 0 ? '?' : '&';
+                        return `${acc}${prefix}${key}=${value}`;
+                    }, URL);
+                }
+                return {
+                    url: `${URL}`,
+                    method: 'GET'
+                };
+            },
+            providesTags: ['Questions']
+        }),
+        deleteQuestion: builder.mutation({
+            query: (id) => {
+                return {
+                    url: `/question/${id}`,
+                    method: 'DELETE'
+                };
+            },
+            invalidatesTags: ['Questions']
         })
     })
 });
 
-export const { useGetCategoryQuery, useCreateQuestionMutation, useGetAllAcademicQuestionsQuery } = questionAPI;
+export const { useGetCategoryQuery, useCreateQuestionMutation, useGetAllAcademicQuestionsQuery, useGetAllQuestionsQuery, useDeleteQuestionMutation, useGetAllJobQuestionsQuery, useGetAllAdmissionQuestionsQuery } = questionAPI;

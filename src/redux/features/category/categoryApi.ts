@@ -1,9 +1,25 @@
 import { baseApi } from "../../api/baseApi";
 
-
-const categoryAPI = baseApi.injectEndpoints({
+const categoryApi = baseApi.injectEndpoints({
     endpoints: (builder) => ({
-       createCategory: builder.mutation({
+        getAllCategoryTypes: builder.query({
+            query: () => {
+                return {
+                    url: '/category/type',
+                    method: 'GET',
+                };
+            },
+            providesTags: ['Categories']
+        }),
+        getCategoryById: builder.query({
+            query: ({ id }) => {
+                return {
+                    url: `/category/${id}`,
+                    method: 'GET',
+                };
+            }
+        }),
+        createCategory: builder.mutation({
             query: (questions) => {
                 return {
                     url: '/category',
@@ -11,10 +27,9 @@ const categoryAPI = baseApi.injectEndpoints({
                     body: questions
                 };
             },
-            // invalidatesTags: ['Categories']
+            invalidatesTags: ['Categories']
         }),
-        
     })
 });
 
-export const { useCreateCategoryMutation } = categoryAPI;
+export const { useGetAllCategoryTypesQuery, useGetCategoryByIdQuery, useCreateCategoryMutation } = categoryApi; 

@@ -9,6 +9,8 @@ import CustomLabel from "../../../shared/components/CustomLabel";
 import Loader from "../../../shared/components/Loader";
 import { useGetTeacherProfileQuery, useUpdateTeacherMutation } from "../../../redux/features/teacher/teacherApi";
 import { FetchBaseQueryError } from '@reduxjs/toolkit/query';
+import { useNavigate } from "react-router-dom";
+import { useAppSelector } from "../../../redux/hooks";
 
 
 interface ErrorResponse {
@@ -41,11 +43,16 @@ const Profile = () => {
         jobType: ""
     });
     const [noFieldError, setNoValidFieldError] = useState<null | string>(null);
-    const [profileImg, setProfileImg] = useState<File | null>(null);
 
+    // below state handles the selected image file and ready it to upload
+    const [profileImg, setProfileImg] = useState<File | null>(null);
+    const navigate = useNavigate();
     // redux state
-    const { data, isLoading, } = useGetTeacherProfileQuery({});
+    const { data: fetchedProfileData, isLoading, } = useGetTeacherProfileQuery({});
     const [updateTeacher, { isLoading: updateLoading, }] = useUpdateTeacherMutation();
+
+    // if token expires redirecting user to login page
+
 
     // making the error message available for only 5 seconds
     useEffect(() => {
@@ -54,16 +61,13 @@ const Profile = () => {
         }, 5000);
     }, [noFieldError]);
 
-
     // handling the loading instances
     if (isLoading || updateLoading) {
         return <Loader />;
     }
 
     // extracting teacher data from backend
-    const { teacherId, email, joinedDate, jobType, subject, name, phone, image } = data.data;
-
-    // console.log(data.data);
+    const { teacherId, email, joinedDate, jobType, subject, name, phone, image } = fetchedProfileData.data;
 
     // form data handler
     //^ handling non file form data
