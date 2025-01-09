@@ -18,6 +18,7 @@ import TestCreation from "../features/teacher/Pages/Materials/Create Test/TestCr
 import ResourcesCreation from "../features/teacher/Pages/Materials/ResourcesCreation";
 import RoutineCreation from "../features/teacher/Pages/Materials/RoutineCreation";
 import NoticeCreation from "../features/teacher/Pages/Materials/NoticeCreation";
+import CoursePreview from "../features/teacher/Pages/Course/CoursePreview";
 
 export const teacherRoutes = [
     {
@@ -26,7 +27,7 @@ export const teacherRoutes = [
     },
     {
         path: 'my-course',
-        element: <MyCourse />
+        element: <MyCourse />,
     },
     {
         path: 'messages',
@@ -63,6 +64,12 @@ export const teacherRoutes = [
         element: <AddQuestion />
     },
 
+    // course preview route
+    {
+        path: 'course-preview/:courseId',
+        element: <CoursePreview />
+    },
+
     // course paths
 
     {
@@ -80,6 +87,10 @@ export const teacherRoutes = [
             {
                 path: 'add-course-material',
                 element: <AddCourseMaterial />
+            },
+            {
+                path: 'course-preview',
+                element: <CoursePreview />
             },
         ]
     },
