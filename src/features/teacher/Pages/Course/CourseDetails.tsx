@@ -5,7 +5,7 @@ import CustomTextField from "../../../../shared/components/CustomTextField";
 import CustomAutoComplete from "../../../../shared/components/CustomAutoComplete";
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import { forwardRef, useImperativeHandle, useState } from "react";
-import { useAppDispatch, useAppSelector } from "../../../../redux/hooks";
+import { useAppDispatch } from "../../../../redux/hooks";
 import { useGetAllCategoryTypesQuery } from "../../../../redux/features/category/categoryApi";
 import Loader from "../../../../shared/components/Loader";
 import { saveCourseIdToStore } from "../../../../redux/features/course/courseSlice";
@@ -30,7 +30,7 @@ const VisuallyHiddenInput = styled('input')({
     whiteSpace: 'nowrap',
     width: 1,
 });
-const CourseDetails = forwardRef<{ submitForm: () => void }, CourseDetailsProps>(({ setActiveSteps }, ref) => {
+const CourseDetails = forwardRef<{ submitForm: () => void; }, CourseDetailsProps>(({ setActiveSteps }, ref) => {
     const [openSnackbar, setOpenSnackbar] = useState(false);
     // below state stores the selected image url
     const [tempCover, setTempCover] = useState('');
@@ -39,7 +39,7 @@ const CourseDetails = forwardRef<{ submitForm: () => void }, CourseDetailsProps>
     // react router hook
     const navigate = useNavigate();
     //for error handling
-    const [error, setError] = useState<any>();
+    // const [error, setError] = useState<any>();
     // course details
     const [courseDetails, setCourseDetails] = useState({
         name: "",
@@ -71,8 +71,8 @@ const CourseDetails = forwardRef<{ submitForm: () => void }, CourseDetailsProps>
 
     // modifying the categoryQueryParams
     // categoryQueryParams.category = 
-    // fetching the teacherId from redux store
-    const { userId } = useAppSelector((state) => state.auth.user);
+    // // fetching the teacherId from redux store
+    // const { userId } = useAppSelector((state) => state.auth.user);
     // fetching all the categories from an api call
     const { data: categoryTypes, isLoading } = useGetAllCategoryTypesQuery({});
     // redux api call for fetching all the categories
@@ -180,7 +180,7 @@ const CourseDetails = forwardRef<{ submitForm: () => void }, CourseDetailsProps>
             setActiveSteps?.(prevStep => prevStep + 1);
         } catch (err) {
             console.log(err);
-            setError(err);
+            // setError(err);
         }
     };
 

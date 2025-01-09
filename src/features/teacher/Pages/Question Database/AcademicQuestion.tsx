@@ -73,7 +73,7 @@ const AcademicQuestion = () => {
 
     const getFieldOptions = (fieldName: string) => {
         // using the initial full dataset for dropdown options
-        return fieldNameObj[fieldName as keyof typeof fieldNameObj || []];
+        return fieldNameObj[fieldName as keyof typeof fieldNameObj] || [];
     };
 
     //*delete confirmation functions
@@ -99,6 +99,17 @@ const AcademicQuestion = () => {
         }
         setOpenSnackbar(false);
     };
+
+    // type guard for error message
+    function hasDataProperty(error): error is { data: { message: string; }; } {
+        return (
+            error !== null &&
+            typeof error === 'object' &&
+            'data' in error &&
+            typeof error.data === 'object' &&
+            'message' in error.data
+        );
+    }
     return (
         <Box sx={{ width: '100%', height: 'auto' }}>
             <Paper variant="outlined" sx={{ width: '100%', height: 'auto', borderRadius: '10px', p: 3 }}>
@@ -245,13 +256,15 @@ const AcademicQuestion = () => {
                 open={open}
             />
             {/* Alert message */}
-            <Alert
-                message={error?.data?.message as string}
-                openSnackbar={openSnackbar}
-                autoHideDuration={5000}
-                handleCloseSnackbar={handleCloseSnackbar}
-                isSuccess={isSuccess}
-            />
+            {hasDataProperty(error) && (
+                <Alert
+                    message={error.data.message}
+                    openSnackbar={openSnackbar}
+                    autoHideDuration={5000}
+                    handleCloseSnackbar={handleCloseSnackbar}
+                    isSuccess={isSuccess}
+                />
+            )}
         </Box>
 
     );
