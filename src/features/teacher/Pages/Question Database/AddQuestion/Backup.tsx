@@ -1,24 +1,24 @@
-const handleAddQuestion = (values: FieldValues) => {
-    console.log(values);
-};
+// const handleAddQuestion = (values: FieldValues) => {
+//     console.log(values);
+// };
 
-const defaultValues = {
-    questionType: "",
-    category: "",
-    division: "",
-    subject: "",
-    chapter: "",
-    question: "",
-    option1: "",
-    option2: "",
-    option3: "",
-    option4: "",
-    designation: "",
-    answerDescription: "",
-};
+// const defaultValues = {
+//     questionType: "",
+//     category: "",
+//     division: "",
+//     subject: "",
+//     chapter: "",
+//     question: "",
+//     option1: "",
+//     option2: "",
+//     option3: "",
+//     option4: "",
+//     designation: "",
+//     answerDescription: "",
+// };
 
 // add question form
-<>
+{/* <>
     <Grid size={index === 0 ? 6 : 12}>
         <CustomLabel fieldName="Question Type" />
         <ProSelectField items={QuestionType} name={`questionType_${index}`} size="small" />
@@ -29,10 +29,10 @@ const defaultValues = {
             <CustomLabel fieldName="Category" />
             <ProInput name={`category_${index}`} placeholder="Academic" type="text" size="small" />
         </Grid>)
-    }
+    } */}
 
-    {/* 2nd row 4 columns */}
-    {
+{/* 2nd row 4 columns */ }
+{/* {
         index === 0 && (
             <>
                 <Grid size={4}>
@@ -48,10 +48,10 @@ const defaultValues = {
                     <ProInput name={`chapter_${index}`} placeholder="Chapter 4: Trail Balance" type="text" size="small" />
                 </Grid>
             </>)
-    }
+    } */}
 
-    {/* mcq row */}
-    <Grid size={12}>
+{/* mcq row */ }
+{/* <Grid size={12}>
         <CustomLabel fieldName='Question' />
         <ProInput name='question' placeholder='Write your question here' type="text" size="small" />
     </Grid>
@@ -62,12 +62,11 @@ const defaultValues = {
             </Grid>
         ))
     }
-    {/* question description */}
     <Grid size={12}>
         <CustomLabel fieldName='Answer Description' />
         <ProInput name={`answerDescription_${index}`} placeholder="Explain the answer here" multiline={true} rows={4} type="text" />
     </Grid>
-</>
+</> */}
 // making an array unique
 // const divisions = [...new Set(categoryData?.data.map((item: ICategory) => (item.division)))] as string[];
 // const universityNames = [...new Set(categoryData?.data.map((item: ICategory) => (item.universityName)))];

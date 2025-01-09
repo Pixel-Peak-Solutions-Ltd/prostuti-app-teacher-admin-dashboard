@@ -16,7 +16,7 @@ const AddQuestion = () => {
     const [openSnackbar, setOpenSnackbar] = useState(false);
 
     // redux api call
-    const [createQuestion, { error, isError, success, result, isSuccess, isLoading }] = useCreateQuestionMutation();
+    const [createQuestion, { error, isSuccess, isLoading }] = useCreateQuestionMutation();
 
     // const categoryId = categoryData?.data[0]._id || '';
     // console.log('Inside add question form:', category_id);

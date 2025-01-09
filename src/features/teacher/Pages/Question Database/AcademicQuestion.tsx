@@ -11,6 +11,7 @@ import Loader from "../../../../shared/components/Loader";
 import CustomTextField from "../../../../shared/components/CustomTextField";
 import DeleteConfirmation from "../../../../shared/components/DeleteConfirmation";
 import Alert from "../../../../shared/components/Alert";
+import { hasDataProperty } from "../../../../utils/TypeGuardForErrorMessage";
 
 const AcademicQuestion = () => {
     const [filter, setFilter] = useState<Record<string, string | undefined>>({});
@@ -100,16 +101,6 @@ const AcademicQuestion = () => {
         setOpenSnackbar(false);
     };
 
-    // type guard for error message
-    function hasDataProperty(error): error is { data: { message: string; }; } {
-        return (
-            error !== null &&
-            typeof error === 'object' &&
-            'data' in error &&
-            typeof error.data === 'object' &&
-            'message' in error.data
-        );
-    }
     return (
         <Box sx={{ width: '100%', height: 'auto' }}>
             <Paper variant="outlined" sx={{ width: '100%', height: 'auto', borderRadius: '10px', p: 3 }}>
