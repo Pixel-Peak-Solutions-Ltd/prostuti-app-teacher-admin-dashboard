@@ -50,6 +50,12 @@ const courseApi = baseApi.injectEndpoints({
                 method: 'GET',
             })
         }),
+        getCoursePreview: builder.query({
+            query: ({ courseId }) => ({
+                url: `/course/preview/${courseId}`,
+                method: 'GET',
+            })
+        }),
         getCategoryForCourse: builder.query({
             query: (questionObj: Record<string, string>) => {
                 // filters: type: questionObj.category_0, division,subject, chapter
@@ -82,4 +88,4 @@ const courseApi = baseApi.injectEndpoints({
 });
 
 
-export const { useSaveCourseMutation, useSaveLessonMutation, useGetLessonsByCourseIdQuery, useGetCourseByIdQuery, useGetCategoryForCourseQuery, useGetCourseByTeacherQuery } = courseApi;
+export const { useSaveCourseMutation, useSaveLessonMutation, useGetLessonsByCourseIdQuery, useGetCourseByIdQuery, useGetCategoryForCourseQuery, useGetCourseByTeacherQuery, useGetCoursePreviewQuery } = courseApi;

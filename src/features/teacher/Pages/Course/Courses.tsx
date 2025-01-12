@@ -62,7 +62,7 @@ const Courses = ({ courses }: any) => {
                 </Box>
                 <CustomTabPanel value={value} index={0}>
                     <Box sx={{ width: '100%', height: courses.length > 4 ? 'auto' : '60vh' }}>
-                        <Grid container rowSpacing={15} columnSpacing={2}>
+                        <Grid container rowSpacing={2} columnSpacing={2}>
                             {
                                 courses.map(course => (
                                     <Grid size={3}>
