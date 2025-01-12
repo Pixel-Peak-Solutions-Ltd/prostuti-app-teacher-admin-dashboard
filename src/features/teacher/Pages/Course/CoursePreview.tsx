@@ -1,4 +1,4 @@
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { useGetCoursePreviewQuery } from "../../../../redux/features/course/courseApi";
 import Loader from "../../../../shared/components/Loader";
 import { Box, Button, Card, Paper, Typography } from "@mui/material";
@@ -8,6 +8,7 @@ import test_icon from '../../../../assets/images/test-icon.png';
 import assignment_icon from '../../../../assets/images/assignment-icon.png';
 import resource_icon from '../../../../assets/images/resource-icon.png';
 import video_icon from '../../../../assets/images/video-icon.png';
+import ArrowOutwardIcon from '@mui/icons-material/ArrowOutward';
 
 const CoursePreview = () => {
     const { courseId } = useParams();
@@ -39,63 +40,82 @@ const CoursePreview = () => {
                         {lessons.map((lesson) => (
                             <Grid size={12}>
                                 <Typography variant="h6" sx={{ fontSize: "1rem", fontWeight: "600" }}>{lesson.number}: {lesson?.name}</Typography>
-                                {/* assignments */}
-                                {
-                                    lesson?.assignments.length > 0 && (
-                                        <Box>
-                                            {lesson?.assignments.map((assignment, index) => (
-                                                <>
-                                                    <Card variant="outlined"
-                                                        sx={{ display: "flex", alignItems: "center", gap: 2, mt: 0.8, px: 1.5, py: 0.8, borderRadius: 2 }}>
-                                                        <Box>
-                                                            <img src={assignment_icon} style={{ width: "24px", height: "24px" }} />
-                                                        </Box>
-                                                        <Box>
-                                                            <Typography variant="h6" sx={{ fontSize: "14px", fontWeight: "600" }} color="#475467">Assignment {index + 1}</Typography>
-                                                            <Typography variant="subtitle1" sx={{ fontSize: "14px", fontWeight: "500" }} color="#475467">{assignment?.assignmentNo}</Typography>
-                                                        </Box>
-                                                    </Card>
-                                                </>
-                                            ))}
-                                        </Box>)
-                                }
                                 {/* record classes */}
                                 {
                                     lesson?.recodedClasses.length > 0 && (
                                         <Box>
                                             {lesson?.recodedClasses.map((recordClass, index) => (
-                                                <>
+                                                <Link to={`/teacher/record-update/${recordClass?._id}`} style={{ textDecoration: "none" }}>
                                                     <Card variant="outlined"
                                                         sx={{ display: "flex", alignItems: "center", gap: 2, mt: 0.8, px: 1.5, py: 0.8, borderRadius: 2 }}>
-                                                        <Box>
+                                                        <Box sx={{ width: "3%" }}>
                                                             <img src={video_icon} style={{ width: "24px", height: "24px" }} />
                                                         </Box>
-                                                        <Box>
-                                                            <Typography variant="h6" sx={{ fontSize: "14px", fontWeight: "600" }} color="#475467">Record Class {index + 1}</Typography>
-                                                            <Typography variant="subtitle1" sx={{ fontSize: "14px", fontWeight: "500" }} color="#475467">{recordClass?.recodeClassName}</Typography>
+                                                        <Box sx={{ width: "97%", display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                                            <Box>
+                                                                <Typography variant="h6" sx={{ fontSize: "14px", fontWeight: "600" }} color="#475467">Record Class {index + 1}</Typography>
+                                                                <Typography variant="subtitle1" sx={{ fontSize: "14px", fontWeight: "500" }} color="#475467">{recordClass?.recodeClassName}</Typography>
+                                                            </Box>
+                                                            <Box sx={{ justifySelf: 'flex-end' }}>
+                                                                <ArrowOutwardIcon color="primary" />
+                                                            </Box>
                                                         </Box>
                                                     </Card>
-                                                </>
+                                                </Link>
                                             ))}
                                         </Box>)
                                 }
+                                {/* assignments */}
+                                {
+                                    lesson?.assignments.length > 0 && (
+                                        <Box>
+                                            {lesson?.assignments.map((assignment, index) => (
+                                                <Link to={`/teacher/assignment-update/${assignment?._id}`} style={{ textDecoration: "none" }}>
+                                                    <Card variant="outlined"
+                                                        sx={{ display: "flex", alignItems: "center", gap: 2, mt: 0.8, px: 1.5, py: 0.8, borderRadius: 2 }}>
+                                                        <Box sx={{ width: "3%" }}>
+                                                            <img src={assignment_icon} style={{ width: "24px", height: "24px" }} />
+                                                        </Box>
+                                                        <Box sx={{ width: "97%", display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                                            <Box>
+                                                                <Typography variant="h6" sx={{ fontSize: "14px", fontWeight: "600" }} color="#475467">Assignment {index + 1}</Typography>
+                                                                <Typography variant="subtitle1" sx={{ fontSize: "14px", fontWeight: "500" }} color="#475467">{assignment?.assignmentNo}</Typography>
+                                                            </Box>
+                                                            <Box sx={{ justifySelf: 'flex-end' }}>
+                                                                <ArrowOutwardIcon color="primary" />
+                                                            </Box>
+                                                        </Box>
+                                                    </Card>
+                                                </Link>
+                                            ))}
+                                        </Box>)
+                                }
+
                                 {/* resources */}
                                 {
                                     lesson?.resources.length > 0 && (
                                         <Box>
                                             {lesson?.resources.map((resource, index) => (
-                                                <>
+                                                <Link to={`/teacher/resource-update/${resource?._id}`} style={{ textDecoration: "none" }}>
                                                     <Card variant="outlined"
                                                         sx={{ display: "flex", alignItems: "center", gap: 2, mt: 0.8, px: 1.5, py: 0.8, borderRadius: 2 }}>
-                                                        <Box>
+                                                        <Box sx={{
+                                                            width: "3%"
+                                                        }}>
                                                             <img src={resource_icon} style={{ width: "24px", height: "24px" }} />
                                                         </Box>
-                                                        <Box>
-                                                            <Typography variant="h6" sx={{ fontSize: "14px", fontWeight: "600" }} color="#475467">Resource {index + 1}</Typography>
-                                                            <Typography variant="subtitle1" sx={{ fontSize: "14px", fontWeight: "500" }} color="#475467">{resource?.name}</Typography>
+                                                        <Box sx={{ width: "97%", display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                                            <Box>
+                                                                <Typography variant="h6" sx={{ fontSize: "14px", fontWeight: "600" }} color="#475467">Resource {index + 1}</Typography>
+                                                                <Typography variant="subtitle1" sx={{ fontSize: "14px", fontWeight: "500" }} color="#475467">{resource?.name}</Typography>
+                                                            </Box>
+                                                            <Box sx={{ justifySelf: 'flex-end' }}>
+                                                                <ArrowOutwardIcon color="primary" />
+                                                            </Box>
                                                         </Box>
+
                                                     </Card>
-                                                </>
+                                                </Link>
                                             ))}
                                         </Box>)
                                 }
@@ -104,18 +124,25 @@ const CoursePreview = () => {
                                     lesson?.resources.length > 0 && (
                                         <Box>
                                             {lesson?.tests.map((test, index) => (
-                                                <>
+                                                <Link to={`/teacher/test-update/${test?._id}`} style={{ textDecoration: "none" }}>
                                                     <Card variant="outlined"
                                                         sx={{ display: "flex", alignItems: "center", gap: 2, mt: 0.8, px: 1.5, py: 0.8, borderRadius: 2 }}>
-                                                        <Box>
+                                                        <Box sx={{
+                                                            width: "3%"
+                                                        }}>
                                                             <img src={test_icon} style={{ width: "24px", height: "24px" }} />
                                                         </Box>
-                                                        <Box>
-                                                            <Typography variant="h6" sx={{ fontSize: "14px", fontWeight: "600" }} color="#475467">Test {index + 1}</Typography>
-                                                            <Typography variant="subtitle1" sx={{ fontSize: "14px", fontWeight: "500" }} color="#475467">{test?.name}</Typography>
+                                                        <Box sx={{ width: "97%", display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                                            <Box>
+                                                                <Typography variant="h6" sx={{ fontSize: "14px", fontWeight: "600" }} color="#475467">Test {index + 1}</Typography>
+                                                                <Typography variant="subtitle1" sx={{ fontSize: "14px", fontWeight: "500" }} color="#475467">{test?.name}</Typography>
+                                                            </Box>
+                                                            <Box sx={{ justifySelf: 'flex-end' }}>
+                                                                <ArrowOutwardIcon color="primary" />
+                                                            </Box>
                                                         </Box>
                                                     </Card>
-                                                </>
+                                                </Link>
                                             ))}
                                         </Box>)
                                 }

@@ -1,22 +1,22 @@
 import { Box, Button, Paper, SnackbarCloseReason, styled, Typography, IconButton } from "@mui/material";
-import { Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import Grid from '@mui/material/Grid2';
 import CustomAutoComplete from "../../../../shared/components/CustomAutoComplete";
 import CustomLabel from "../../../../shared/components/CustomLabel";
 import CustomTextField from "../../../../shared/components/CustomTextField";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
-import { Dayjs } from "dayjs";
+import dayjs, { Dayjs } from "dayjs";
 import { useGetLessonsByCourseIdQuery } from "../../../../redux/features/course/courseApi";
 import { useAppSelector } from "../../../../redux/hooks";
 import Loader from "../../../../shared/components/Loader";
 import Alert from "../../../../shared/components/Alert";
-import { useCreateRecordClassMutation } from "../../../../redux/features/materials/materialsApi";
+import { useCreateRecordClassMutation, useGetRecordClassByIdQuery } from "../../../../redux/features/materials/materialsApi";
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import LinearWithValueLabel from "../../../../shared/components/ProgessBar";
 import MP4 from '../../../../assets/images/MP4-icon.png';
@@ -41,6 +41,10 @@ const VisuallyHiddenInput = styled('input')({
     width: 1,
 });
 const RecordClass = () => {
+    // record class id while updating
+    const { recordId } = useParams();
+    // checking if user coming form course preview page
+    const isEditing = recordId ? true : false;
     // local states
     const [recordDetails, setRecordDetails] = useState<Record<string, string>>({});
     const [openSnackbar, setOpenSnackbar] = useState(false);
@@ -57,9 +61,29 @@ const RecordClass = () => {
     // making api call to save the record class
     const [createRecordClass, { isSuccess, isLoading: recordClassCreationLoader }] = useCreateRecordClassMutation();
 
-    if (courseLoading) {
+    // api call to get existing record class data for update operation
+
+    const { data: recordData, isLoading: recordClassFetching } = useGetRecordClassByIdQuery({ recordId });
+
+    // for updating the record class setting the state to the existing value
+    useEffect(() => {
+        if (recordData && isEditing) {
+            setRecordDetails({
+                recodeClassName: recordData.data.recodeClassName,
+                classDetails: recordData.data.classDetails,
+                classDate: recordData.data.classDate,
+                lessonName: recordData.data.lessonName
+            });
+        }
+    }, [recordData, isEditing]);
+
+    // handling data loading
+
+    if (courseLoading || recordClassFetching) {
         return (<Loader />);
     }
+
+    const { recodeClassName, classDetails, classDate } = recordData.data;
 
     const lessonNames = lessonData?.data.map((item: typeof lessonData) => item.name);
     const lesson_id = lessonData?.data.filter((item: typeof lessonData) => item.name === recordDetails?.lessonName);
@@ -161,7 +185,6 @@ const RecordClass = () => {
 
     return (
         <>
-
             <Box sx={{ width: '100%', height: 'auto' }}>
                 <Paper variant="outlined" sx={{ width: '100%', height: 'auto', borderRadius: '10px', p: 3 }}>
                     {/* top title and button section */}
@@ -173,7 +196,7 @@ const RecordClass = () => {
                                     <ArrowBackIcon fontSize='small' />
                                 </Button>
                             </Link>
-                            <Typography variant='h3'>Record Class Creation</Typography>
+                            <Typography variant='h3'>{isEditing ? `Update Record Class` : `Record Class Creation`}</Typography>
                         </Box>
                         {/* continue button */}
                         {/* <Link to='/teacher/create-course/create-lessons'> */}
@@ -197,24 +220,25 @@ const RecordClass = () => {
                                 <form onSubmit={handleSubmit}>
                                     <Paper variant='outlined' sx={{ width: '100%', height: '100%', p: 2, borderRadius: '8px', mb: 3 }}>
                                         <Grid container spacing={3} >
-                                            {/* 1st row */}
+                                            {/* 1st row --> lesson name selection field */}
                                             <Grid size={12}>
                                                 <CustomLabel fieldName="Lesson Name" />
                                                 <CustomAutoComplete
                                                     name='lessonName' options={lessonNames || []}
                                                     handleInput={handleRecordDetailsInput}
                                                     value={recordDetails?.lessonName}
+                                                    // placeholder={}
                                                     required
                                                 />
                                             </Grid>
-                                            {/* 2nd row */}
+                                            {/* 2nd row --> record class name */}
                                             <Grid size={8}>
                                                 <CustomLabel fieldName="Record Class Name" />
                                                 <CustomTextField
                                                     name='recodeClassName'
                                                     handleInput={handleRecordDetailsInput}
-                                                    value={recordDetails?.recodeClassName}
-                                                    placeholder="Enter Record Class Name"
+                                                    value={recordDetails?.recodeClassName || ''}
+                                                    placeholder={isEditing ? recodeClassName : "Enter Record Class Name"}
                                                     required
                                                 />
                                             </Grid>
@@ -223,7 +247,9 @@ const RecordClass = () => {
                                                 <CustomLabel fieldName="Record Class Date" />
                                                 <LocalizationProvider dateAdapter={AdapterDayjs}>
                                                     {/* <DatePicker sx={{ width: '100%', height: '40px', borderRadius: "10px" }} /> */}
-                                                    <StyledDatePicker onChange={handleDateChange} />
+                                                    <StyledDatePicker
+                                                        value={recordDetails?.classDate ? dayjs(recordDetails.classDate) : null}
+                                                        onChange={handleDateChange} />
                                                 </LocalizationProvider>
                                             </Grid>
                                             {/* 3rd row */}
@@ -233,7 +259,7 @@ const RecordClass = () => {
                                                     name='classDetails' multiline={true} rows={6}
                                                     placeholder="Enter Class Details"
                                                     handleInput={handleRecordDetailsInput}
-                                                    value={recordDetails?.classDetails}
+                                                    value={recordDetails?.classDetails || ''}
                                                 />
                                             </Grid>
                                             {/* 3rd row */}

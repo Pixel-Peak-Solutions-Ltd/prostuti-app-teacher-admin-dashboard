@@ -11,6 +11,14 @@ const materialApi = baseApi.injectEndpoints({
                 };
             }
         }),
+        getRecordClassById: builder.query({
+            query: ({ recordId }) => {
+                return {
+                    url: `/recoded-class/${recordId}`,
+                    method: 'GET',
+                };
+            }
+        }),
         createResource: builder.mutation({
             query: (resourceData) => {
                 console.log('Data received in API call:', resourceData.get('files'));
@@ -42,4 +50,10 @@ const materialApi = baseApi.injectEndpoints({
     })
 });
 
-export const { useCreateRecordClassMutation, useCreateResourceMutation, useCreateAssignmentMutation, useCreateTestMutation } = materialApi;
+export const {
+    useCreateRecordClassMutation,
+    useCreateResourceMutation,
+    useCreateAssignmentMutation,
+    useCreateTestMutation,
+    useGetRecordClassByIdQuery
+} = materialApi;

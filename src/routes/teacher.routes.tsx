@@ -70,8 +70,25 @@ export const teacherRoutes = [
         element: <CoursePreview />
     },
 
-    // course paths
+    // course update routes
+    {
+        path: 'record-update/:recordId',
+        element: <RecordClass />
+    },
+    {
+        path: 'assignment-update/:assignmentId',
+        element: <AssignmentCreation />
+    },
+    {
+        path: 'resource-update/:resourceId',
+        element: <ResourcesCreation />
+    },
+    {
+        path: 'test-update/:testId',
+        element: <TestCreation />
+    },
 
+    // course paths
     {
         path: 'create-course',
         element: <CreateCourse />,
