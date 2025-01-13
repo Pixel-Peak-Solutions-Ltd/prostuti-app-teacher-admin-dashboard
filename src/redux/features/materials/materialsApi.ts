@@ -9,7 +9,8 @@ const materialApi = baseApi.injectEndpoints({
                     method: 'POST',
                     body: recordClassData
                 };
-            }
+            },
+            invalidatesTags: ['Record']
         }),
         getRecordClassById: builder.query({
             query: ({ recordId }) => {
@@ -17,11 +18,22 @@ const materialApi = baseApi.injectEndpoints({
                     url: `/recoded-class/${recordId}`,
                     method: 'GET',
                 };
-            }
+            },
+            providesTags: ['Record'],
+        }),
+        updateRecordClass: builder.mutation({
+            query: ({ recordClassData, recordClassId }) => {
+                return {
+                    url: `/recoded-class/${recordClassId}`,
+                    method: 'PATCH',
+                    body: recordClassData
+                };
+            },
+            invalidatesTags: ['Record']
         }),
         createResource: builder.mutation({
             query: (resourceData) => {
-                console.log('Data received in API call:', resourceData.get('files'));
+                // console.log('Data received in API call:', resourceData.get('files'));
                 return {
                     url: '/resource',
                     method: 'POST',
@@ -55,5 +67,6 @@ export const {
     useCreateResourceMutation,
     useCreateAssignmentMutation,
     useCreateTestMutation,
-    useGetRecordClassByIdQuery
+    useGetRecordClassByIdQuery,
+    useUpdateRecordClassMutation
 } = materialApi;

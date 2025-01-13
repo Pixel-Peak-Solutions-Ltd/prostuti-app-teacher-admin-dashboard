@@ -48,13 +48,15 @@ const courseApi = baseApi.injectEndpoints({
             query: ({ courseId }) => ({
                 url: `/course/${courseId}`,
                 method: 'GET',
-            })
+            }),
+            providesTags: ['Courses']
         }),
         getCoursePreview: builder.query({
             query: ({ courseId }) => ({
                 url: `/course/preview/${courseId}`,
                 method: 'GET',
-            })
+            }),
+            providesTags: ['Courses']
         }),
         getCategoryForCourse: builder.query({
             query: (questionObj: Record<string, string>) => {
