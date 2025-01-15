@@ -132,6 +132,8 @@ const AssignmentCreation = () => {
             );
             setFiles(prevFiles => [...prevFiles, ...uniqueNewFiles]);
         }
+        // Reset the input to allow selecting the same file again
+        e.target.value = "";
     };
 
     //~deleting a file from the local state
@@ -181,6 +183,7 @@ const AssignmentCreation = () => {
             if (isEditing) {
                 console.log('Updating assignment');
                 await updateAssignment({ assignmentData, assignmentId });
+                setFiles([]);
             } else {
                 await createAssignment(assignmentData);
                 setAssignmentDetails({});
@@ -235,6 +238,7 @@ const AssignmentCreation = () => {
                             <Loader />
                         )
                     }
+                    {/* upload form and button section */}
                     {
                         !assignmentCreationLoading && (
                             <Box sx={{ display: "flex", flexDirection: 'column', gap: '20px' }}>
@@ -308,12 +312,11 @@ const AssignmentCreation = () => {
                                                 </Typography>
                                             </Grid>
                                             {
-                                                (isEditing && files.length === 0) &&
-                                                filteredUploadFileResources.map((assignment, index) => (
+                                                isEditing && filteredUploadFileResources.map((assignment, index) => (
                                                     <>
-                                                        <Grid size={12}>
+                                                        <Grid size={12} sx={{ zIndex: 3 }} key={index}>
                                                             <Card variant="outlined"
-                                                                sx={{ display: "flex", alignItems: "center", justifyContent: 'space-between', gap: 2, mt: 0.8, px: 1.5, py: 0.8, borderRadius: 2, zIndex: 100 }}>
+                                                                sx={{ display: "flex", alignItems: "center", justifyContent: 'space-between', gap: 2, mt: 0.8, px: 1.5, py: 0.8, borderRadius: 2 }}>
                                                                 <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
                                                                     <img src={PDF}
                                                                         style={{
@@ -352,7 +355,7 @@ const AssignmentCreation = () => {
                                             <Grid size={12}>
                                                 {
                                                     files.length !== 0 && (
-                                                        <Box>
+                                                        <Box sx={{ zIndex: 3 }}>
                                                             {
                                                                 files.map((file, index) => (
                                                                     <>
@@ -374,7 +377,6 @@ const AssignmentCreation = () => {
 
                                                                             {/* progression bar */}
                                                                             <Box sx={{ width: '90%' }}>
-
                                                                                 <LinearWithValueLabel />
                                                                             </Box>
                                                                         </Paper>
@@ -387,7 +389,7 @@ const AssignmentCreation = () => {
                                                 }
                                                 {/* </Card> */}
                                                 <Grid size={12} sx={{ display: 'flex', justifyContent: 'center', mt: 1 }}>
-                                                    <Box>
+                                                    <Box sx={{ zIndex: 3 }}>
                                                         {/* new image upload button */}
                                                         <Button component="label"
                                                             size="small"
@@ -396,6 +398,7 @@ const AssignmentCreation = () => {
                                                             startIcon={<CloudUploadIcon />}
                                                             sx={{
                                                                 color: "gray.700", borderRadius: "8px", cursor: "pointer",
+
                                                                 // backgroundColor: tempCover ? "white" : 'transparent'
                                                             }}
                                                         >
@@ -426,14 +429,14 @@ const AssignmentCreation = () => {
                                             }
 
                                         </Grid>
-                                        <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: "20px", mt: 3 }}>
+                                        <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: "20px", mt: 3, zIndex: 3 }}>
                                             <Button
                                                 type='submit'
                                                 variant='contained'
                                                 size='small'
                                                 startIcon={<CloudUploadIcon />}
                                                 sx={{ width: '170px', height: '40px', borderRadius: '8px', fontSize: '14px' }}>
-                                                Upload Class
+                                                {isEditing ? 'Update' : 'Upload Assignment'}
                                             </Button>
                                         </Box>
                                     </Paper>
