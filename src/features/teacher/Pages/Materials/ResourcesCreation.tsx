@@ -1,4 +1,4 @@
-import { Box, Button, IconButton, Paper, SnackbarCloseReason, Typography, styled } from "@mui/material";
+import { Box, Button, Card, IconButton, Paper, SnackbarCloseReason, Typography, styled } from "@mui/material";
 import { Link, useParams } from "react-router-dom";
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
@@ -11,14 +11,14 @@ import CustomTextField from "../../../../shared/components/CustomTextField";
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
-import { Dayjs } from "dayjs";
-import { useState } from "react";
+import dayjs, { Dayjs } from "dayjs";
+import { useEffect, useState } from "react";
 import Loader from "../../../../shared/components/Loader";
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import PDF from '../../../../assets/images/PDF.png';
 import LinearWithValueLabel from "../../../../shared/components/ProgessBar";
-import { useCreateResourceMutation } from "../../../../redux/features/materials/materialsApi";
+import { useCreateResourceMutation, useGetResourceByIdQuery, useUpdateResourceMutation } from "../../../../redux/features/materials/materialsApi";
 import Alert from "../../../../shared/components/Alert";
 
 const StyledDatePicker = styled(DatePicker)({
@@ -42,22 +42,48 @@ const VisuallyHiddenInput = styled('input')({
 });
 const ResourcesCreation = () => {
     const { resourceId } = useParams();
+    // checking if user coming form course preview page
+    const isEditing = resourceId ? true : false;
     // local states
     const [resourceDetails, setResourceDetails] = useState<Record<string, string>>({});
     const [openSnackbar, setOpenSnackbar] = useState(false);
     const [fileError, setFileError] = useState<string | null>(null);
     // below state handles the selected image file and ready it to upload
     const [files, setFiles] = useState<File[]>([]);
+    const [cancelledResource, setCancelledResource] = useState<any>([]);
+    const finalCancellation: any = [...cancelledResource];
     // fetching courseId from the local redux store
     const courseId = useAppSelector((state) => state.courseAndLessonId.id.course_id);
     // getting all the lessons of the corresponding course
     const { data: lessonData, isLoading: courseLoading } = useGetLessonsByCourseIdQuery({ courseId });
     const [createResource, { isLoading: resourceCreationLoading, isSuccess }] = useCreateResourceMutation();
 
-    if (courseLoading) {
+    // making api call to update the record class
+    const [updateResource, { isSuccess: resourceUpdateSuccess, isLoading: resourceUpdateLoader }] = useUpdateResourceMutation();
+
+    // api call to get existing record class data for update operation
+    const { data: resourceData, isLoading: resourceFetching } = useGetResourceByIdQuery({ resourceId }, { skip: !resourceId });
+
+    // for updating the record class setting the state to the existing value
+    useEffect(() => {
+        if (resourceData && isEditing) {
+            setResourceDetails({
+                name: resourceData.data.name,
+                resourceDate: resourceData.data.resourceDate,
+                canceledResources: finalCancellation
+            });
+        }
+    }, [resourceData, isEditing]);
+
+    if (courseLoading || resourceFetching || resourceUpdateLoader) {
         return (<Loader />);
     }
 
+    const { name, uploadFileResources = [] } = resourceData?.data || {};
+
+    const filteredUploadFileResources = uploadFileResources.filter(
+        (resource) => !cancelledResource.includes(resource)
+    );
     // data filtering
     const lessonNames = lessonData?.data.map((item: typeof lessonData) => item.name);
     const lesson_id = lessonData?.data.filter((item: typeof lessonData) => item.name === resourceDetails?.lessonName);
@@ -101,6 +127,8 @@ const ResourcesCreation = () => {
             );
             setFiles(prevFiles => [...prevFiles, ...uniqueNewFiles]);
         }
+        // Reset the input to allow selecting the same file again
+        e.target.value = "";
     };
 
     //* handling the submit function
@@ -109,12 +137,21 @@ const ResourcesCreation = () => {
         // removing lessonName field as it's not necessary
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const selectedResourceDetails = (({ lessonName, ...rest }) => rest)(resourceDetails);
-        selectedResourceDetails.lesson_id = lesson_id[0]._id;
+        selectedResourceDetails.lesson_id = lesson_id[0]?._id;
         selectedResourceDetails.course_id = courseId;
+
+        const updateData = {
+            ...resourceDetails,
+            canceledResources: finalCancellation
+        };
         // creating a new form data
         const resourceData = new FormData();
 
-        resourceData.append('data', JSON.stringify(selectedResourceDetails));
+        if (isEditing) {
+            resourceData.append('data', JSON.stringify(updateData));
+        } else {
+            resourceData.append('data', JSON.stringify(selectedResourceDetails));
+        }
 
         // inserting pdf files to the files key inside the formData
 
@@ -129,10 +166,17 @@ const ResourcesCreation = () => {
 
         // sending the request to the server via redux tooklit
         try {
-            await createResource(resourceData);
+            if (isEditing) {
+                console.log('Updating resource');
+                await updateResource({ resourceData, resourceId });
+                setFiles([]);
+            } else {
+                await createResource(resourceData);
+
+                setResourceDetails({});
+                setFiles([]);
+            }
             setOpenSnackbar(true);
-            setResourceDetails({});
-            setFiles([]);
         } catch (err) {
             console.log(err);
         }
@@ -188,22 +232,27 @@ const ResourcesCreation = () => {
                                     <Paper variant='outlined' sx={{ width: '100%', height: '100%', p: 2, borderRadius: '8px', mb: 3 }}>
                                         <Grid container spacing={3} >
                                             {/* 1st row - lesson name */}
-                                            <Grid size={12}>
-                                                <CustomLabel fieldName="Lesson Name" />
-                                                <CustomAutoComplete
-                                                    name='lessonName' options={lessonNames || []}
-                                                    handleInput={handleResourceDetailsInput}
-                                                    value={resourceDetails?.lessonName}
-                                                    required
-                                                />
-                                            </Grid>
+                                            {
+                                                !isEditing && (
+                                                    <Grid size={12}>
+                                                        <CustomLabel fieldName="Lesson Name" />
+                                                        <CustomAutoComplete
+                                                            name='lessonName' options={lessonNames || []}
+                                                            handleInput={handleResourceDetailsInput}
+                                                            value={resourceDetails?.lessonName}
+                                                            required
+                                                        />
+                                                    </Grid>
+                                                )
+                                            }
+
                                             {/* 2nd row - resource name & date picker */}
                                             <Grid size={8}>
                                                 <CustomLabel fieldName="Resource Name" />
                                                 <CustomTextField
                                                     name='name'
                                                     handleInput={handleResourceDetailsInput}
-                                                    value={resourceDetails?.name}
+                                                    value={resourceDetails?.name || ''}
                                                     placeholder="Enter Resource Name"
                                                     required
                                                 />
@@ -212,11 +261,59 @@ const ResourcesCreation = () => {
                                             <Grid size={4} sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
                                                 <CustomLabel fieldName="Class Date" />
                                                 <LocalizationProvider dateAdapter={AdapterDayjs}>
-                                                    <StyledDatePicker onChange={handleDateChange} />
+                                                    <StyledDatePicker
+                                                        value={resourceDetails?.resourceDate ? dayjs(resourceDetails?.resourceDate) : null}
+                                                        onChange={handleDateChange}
+                                                    />
                                                 </LocalizationProvider>
                                             </Grid>
                                             {/* 3rd row */}
                                             {/* Resource file upload field */}
+                                            <Grid size={12}>
+                                                <Typography variant="h6" sx={{ fontSize: "1rem", fontWeight: "500" }} color="grey.700">
+                                                    Uploaded Resources
+                                                </Typography>
+                                            </Grid>
+                                            {
+                                                isEditing && filteredUploadFileResources.map((resource, index) => (
+                                                    <>
+                                                        <Grid size={12} sx={{ zIndex: 3 }} key={index}>
+                                                            <Card variant="outlined"
+                                                                sx={{ display: "flex", alignItems: "center", justifyContent: 'space-between', gap: 2, mt: 0.8, px: 1.5, py: 0.8, borderRadius: 2 }}>
+                                                                <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
+                                                                    <img src={PDF}
+                                                                        style={{
+                                                                            width: '40px',
+                                                                            height: '40px'
+                                                                        }}
+                                                                    />
+                                                                    <Typography variant="subtitle1" color="grey.500">
+                                                                        {resource.originalName}
+                                                                    </Typography>
+                                                                </Box>
+                                                                <IconButton
+                                                                    onClick={
+                                                                        () => {
+                                                                            setCancelledResource((prevState) => [...prevState, resource]);
+                                                                            console.log(index);
+                                                                            // // console.log(Files[index]);
+                                                                            // canceledAssignment.push(assignment);
+                                                                            setResourceDetails((prevState) => ({
+                                                                                ...prevState,
+                                                                                canceledResources: cancelledResource
+                                                                            }));
+                                                                            console.log('cancelled resource onclick', cancelledResource);
+                                                                        }
+
+                                                                    }
+                                                                >
+                                                                    <DeleteForeverIcon />
+                                                                </IconButton>
+                                                            </Card>
+                                                        </Grid>
+                                                    </>
+                                                ))
+                                            }
                                             <Grid size={12}>
                                                 {
                                                     files.length !== 0 && (
@@ -317,7 +414,7 @@ const ResourcesCreation = () => {
                 openSnackbar={openSnackbar}
                 autoHideDuration={5000}
                 handleCloseSnackbar={handleCloseSnackbar}
-                isSuccess={isSuccess}
+                isSuccess={isSuccess || resourceUpdateSuccess}
             />
         </>
     );
