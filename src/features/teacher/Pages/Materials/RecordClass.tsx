@@ -66,7 +66,7 @@ const RecordClass = () => {
     const [updateRecordClass, { isSuccess: updateSuccess, isLoading: recordClassUpdateLoader }] = useUpdateRecordClassMutation();
 
     // api call to get existing record class data for update operation
-    const { data: recordData, isLoading: recordClassFetching } = useGetRecordClassByIdQuery({ recordId });
+    const { data: recordData, isLoading: recordClassFetching } = useGetRecordClassByIdQuery({ recordId }, { skip: !recordId });
 
     // for updating the record class setting the state to the existing value
     useEffect(() => {
@@ -85,10 +85,10 @@ const RecordClass = () => {
         return (<Loader />);
     }
 
-    console.log('fetched record data:', recordData.data);
 
 
-    const { recodeClassName, _id: recordClassId, classVideoURL: { originalName }, course_id } = recordData.data;
+    const { recodeClassName, _id: recordClassId, classVideoURL: { originalName } = {}, course_id } = recordData?.data || {};
+    console.log('fetched record data:', recordData?.data);
 
     const lessonNames = lessonData?.data.map((item: typeof lessonData) => item.name);
     const lesson_id = lessonData?.data.filter((item: typeof lessonData) => item.name === recordDetails?.lessonName);

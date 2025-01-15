@@ -31,6 +31,7 @@ const materialApi = baseApi.injectEndpoints({
             },
             invalidatesTags: ['Record']
         }),
+        // resource operations
         createResource: builder.mutation({
             query: (resourceData) => {
                 // console.log('Data received in API call:', resourceData.get('files'));
@@ -39,8 +40,29 @@ const materialApi = baseApi.injectEndpoints({
                     method: 'POST',
                     body: resourceData
                 };
-            }
+            },
+            invalidatesTags: ['Resource']
         }),
+        getResourceById: builder.query({
+            query: ({ resourceId }) => {
+                return {
+                    url: `/resource/${resourceId}`,
+                    method: 'GET',
+                };
+            },
+            providesTags: ['Resource'],
+        }),
+        updateResource: builder.mutation({
+            query: ({ resourceData, resourceId }) => {
+                return {
+                    url: `/resource/${resourceId}`,
+                    method: 'PATCH',
+                    body: resourceData
+                };
+            },
+            invalidatesTags: ['Resource']
+        }),
+        // assignment operations
         createAssignment: builder.mutation({
             query: (assignmentData) => {
                 return {
@@ -48,7 +70,27 @@ const materialApi = baseApi.injectEndpoints({
                     method: 'POST',
                     body: assignmentData
                 };
-            }
+            },
+            invalidatesTags: ['Assignment']
+        }),
+        getAssignmentById: builder.query({
+            query: ({ assignmentId }) => {
+                return {
+                    url: `/assignment/${assignmentId}`,
+                    method: 'GET',
+                };
+            },
+            providesTags: ['Assignment'],
+        }),
+        updateAssignment: builder.mutation({
+            query: ({ assignmentData, assignmentId }) => {
+                return {
+                    url: `/assignment/${assignmentId}`,
+                    method: 'PATCH',
+                    body: assignmentData
+                };
+            },
+            invalidatesTags: ['Assignment']
         }),
         createTest: builder.mutation({
             query: (testData) => {
@@ -68,5 +110,9 @@ export const {
     useCreateAssignmentMutation,
     useCreateTestMutation,
     useGetRecordClassByIdQuery,
-    useUpdateRecordClassMutation
+    useUpdateRecordClassMutation,
+    useGetAssignmentByIdQuery,
+    useUpdateAssignmentMutation,
+    useGetResourceByIdQuery,
+    useUpdateResourceMutation
 } = materialApi;

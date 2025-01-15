@@ -1,5 +1,5 @@
-import { Box, Button, IconButton, Paper, SnackbarCloseReason, Typography, styled } from "@mui/material";
-import { Link } from "react-router-dom";
+import { Box, Button, Card, IconButton, Paper, SnackbarCloseReason, Typography, styled } from "@mui/material";
+import { Link, useParams } from "react-router-dom";
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import Grid from '@mui/material/Grid2';
@@ -11,15 +11,15 @@ import CustomTextField from "../../../../shared/components/CustomTextField";
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
-import { Dayjs } from "dayjs";
-import { useState } from "react";
+import dayjs, { Dayjs } from "dayjs";
+import { useEffect, useState } from "react";
 import Loader from "../../../../shared/components/Loader";
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import PDF from '../../../../assets/images/PDF.png';
 import LinearWithValueLabel from "../../../../shared/components/ProgessBar";
 import Alert from "../../../../shared/components/Alert";
-import { useCreateAssignmentMutation } from "../../../../redux/features/materials/materialsApi";
+import { useCreateAssignmentMutation, useGetAssignmentByIdQuery, useUpdateAssignmentMutation } from "../../../../redux/features/materials/materialsApi";
 
 const StyledDatePicker = styled(DatePicker)({
     width: '100%',
@@ -41,6 +41,9 @@ const VisuallyHiddenInput = styled('input')({
     width: 1,
 });
 const AssignmentCreation = () => {
+    const { assignmentId } = useParams();
+    // checking if user coming form course preview page
+    const isEditing = assignmentId ? true : false;
     // local states
     const [assignmentDetails, setAssignmentDetails] = useState<Record<string, string | number>>({});
     const [openSnackbar, setOpenSnackbar] = useState(false);
@@ -53,9 +56,29 @@ const AssignmentCreation = () => {
     const { data: lessonData, isLoading: courseLoading } = useGetLessonsByCourseIdQuery({ courseId });
     const [createAssignment, { isLoading: assignmentCreationLoading, isSuccess }] = useCreateAssignmentMutation();
 
-    if (courseLoading) {
+    // making api call to update the record class
+    const [updateAssignment, { isSuccess: assignmentUpdateSuccess, isLoading: assignmentUpdateLoader }] = useUpdateAssignmentMutation();
+
+    // api call to get existing record class data for update operation
+    const { data: assignmentData, isLoading: assignmentFetching } = useGetAssignmentByIdQuery({ assignmentId }, { skip: !assignmentId });
+
+    // for updating the record class setting the state to the existing value
+    useEffect(() => {
+        if (assignmentData && isEditing) {
+            setAssignmentDetails({
+                assignmentNo: assignmentData.data.assignmentNo,
+                details: assignmentData.data.details,
+                unlockDate: assignmentData.data.unlockDate,
+                marks: assignmentData.data.marks
+            });
+        }
+    }, [assignmentData, isEditing]);
+
+    if (courseLoading || assignmentFetching || assignmentUpdateLoader) {
         return (<Loader />);
     }
+
+    const { assignmentNo, uploadFileResources = [] } = assignmentData?.data || {};
     // data filtering
     const lessonNames = lessonData?.data.map((item: typeof lessonData) => item.name);
     const lesson_id = lessonData?.data.filter((item: typeof lessonData) => item.name === assignmentDetails?.lessonName);
@@ -108,12 +131,20 @@ const AssignmentCreation = () => {
         // removing lessonName field as it's not necessary
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const selectedAssignmentDetails = (({ lessonName, ...rest }) => rest)(assignmentDetails);
-        selectedAssignmentDetails.lesson_id = lesson_id[0]._id;
+        selectedAssignmentDetails.lesson_id = lesson_id[0]?._id;
         selectedAssignmentDetails.course_id = courseId;
+
+        const updateData = {
+            ...assignmentDetails
+        };
         // creating a new form data
         const assignmentData = new FormData();
 
-        assignmentData.append('data', JSON.stringify(selectedAssignmentDetails));
+        if (isEditing) {
+            assignmentData.append('data', JSON.stringify(updateData));
+        } else {
+            assignmentData.append('data', JSON.stringify(selectedAssignmentDetails));
+        }
 
         // inserting pdf files to the files key inside the formData
 
@@ -128,10 +159,16 @@ const AssignmentCreation = () => {
 
         // sending the request to the server via redux tooklit
         try {
-            await createAssignment(assignmentData);
+            if (isEditing) {
+                console.log('Updating assignment');
+                await updateAssignment({ assignmentData, assignmentId });
+            } else {
+                await createAssignment(assignmentData);
+                setAssignmentDetails({});
+                setFiles([]);
+            }
             setOpenSnackbar(true);
-            setAssignmentDetails({});
-            setFiles([]);
+
         } catch (err) {
             console.log(err);
         }
@@ -186,24 +223,29 @@ const AssignmentCreation = () => {
                                     <Paper variant='outlined' sx={{ width: '100%', height: '100%', p: 2, borderRadius: '8px', mb: 3 }}>
                                         <Grid container spacing={3} >
                                             {/* 1st row - lesson name */}
-                                            <Grid size={12}>
-                                                <CustomLabel fieldName="Lesson Name" />
-                                                <CustomAutoComplete
-                                                    name='lessonName' options={lessonNames || []}
-                                                    handleInput={handleAssignmentDetailsInput}
-                                                    value={assignmentDetails?.lessonName as string}
-                                                    required
-                                                />
-                                            </Grid>
+                                            {
+                                                !isEditing && (
+                                                    <Grid size={12}>
+                                                        <CustomLabel fieldName="Lesson Name" />
+                                                        <CustomAutoComplete
+                                                            name='lessonName' options={lessonNames || []}
+                                                            handleInput={handleAssignmentDetailsInput}
+                                                            value={assignmentDetails?.lessonName as string}
+                                                            required
+                                                        />
+                                                    </Grid>
+                                                )
+                                            }
+
                                             {/* 2nd row - resource name, marks & date picker */}
                                             <Grid size={4}>
                                                 <CustomLabel fieldName="Assignment No" />
                                                 <CustomTextField
                                                     name='assignmentNo'
                                                     handleInput={handleAssignmentDetailsInput}
-                                                    value={assignmentDetails?.assignmentNo}
-                                                    placeholder="Enter Resource Name"
-                                                    required
+                                                    value={assignmentDetails?.assignmentNo || ''}
+                                                    placeholder={isEditing ? assignmentNo : "Naming hint: [Subject] AS01"}
+                                                    required={isEditing ? false : true}
                                                 />
                                             </Grid>
                                             <Grid size={4}>
@@ -211,9 +253,9 @@ const AssignmentCreation = () => {
                                                 <CustomTextField
                                                     name='marks'
                                                     handleInput={(e) => setAssignmentDetails((state) => ({ ...state, marks: Number(e.target.value) }))}
-                                                    value={assignmentDetails?.marks}
+                                                    value={assignmentDetails?.marks || ''}
                                                     placeholder="Enter Allocated Marks"
-                                                    required
+                                                    required={isEditing ? false : true}
                                                     type="number"
                                                 />
                                             </Grid>
@@ -221,7 +263,10 @@ const AssignmentCreation = () => {
                                             <Grid size={4} sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
                                                 <CustomLabel fieldName="Assignment Unlock" />
                                                 <LocalizationProvider dateAdapter={AdapterDayjs}>
-                                                    <StyledDatePicker onChange={handleDateChange} />
+                                                    <StyledDatePicker
+                                                        value={assignmentDetails?.unlockDate ? dayjs(assignmentDetails.unlockDate) : null}
+                                                        onChange={handleDateChange}
+                                                    />
                                                 </LocalizationProvider>
                                             </Grid>
                                             {/* 3rd row */}
@@ -229,14 +274,39 @@ const AssignmentCreation = () => {
                                                 <CustomLabel fieldName="Assignment Details" />
                                                 <CustomTextField
                                                     name="details"
-                                                    required
+                                                    required={isEditing ? false : true}
                                                     handleInput={handleAssignmentDetailsInput}
-                                                    value={assignmentDetails?.details}
+                                                    value={assignmentDetails?.details || ''}
                                                     placeholder="Enter Assignment Details"
                                                     multiline
                                                     rows={6}
                                                 />
                                             </Grid>
+                                            {/* file update row */}
+                                            <Grid size={12}>
+                                                <Typography variant="h6" sx={{ fontSize: "1rem", fontWeight: "500" }} color="grey.700">Uploaded Record Class</Typography>
+                                            </Grid>
+                                            {
+                                                (isEditing && files.length === 0) &&
+                                                uploadFileResources.map((assignment) => (
+                                                    <>
+                                                        <Grid size={12}>
+                                                            <Card variant="outlined"
+                                                                sx={{ display: "flex", alignItems: "center", gap: 2, mt: 0.8, px: 1.5, py: 0.8, borderRadius: 2 }}>
+                                                                <img src={PDF}
+                                                                    style={{
+                                                                        width: '40px',
+                                                                        height: '40px'
+                                                                    }}
+                                                                />
+                                                                <Typography variant="subtitle1" color="grey.500">
+                                                                    {assignment.originalName}
+                                                                </Typography>
+                                                            </Card>
+                                                        </Grid>
+                                                    </>
+                                                ))
+                                            }
                                             {/* Resource file upload field */}
                                             <Grid size={12}>
                                                 {
@@ -338,7 +408,7 @@ const AssignmentCreation = () => {
                 openSnackbar={openSnackbar}
                 autoHideDuration={5000}
                 handleCloseSnackbar={handleCloseSnackbar}
-                isSuccess={isSuccess}
+                isSuccess={isSuccess || assignmentUpdateSuccess}
             />
         </>
     );

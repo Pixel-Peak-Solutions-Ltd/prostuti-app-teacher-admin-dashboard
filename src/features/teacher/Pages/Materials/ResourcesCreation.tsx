@@ -1,5 +1,5 @@
 import { Box, Button, IconButton, Paper, SnackbarCloseReason, Typography, styled } from "@mui/material";
-import { Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import Grid from '@mui/material/Grid2';
@@ -41,6 +41,7 @@ const VisuallyHiddenInput = styled('input')({
     width: 1,
 });
 const ResourcesCreation = () => {
+    const { resourceId } = useParams();
     // local states
     const [resourceDetails, setResourceDetails] = useState<Record<string, string>>({});
     const [openSnackbar, setOpenSnackbar] = useState(false);
