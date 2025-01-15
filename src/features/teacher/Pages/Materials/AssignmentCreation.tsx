@@ -41,6 +41,7 @@ const VisuallyHiddenInput = styled('input')({
     width: 1,
 });
 const AssignmentCreation = () => {
+    // const canceledAssignment: any = [];
     const { assignmentId } = useParams();
     // checking if user coming form course preview page
     const isEditing = assignmentId ? true : false;
@@ -50,6 +51,9 @@ const AssignmentCreation = () => {
     const [fileError, setFileError] = useState<string | null>(null);
     // below state handles the selected image file and ready it to upload
     const [files, setFiles] = useState<File[]>([]);
+    const [cancelledAssignment, setCancelledAssignment] = useState<any>([]);
+
+    const finalCancellation: any = [...cancelledAssignment];
     // fetching courseId from the local redux store
     const courseId = useAppSelector((state) => state.courseAndLessonId.id.course_id);
     // getting all the lessons of the corresponding course
@@ -62,6 +66,7 @@ const AssignmentCreation = () => {
     // api call to get existing record class data for update operation
     const { data: assignmentData, isLoading: assignmentFetching } = useGetAssignmentByIdQuery({ assignmentId }, { skip: !assignmentId });
 
+
     // for updating the record class setting the state to the existing value
     useEffect(() => {
         if (assignmentData && isEditing) {
@@ -69,7 +74,8 @@ const AssignmentCreation = () => {
                 assignmentNo: assignmentData.data.assignmentNo,
                 details: assignmentData.data.details,
                 unlockDate: assignmentData.data.unlockDate,
-                marks: assignmentData.data.marks
+                marks: assignmentData.data.marks,
+                canceledAssignments: finalCancellation
             });
         }
     }, [assignmentData, isEditing]);
@@ -79,6 +85,16 @@ const AssignmentCreation = () => {
     }
 
     const { assignmentNo, uploadFileResources = [] } = assignmentData?.data || {};
+
+    const filteredUploadFileResources = uploadFileResources.filter(
+        (assignment) => !cancelledAssignment.includes(assignment)
+    );
+
+    // console.log('existing files', uploadFileResources);
+
+    // console.log('outside cancelled assignment', cancelledAssignment);
+
+    console.log('outside cancelled assignment', finalCancellation);
     // data filtering
     const lessonNames = lessonData?.data.map((item: typeof lessonData) => item.name);
     const lesson_id = lessonData?.data.filter((item: typeof lessonData) => item.name === assignmentDetails?.lessonName);
@@ -135,8 +151,11 @@ const AssignmentCreation = () => {
         selectedAssignmentDetails.course_id = courseId;
 
         const updateData = {
-            ...assignmentDetails
+            ...assignmentDetails,
+            canceledAssignments: finalCancellation
         };
+
+        console.log('update data to the server', updateData);
         // creating a new form data
         const assignmentData = new FormData();
 
@@ -284,24 +303,46 @@ const AssignmentCreation = () => {
                                             </Grid>
                                             {/* file update row */}
                                             <Grid size={12}>
-                                                <Typography variant="h6" sx={{ fontSize: "1rem", fontWeight: "500" }} color="grey.700">Uploaded Record Class</Typography>
+                                                <Typography variant="h6" sx={{ fontSize: "1rem", fontWeight: "500" }} color="grey.700">
+                                                    Uploaded Assignments
+                                                </Typography>
                                             </Grid>
                                             {
                                                 (isEditing && files.length === 0) &&
-                                                uploadFileResources.map((assignment) => (
+                                                filteredUploadFileResources.map((assignment, index) => (
                                                     <>
                                                         <Grid size={12}>
                                                             <Card variant="outlined"
-                                                                sx={{ display: "flex", alignItems: "center", gap: 2, mt: 0.8, px: 1.5, py: 0.8, borderRadius: 2 }}>
-                                                                <img src={PDF}
-                                                                    style={{
-                                                                        width: '40px',
-                                                                        height: '40px'
-                                                                    }}
-                                                                />
-                                                                <Typography variant="subtitle1" color="grey.500">
-                                                                    {assignment.originalName}
-                                                                </Typography>
+                                                                sx={{ display: "flex", alignItems: "center", justifyContent: 'space-between', gap: 2, mt: 0.8, px: 1.5, py: 0.8, borderRadius: 2, zIndex: 100 }}>
+                                                                <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
+                                                                    <img src={PDF}
+                                                                        style={{
+                                                                            width: '40px',
+                                                                            height: '40px'
+                                                                        }}
+                                                                    />
+                                                                    <Typography variant="subtitle1" color="grey.500">
+                                                                        {assignment.originalName}
+                                                                    </Typography>
+                                                                </Box>
+                                                                <IconButton
+                                                                    onClick={
+                                                                        () => {
+                                                                            setCancelledAssignment((as) => [...as, assignment]);
+                                                                            console.log(index);
+                                                                            // // console.log(Files[index]);
+                                                                            // canceledAssignment.push(assignment);
+                                                                            setAssignmentDetails((prevState) => ({
+                                                                                ...prevState,
+                                                                                canceledAssignments: cancelledAssignment
+                                                                            }));
+                                                                            console.log('cancelled assignment onclick', cancelledAssignment);
+                                                                        }
+
+                                                                    }
+                                                                >
+                                                                    <DeleteForeverIcon />
+                                                                </IconButton>
                                                             </Card>
                                                         </Grid>
                                                     </>
