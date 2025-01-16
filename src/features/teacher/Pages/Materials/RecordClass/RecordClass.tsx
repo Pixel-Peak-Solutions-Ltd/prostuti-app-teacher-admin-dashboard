@@ -3,23 +3,23 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import Grid from '@mui/material/Grid2';
-import CustomAutoComplete from "../../../../shared/components/CustomAutoComplete";
-import CustomLabel from "../../../../shared/components/CustomLabel";
-import CustomTextField from "../../../../shared/components/CustomTextField";
+import CustomAutoComplete from "../../../../../shared/components/CustomAutoComplete";
+import CustomLabel from "../../../../../shared/components/CustomLabel";
+import CustomTextField from "../../../../../shared/components/CustomTextField";
 import { useEffect, useState } from "react";
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import dayjs, { Dayjs } from "dayjs";
-import { useGetLessonsByCourseIdQuery } from "../../../../redux/features/course/courseApi";
-import { useAppSelector } from "../../../../redux/hooks";
-import Loader from "../../../../shared/components/Loader";
-import Alert from "../../../../shared/components/Alert";
-import { useCreateRecordClassMutation, useGetRecordClassByIdQuery, useUpdateRecordClassMutation } from "../../../../redux/features/materials/materialsApi";
+import { useGetLessonsByCourseIdQuery } from "../../../../../redux/features/course/courseApi";
+import { useAppSelector } from "../../../../../redux/hooks";
+import Loader from "../../../../../shared/components/Loader";
+import Alert from "../../../../../shared/components/Alert";
+import { useCreateRecordClassMutation, useGetRecordClassByIdQuery, useUpdateRecordClassMutation } from "../../../../../redux/features/materials/materialsApi";
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
-import LinearWithValueLabel from "../../../../shared/components/ProgessBar";
-import MP4 from '../../../../assets/images/MP4-icon.png';
+import LinearWithValueLabel from "../../../../../shared/components/ProgessBar";
+import MP4 from '../../../../../assets/images/MP4-icon.png';
 
 const StyledDatePicker = styled(DatePicker)({
     width: '100%',

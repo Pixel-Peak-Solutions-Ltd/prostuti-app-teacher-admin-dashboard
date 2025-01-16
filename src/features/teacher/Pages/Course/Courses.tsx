@@ -6,6 +6,8 @@ import CourseCard from './CourseCard';
 import { Button } from '@mui/material';
 import { Link } from 'react-router-dom';
 import Grid from '@mui/material/Grid2';
+import { useAppDispatch } from '../../../../redux/hooks';
+import { saveCourseIdToStore } from '../../../../redux/features/course/courseSlice';
 
 interface TabPanelProps {
     children?: React.ReactNode;
@@ -36,20 +38,24 @@ function a11yProps(index: number) {
 
 const Courses = ({ courses }: any) => {
     const [value, setValue] = useState(0);
-
+    const dispatch = useAppDispatch();
     const handleChange = (event: React.SyntheticEvent, newValue: number) => {
         setValue(newValue);
     };
     return (
         <>
-            <Box sx={{ width: '100%' }}>
+            <Box sx={{ width: "auto" }}>
                 <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                    <h2 style={{ fontSize: "30px", lineHeight: "38px" }}>My Courses</h2>
-                    <Link to={`/teacher/create-course`} style={{ textDecoration: 'none', color: '#3F3F46' }}>
-                        <Button variant='contained' sx={{ width: '522px', height: '44px', borderRadius: '8px', fontSize: '16px' }}>
-                            + Create Course
-                        </Button>
-                    </Link>
+                    <Box >
+                        <h2 style={{ fontSize: "30px", lineHeight: "38px" }}>My Courses</h2>
+                    </Box>
+                    <Box>
+                        <Link to={`/teacher/create-course`} style={{ textDecoration: 'none', color: '#3F3F46' }}>
+                            <Button variant='contained' sx={{ width: '522px', height: '44px', borderRadius: '8px', fontSize: '16px' }}>
+                                + Create Course
+                            </Button>
+                        </Link>
+                    </Box>
                 </Box>
 
                 <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
@@ -64,11 +70,13 @@ const Courses = ({ courses }: any) => {
                     <Box sx={{ width: '100%', height: courses.length > 4 ? 'auto' : '60vh' }}>
                         <Grid container rowSpacing={2} columnSpacing={2}>
                             {
-                                courses.map(course => (
-                                    <Grid size={3}>
+                                courses.map((course, index) => (
+                                    <Grid size={3} key={index}
+                                        onClick={() => {
+                                            dispatch(saveCourseIdToStore({ course_id: course._id }));
+                                        }}>
                                         <CourseCard course={course} />
                                     </Grid>
-
                                 ))
                             }
                         </Grid>

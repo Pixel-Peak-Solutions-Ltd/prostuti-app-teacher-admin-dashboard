@@ -12,7 +12,6 @@ const CourseCard = ({ course }: any) => {
                 <h4 style={{ marginTop: "5px", }}>{name}</h4>
             </Box>
         </Link>
-
     );
 };
 

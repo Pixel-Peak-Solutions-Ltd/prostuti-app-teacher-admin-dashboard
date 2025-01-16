@@ -12,13 +12,14 @@ import CreateCourse from "../features/teacher/Pages/Course/CreateCourse";
 import CourseDetails from "../features/teacher/Pages/Course/CourseDetails";
 import CreateLessons from "../features/teacher/Pages/Course/CreateLessons";
 import AddCourseMaterial from "../features/teacher/Pages/Course/AddCourseMaterial";
-import RecordClass from "../features/teacher/Pages/Materials/RecordClass";
-import AssignmentCreation from "../features/teacher/Pages/Materials/AssignmentCreation";
+import RecordClass from "../features/teacher/Pages/Materials/RecordClass/RecordClass";
+import AssignmentCreation from "../features/teacher/Pages/Materials/Assignment/AssignmentCreation";
 import TestCreation from "../features/teacher/Pages/Materials/Create Test/TestCreation";
-import ResourcesCreation from "../features/teacher/Pages/Materials/ResourcesCreation";
+import ResourcesCreation from "../features/teacher/Pages/Materials/Resource/ResourcesCreation";
 import RoutineCreation from "../features/teacher/Pages/Materials/RoutineCreation";
 import NoticeCreation from "../features/teacher/Pages/Materials/NoticeCreation";
 import CoursePreview from "../features/teacher/Pages/Course/CoursePreview";
+import RecordClassList from "../features/teacher/Pages/Materials/RecordClass/RecordClassList";
 
 export const teacherRoutes = [
     {
@@ -86,6 +87,32 @@ export const teacherRoutes = [
     {
         path: 'test-update/:testId',
         element: <TestCreation />
+    },
+
+    // course material lists route
+    {
+        path: 'record-class-list',
+        element: <RecordClassList />
+    },
+    {
+        path: 'resources-list',
+        element: <RecordClassList />
+    },
+    {
+        path: 'test-list',
+        element: <RecordClassList />
+    },
+    {
+        path: 'assignment-list',
+        element: <RecordClassList />
+    },
+    {
+        path: 'routine-list',
+        element: <RecordClassList />
+    },
+    {
+        path: 'notice-list',
+        element: <RecordClassList />
     },
 
     // course paths
