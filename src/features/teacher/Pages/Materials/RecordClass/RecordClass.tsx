@@ -246,7 +246,7 @@ const RecordClass = () => {
                     {/* form section starts here */}
                     {
                         recordClassCreationLoader && (
-                            <Loader />
+                            <Typography variant="h2">Uploading File Please Wait </Typography>
                         )
                     }
                     {

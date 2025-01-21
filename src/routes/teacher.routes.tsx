@@ -20,6 +20,8 @@ import RoutineCreation from "../features/teacher/Pages/Materials/RoutineCreation
 import NoticeCreation from "../features/teacher/Pages/Materials/NoticeCreation";
 import CoursePreview from "../features/teacher/Pages/Course/CoursePreview";
 import RecordClassList from "../features/teacher/Pages/Materials/RecordClass/RecordClassList";
+import AssignmentList from "../features/teacher/Pages/Materials/Assignment/AssignmentList";
+import ResourcesList from "../features/teacher/Pages/Materials/Resource/ResourcesList";
 
 export const teacherRoutes = [
     {
@@ -96,7 +98,7 @@ export const teacherRoutes = [
     },
     {
         path: 'resources-list',
-        element: <RecordClassList />
+        element: <ResourcesList />
     },
     {
         path: 'test-list',
@@ -104,7 +106,7 @@ export const teacherRoutes = [
     },
     {
         path: 'assignment-list',
-        element: <RecordClassList />
+        element: <AssignmentList />
     },
     {
         path: 'routine-list',

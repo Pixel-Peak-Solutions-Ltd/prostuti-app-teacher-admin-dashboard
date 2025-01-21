@@ -39,6 +39,9 @@ function a11yProps(index: number) {
 const Courses = ({ courses }: any) => {
     const [value, setValue] = useState(0);
     const dispatch = useAppDispatch();
+    // filtering the courses according to isPublished key
+    const publishedCourses = courses.filter((course: any) => course.isPublished === true);
+    const unpublishedCourses = courses.filter((course: any) => course.isPublished === false);
     const handleChange = (event: React.SyntheticEvent, newValue: number) => {
         setValue(newValue);
     };
@@ -51,7 +54,7 @@ const Courses = ({ courses }: any) => {
                     </Box>
                     <Box>
                         <Link to={`/teacher/create-course`} style={{ textDecoration: 'none', color: '#3F3F46' }}>
-                            <Button variant='contained' sx={{ width: '522px', height: '44px', borderRadius: '8px', fontSize: '16px' }}>
+                            <Button variant='contained' sx={{ width: 'auto', height: '44px', borderRadius: '8px', fontSize: '16px' }}>
                                 + Create Course
                             </Button>
                         </Link>
@@ -61,16 +64,16 @@ const Courses = ({ courses }: any) => {
                 <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
                     <Tabs value={value} onChange={handleChange} aria-label="basic tabs example">
                         {/* <Box> */}
-                        <Tab label={`My Courses ${courses.length}`} {...a11yProps(0)} />
+                        <Tab label={`My Courses (${publishedCourses.length})`} {...a11yProps(0)} />
                         {/* </Box> */}
-                        <Tab label="Unpublished" {...a11yProps(1)} />
+                        <Tab label={`Unpublished (${unpublishedCourses.length})`} {...a11yProps(1)} />
                     </Tabs>
                 </Box>
                 <CustomTabPanel value={value} index={0}>
                     <Box sx={{ width: '100%', height: courses.length > 4 ? 'auto' : '60vh' }}>
                         <Grid container rowSpacing={2} columnSpacing={2}>
                             {
-                                courses.map((course, index) => (
+                                publishedCourses.map((course, index) => (
                                     <Grid size={3} key={index}
                                         onClick={() => {
                                             dispatch(saveCourseIdToStore({ course_id: course._id }));
@@ -83,7 +86,20 @@ const Courses = ({ courses }: any) => {
                     </Box>
                 </CustomTabPanel>
                 <CustomTabPanel value={value} index={1}>
-                    Unpublished
+                    <Box sx={{ width: '100%', height: courses.length > 4 ? 'auto' : '60vh' }}>
+                        <Grid container rowSpacing={2} columnSpacing={2}>
+                            {
+                                unpublishedCourses.map((course, index) => (
+                                    <Grid size={3} key={index}
+                                        onClick={() => {
+                                            dispatch(saveCourseIdToStore({ course_id: course._id }));
+                                        }}>
+                                        <CourseCard course={course} />
+                                    </Grid>
+                                ))
+                            }
+                        </Grid>
+                    </Box>
                 </CustomTabPanel>
             </Box>
         </>
