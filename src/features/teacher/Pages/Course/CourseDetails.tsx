@@ -39,7 +39,7 @@ const CourseDetails = forwardRef<{ submitForm: () => void; }, CourseDetailsProps
     // react router hook
     const navigate = useNavigate();
     //for error handling
-    const [error, setError] = useState<any>();
+    // const [error, setError] = useState<any>();
     // course details
     const [courseDetails, setCourseDetails] = useState({
         name: "",
