@@ -7,6 +7,7 @@ import assignment from '../assets/images/assignment.png';
 import video from '../assets/images/video.png';
 import routine from '../assets/images/routine.png';
 import notice from '../assets/images/notice.png';
+import rankup from '../assets/images/rankup.png';
 
 export const questionDatabase = [
     {
@@ -47,6 +48,36 @@ export const materials = [
     {
         logo: notice,
         name: 'Notice'
+    }
+];
+export const materialsInPreview = [
+    {
+        logo: video,
+        name: 'Record Class'
+    },
+    {
+        logo: resource,
+        name: 'Resources'
+    },
+    {
+        logo: test,
+        name: 'Test',
+    },
+    {
+        logo: assignment,
+        name: 'Assignment',
+    },
+    {
+        logo: routine,
+        name: 'Routine',
+    },
+    {
+        logo: notice,
+        name: 'Notice'
+    },
+    {
+        logo: rankup,
+        name: 'Student Performance'
     }
 ];
 

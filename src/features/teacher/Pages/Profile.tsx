@@ -139,7 +139,7 @@ const Profile = () => {
                     <Box component="section" sx={{ display: 'flex', justifyContent: 'flex-start', gap: 3 }}>
                         {/* avatar section */}
                         <Box sx={{ position: 'relative' }}>
-                            <Avatar alt="teacher-photo" src={tempAvatar || image.path || ''} sx={{ width: "130px", height: "130px" }}
+                            <Avatar alt="teacher-photo" src={tempAvatar || image?.path || ''} sx={{ width: "130px", height: "130px" }}
                                 onMouseOver={() => setIsHovering(true)}
                                 onMouseOut={() => setIsHovering(false)}
                             />

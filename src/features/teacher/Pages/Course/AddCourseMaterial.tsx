@@ -6,7 +6,7 @@ import { materials } from "../../../../utils/Constants";
 const AddCourseMaterial = () => {
     return (
         <Box component="section" sx={{ mt: 3 }}>
-            <Grid container spacing={3} sx={{ mt: 3, justifyContent: 'center', }}>
+            <Grid container spacing={3} sx={{ mt: 3, justifyContent: 'center' }}>
                 {materials.map((item, index) => (
                     <Grid size={5} key={index} sx={{ alignSelf: 'center', justifySelf: 'center' }}>
                         <Paper variant="outlined" sx={{ maxWidth: '100%', height: '250px', display: 'flex', flexDirection: 'column', justifyContent: 'center', gap: 3, alignItems: 'center', py: 1, borderRadius: 4 }}>
@@ -25,7 +25,6 @@ const AddCourseMaterial = () => {
                         </Paper>
                     </Grid>
                 ))}
-
             </Grid>
         </Box >
     );
