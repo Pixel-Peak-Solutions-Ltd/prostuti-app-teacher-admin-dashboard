@@ -49,7 +49,7 @@ const CreateLessons = () => {
             navigate('/teacher/create-course/add-course-material');
         } catch (err) {
             setError(err);
-            console.log(err);
+            console.log('error captured in lesson submit', err);
         }
 
         console.log(lessonDataToSubmit);
@@ -83,7 +83,7 @@ const CreateLessons = () => {
                             <img src={emptybox} style={{ width: '293px', height: '293px' }} />
                             <Typography variant="h6">You haven't created any lessons yet!</Typography>
                             <Button
-                                onClick={() => setIsCreateLessons(true)}
+                                onClick={() => { setIsCreateLessons(true); }}
                                 variant='contained'
                                 sx={{ width: '522px', height: '44px', borderRadius: '8px', fontSize: '16px' }}>
                                 + Create Lessons

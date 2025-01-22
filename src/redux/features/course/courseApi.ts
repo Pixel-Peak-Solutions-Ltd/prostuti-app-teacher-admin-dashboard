@@ -86,8 +86,17 @@ const courseApi = baseApi.injectEndpoints({
                 };
             }
         }),
+        deleteCourse: builder.mutation({
+            query: ({ courseId }) => {
+                return {
+                    url: `/course/${courseId}`,
+                    method: 'DELETE'
+                };
+            },
+            invalidatesTags: ['Courses']
+        })
     })
 });
 
 
-export const { useSaveCourseMutation, useSaveLessonMutation, useGetLessonsByCourseIdQuery, useGetCourseByIdQuery, useGetCategoryForCourseQuery, useGetCourseByTeacherQuery, useGetCoursePreviewQuery } = courseApi;
+export const { useSaveCourseMutation, useSaveLessonMutation, useGetLessonsByCourseIdQuery, useGetCourseByIdQuery, useGetCategoryForCourseQuery, useGetCourseByTeacherQuery, useGetCoursePreviewQuery, useDeleteCourseMutation } = courseApi;

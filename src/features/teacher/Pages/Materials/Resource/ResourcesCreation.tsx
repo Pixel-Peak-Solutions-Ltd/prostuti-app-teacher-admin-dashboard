@@ -1,5 +1,5 @@
 import { Box, Button, Card, IconButton, Paper, SnackbarCloseReason, Typography, styled } from "@mui/material";
-import { Link, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import Grid from '@mui/material/Grid2';
@@ -18,8 +18,9 @@ import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import PDF from '../../../../../assets/images/PDF.png';
 import LinearWithValueLabel from "../../../../../shared/components/ProgessBar";
-import { useCreateResourceMutation, useGetResourceByIdQuery, useUpdateResourceMutation } from "../../../../../redux/features/materials/materialsApi";
+import { useCreateResourceMutation, useDeleteResourceMutation, useGetResourceByIdQuery, useUpdateResourceMutation } from "../../../../../redux/features/materials/materialsApi";
 import Alert from "../../../../../shared/components/Alert";
+import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
 
 const StyledDatePicker = styled(DatePicker)({
     width: '100%',
@@ -41,6 +42,7 @@ const VisuallyHiddenInput = styled('input')({
     width: 1,
 });
 const ResourcesCreation = () => {
+    const navigate = useNavigate();
     const { resourceId } = useParams();
     // checking if user coming form course preview page
     const isEditing = resourceId ? true : false;
@@ -63,6 +65,9 @@ const ResourcesCreation = () => {
 
     // api call to get existing record class data for update operation
     const { data: resourceData, isLoading: resourceFetching } = useGetResourceByIdQuery({ resourceId }, { skip: !resourceId });
+    // delete resource
+
+    const [deleteResource, { isSuccess: deleteSuccess, isLoading: deleteLoader }] = useDeleteResourceMutation();
 
     // for updating the record class setting the state to the existing value
     useEffect(() => {
@@ -75,7 +80,7 @@ const ResourcesCreation = () => {
         }
     }, [resourceData, isEditing]);
 
-    if (courseLoading || resourceFetching || resourceUpdateLoader) {
+    if (courseLoading || resourceFetching || resourceUpdateLoader || deleteLoader) {
         return (<Loader />);
     }
 
@@ -183,6 +188,15 @@ const ResourcesCreation = () => {
 
     };
 
+    //*handling recordClass delete
+    const handleResourceDelete = async () => {
+        try {
+            await deleteResource({ resourceId });
+        } catch (error) {
+            console.log(error);
+        }
+    };
+
     // close snackbar automatically
     const handleCloseSnackbar = (
         event: React.SyntheticEvent | Event,
@@ -193,6 +207,10 @@ const ResourcesCreation = () => {
         }
         setOpenSnackbar(false);
     };
+
+    if (deleteSuccess) {
+        navigate(`/teacher/resources-list`);
+    }
 
     return (
         <>
@@ -209,14 +227,31 @@ const ResourcesCreation = () => {
                             </Link>
                             <Typography variant='h3'>Resource Creation</Typography>
                         </Box>
+
+                        {
+                            isEditing && (
+                                <Button
+                                    onClick={handleResourceDelete}
+                                    variant='outlined'
+                                    sx={{ borderRadius: '8px', width: '140px', height: '48px', gap: 1 }}>
+                                    <DeleteOutlinedIcon fontSize='small' />
+                                    Delete
+                                </Button>
+                            )
+                        }
                         {/* continue button */}
                         {/* <Link to='/teacher/create-course/add-course-lessons'> */}
-                        <Button
-                            // onClick={handleContinue}
-                            variant='contained'
-                            sx={{ borderRadius: '8px', width: '140px', height: '48px' }}>
-                            Continue <ChevronRightIcon />
-                        </Button>
+                        {
+                            !isEditing && (
+                                <Button
+                                    // onClick={handleContinue}
+                                    variant='contained'
+                                    sx={{ borderRadius: '8px', width: '140px', height: '48px' }}>
+                                    Continue <ChevronRightIcon />
+                                </Button>
+                            )
+                        }
+
                         {/* </Link> */}
                     </Box>
                     {/* form section starts here */}

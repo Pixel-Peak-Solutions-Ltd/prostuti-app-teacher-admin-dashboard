@@ -31,6 +31,15 @@ const materialApi = baseApi.injectEndpoints({
             },
             invalidatesTags: ['Record']
         }),
+        deleteRecordClass: builder.mutation({
+            query: ({ recordClassId }) => {
+                return {
+                    url: `/recoded-class/${recordClassId}`,
+                    method: 'DELETE',
+                };
+            },
+            invalidatesTags: ['Record']
+        }),
         // resource operations
         createResource: builder.mutation({
             query: (resourceData) => {
@@ -58,6 +67,15 @@ const materialApi = baseApi.injectEndpoints({
                     url: `/resource/${resourceId}`,
                     method: 'PATCH',
                     body: resourceData
+                };
+            },
+            invalidatesTags: ['Resource']
+        }),
+        deleteResource: builder.mutation({
+            query: ({ resourceId }) => {
+                return {
+                    url: `/resource/${resourceId}`,
+                    method: 'DELETE',
                 };
             },
             invalidatesTags: ['Resource']
@@ -114,5 +132,7 @@ export const {
     useGetAssignmentByIdQuery,
     useUpdateAssignmentMutation,
     useGetResourceByIdQuery,
-    useUpdateResourceMutation
+    useUpdateResourceMutation,
+    useDeleteRecordClassMutation,
+    useDeleteResourceMutation
 } = materialApi;
