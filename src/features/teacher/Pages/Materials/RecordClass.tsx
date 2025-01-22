@@ -1,25 +1,25 @@
-import { Box, Button, Paper, SnackbarCloseReason, styled, Typography, IconButton, Card } from "@mui/material";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { Box, Button, Paper, SnackbarCloseReason, styled, Typography, IconButton } from "@mui/material";
+import { Link } from "react-router-dom";
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import Grid from '@mui/material/Grid2';
-import CustomAutoComplete from "../../../../../shared/components/CustomAutoComplete";
-import CustomLabel from "../../../../../shared/components/CustomLabel";
-import CustomTextField from "../../../../../shared/components/CustomTextField";
-import { useEffect, useState } from "react";
+import CustomAutoComplete from "../../../../shared/components/CustomAutoComplete";
+import CustomLabel from "../../../../shared/components/CustomLabel";
+import CustomTextField from "../../../../shared/components/CustomTextField";
+import { useState } from "react";
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
-import dayjs, { Dayjs } from "dayjs";
-import { useGetLessonsByCourseIdQuery } from "../../../../../redux/features/course/courseApi";
-import { useAppSelector } from "../../../../../redux/hooks";
-import Loader from "../../../../../shared/components/Loader";
-import Alert from "../../../../../shared/components/Alert";
-import { useCreateRecordClassMutation, useGetRecordClassByIdQuery, useUpdateRecordClassMutation } from "../../../../../redux/features/materials/materialsApi";
+import { Dayjs } from "dayjs";
+import { useGetLessonsByCourseIdQuery } from "../../../../redux/features/course/courseApi";
+import { useAppSelector } from "../../../../redux/hooks";
+import Loader from "../../../../shared/components/Loader";
+import Alert from "../../../../shared/components/Alert";
+import { useCreateRecordClassMutation } from "../../../../redux/features/materials/materialsApi";
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
-import LinearWithValueLabel from "../../../../../shared/components/ProgessBar";
-import MP4 from '../../../../../assets/images/MP4-icon.png';
+import LinearWithValueLabel from "../../../../shared/components/ProgessBar";
+import MP4 from '../../../../assets/images/MP4-icon.png';
 
 const StyledDatePicker = styled(DatePicker)({
     width: '100%',
@@ -41,11 +41,6 @@ const VisuallyHiddenInput = styled('input')({
     width: 1,
 });
 const RecordClass = () => {
-    const navigate = useNavigate();
-    // record class id while updating
-    const { recordId } = useParams();
-    // checking if user coming form course preview page
-    const isEditing = recordId ? true : false;
     // local states
     const [recordDetails, setRecordDetails] = useState<Record<string, string>>({});
     const [openSnackbar, setOpenSnackbar] = useState(false);
@@ -62,40 +57,12 @@ const RecordClass = () => {
     // making api call to save the record class
     const [createRecordClass, { isSuccess, isLoading: recordClassCreationLoader }] = useCreateRecordClassMutation();
 
-    // making api call to update the record class
-    const [updateRecordClass, { isSuccess: updateSuccess, isLoading: recordClassUpdateLoader }] = useUpdateRecordClassMutation();
-
-    // api call to get existing record class data for update operation
-    const { data: recordData, isLoading: recordClassFetching } = useGetRecordClassByIdQuery({ recordId }, { skip: !recordId });
-
-    // for updating the record class setting the state to the existing value
-    useEffect(() => {
-        if (recordData && isEditing) {
-            setRecordDetails({
-                recodeClassName: recordData.data.recodeClassName,
-                classDetails: recordData.data.classDetails,
-                classDate: recordData.data.classDate,
-            });
-        }
-    }, [recordData, isEditing]);
-
-    // handling data loading
-
-    if (courseLoading || recordClassFetching || recordClassUpdateLoader) {
+    if (courseLoading) {
         return (<Loader />);
     }
 
-
-
-    const { recodeClassName, _id: recordClassId, classVideoURL: { originalName } = {}, course_id } = recordData?.data || {};
-    console.log('fetched record data:', recordData?.data);
-
     const lessonNames = lessonData?.data.map((item: typeof lessonData) => item.name);
     const lesson_id = lessonData?.data.filter((item: typeof lessonData) => item.name === recordDetails?.lessonName);
-
-    // extracting lessonName for update
-
-    // const selectedLessonName = lessonData?.data.filter((item: typeof lessonData) => item.name )
 
     //~deleting a file from the local state
     const handleDeleteFile = (passedIndex: number) => {
@@ -147,53 +114,32 @@ const RecordClass = () => {
         e.preventDefault();
         // taking out the unwanted fields from the details object : ESNext syntax
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
-
         const refinedDetails = (({ lessonName, ...rest }) => rest)(recordDetails);
-        // constructing the final object for creating record class
+        // constructing the final object
         const submissionJSONData = {
             ...refinedDetails,
             // classVideoURL: [...urlArray],
-            lesson_id: lesson_id[0]?._id,
+            lesson_id: lesson_id[0]._id,
             course_id: courseId
         };
-
-        // constructing final object for updating record class
-
-        const updateData = {
-            ...recordDetails
-        };
-
-        console.log(updateData);
 
         // creating recordClass form data
         const recordClassData = new FormData();
         // appending json data
-        if (isEditing) {
-            recordClassData.append('data', JSON.stringify(updateData));
-        } else {
-            recordClassData.append('data', JSON.stringify(submissionJSONData));
-        }
+        recordClassData.append('data', JSON.stringify(submissionJSONData));
 
-        if (!file && !isEditing) {
+        if (!file) {
             return setFileError('Must provide a video file');
-        } else if (file) {
+        } else {
             recordClassData.append('file', file);
         }
 
-        for (const [key, value] of recordClassData.entries()) {
-            console.log(key, value);
-        }
         try {
-            if (isEditing) {
-                console.log("Updating record class");
-                await updateRecordClass({ recordClassData, recordClassId });
-            } else {
-                await createRecordClass(recordClassData);
-                setRecordDetails({});
-                setTempFileArr([]);
-                setFile(null);
-            }
+            await createRecordClass(recordClassData);
             setOpenSnackbar(true);
+            setRecordDetails({});
+            setFile(null);
+            setTempFileArr([]);
         } catch (error) {
             console.log(error);
             setOpenSnackbar(true);
@@ -213,13 +159,9 @@ const RecordClass = () => {
         setOpenSnackbar(false);
     };
 
-    // take user to the course preview page after the successful update
-    if (updateSuccess) {
-        navigate(`/teacher/course-preview/${course_id}`);
-    }
-
     return (
         <>
+
             <Box sx={{ width: '100%', height: 'auto' }}>
                 <Paper variant="outlined" sx={{ width: '100%', height: 'auto', borderRadius: '10px', p: 3 }}>
                     {/* top title and button section */}
@@ -231,7 +173,7 @@ const RecordClass = () => {
                                     <ArrowBackIcon fontSize='small' />
                                 </Button>
                             </Link>
-                            <Typography variant='h3'>{isEditing ? `Update Record Class` : `Record Class Creation`}</Typography>
+                            <Typography variant='h3'>Record Class Creation</Typography>
                         </Box>
                         {/* continue button */}
                         {/* <Link to='/teacher/create-course/create-lessons'> */}
@@ -246,7 +188,7 @@ const RecordClass = () => {
                     {/* form section starts here */}
                     {
                         recordClassCreationLoader && (
-                            <Typography variant="h2">Uploading File Please Wait </Typography>
+                            <Loader />
                         )
                     }
                     {
@@ -255,29 +197,25 @@ const RecordClass = () => {
                                 <form onSubmit={handleSubmit}>
                                     <Paper variant='outlined' sx={{ width: '100%', height: '100%', p: 2, borderRadius: '8px', mb: 3 }}>
                                         <Grid container spacing={3} >
-                                            {/* 1st row --> lesson name selection field */}
-                                            {!isEditing && (
-                                                <Grid size={12}>
-                                                    <CustomLabel fieldName="Lesson Name" />
-                                                    <CustomAutoComplete
-                                                        name='lessonName' options={lessonNames || []}
-                                                        handleInput={handleRecordDetailsInput}
-                                                        value={recordDetails?.lessonName}
-                                                        // placeholder={}
-                                                        required
-                                                    />
-                                                </Grid>
-                                            )}
-
-                                            {/* 2nd row --> record class name */}
+                                            {/* 1st row */}
+                                            <Grid size={12}>
+                                                <CustomLabel fieldName="Lesson Name" />
+                                                <CustomAutoComplete
+                                                    name='lessonName' options={lessonNames || []}
+                                                    handleInput={handleRecordDetailsInput}
+                                                    value={recordDetails?.lessonName}
+                                                    required
+                                                />
+                                            </Grid>
+                                            {/* 2nd row */}
                                             <Grid size={8}>
                                                 <CustomLabel fieldName="Record Class Name" />
                                                 <CustomTextField
                                                     name='recodeClassName'
                                                     handleInput={handleRecordDetailsInput}
-                                                    value={recordDetails?.recodeClassName || ''}
-                                                    placeholder={isEditing ? recodeClassName : "Enter Record Class Name"}
-                                                    required={isEditing ? false : true}
+                                                    value={recordDetails?.recodeClassName}
+                                                    placeholder="Enter Record Class Name"
+                                                    required
                                                 />
                                             </Grid>
                                             {/* date picker */}
@@ -285,9 +223,7 @@ const RecordClass = () => {
                                                 <CustomLabel fieldName="Record Class Date" />
                                                 <LocalizationProvider dateAdapter={AdapterDayjs}>
                                                     {/* <DatePicker sx={{ width: '100%', height: '40px', borderRadius: "10px" }} /> */}
-                                                    <StyledDatePicker
-                                                        value={recordDetails?.classDate ? dayjs(recordDetails.classDate) : null}
-                                                        onChange={handleDateChange} />
+                                                    <StyledDatePicker onChange={handleDateChange} />
                                                 </LocalizationProvider>
                                             </Grid>
                                             {/* 3rd row */}
@@ -297,31 +233,10 @@ const RecordClass = () => {
                                                     name='classDetails' multiline={true} rows={6}
                                                     placeholder="Enter Class Details"
                                                     handleInput={handleRecordDetailsInput}
-                                                    value={recordDetails?.classDetails || ''}
-                                                    required={isEditing ? false : true}
+                                                    value={recordDetails?.classDetails}
                                                 />
                                             </Grid>
-                                            {/* 3rd row --> update row */}
-                                            {
-                                                (isEditing && tempFileArr.length) === 0 && (
-                                                    <Grid size={12}>
-                                                        <Typography variant="h6" sx={{ fontSize: "1rem", fontWeight: "500" }} color="grey.700">Uploaded Record Class</Typography>
-                                                        <Card variant="outlined"
-                                                            sx={{ display: "flex", alignItems: "center", gap: 2, mt: 0.8, px: 1.5, py: 0.8, borderRadius: 2 }}>
-                                                            <img src={MP4}
-                                                                style={{
-                                                                    width: '40px',
-                                                                    height: '40px'
-                                                                }}
-                                                            />
-                                                            <Typography variant="subtitle1" color="grey.500">
-                                                                {originalName}
-                                                            </Typography>
-
-                                                        </Card>
-                                                    </Grid>
-                                                )
-                                            }
+                                            {/* 3rd row */}
                                             {/* Resource file upload field */}
                                             <Grid size={12}>
                                                 {
@@ -436,7 +351,6 @@ const RecordClass = () => {
 
                                             }
                                         </Grid>
-                                        {/* upload button */}
                                         <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: "20px", mt: 3 }}>
                                             <Button
                                                 type='submit'
@@ -444,7 +358,7 @@ const RecordClass = () => {
                                                 size='small'
                                                 startIcon={<CloudUploadIcon />}
                                                 sx={{ width: '170px', height: '40px', borderRadius: '8px', fontSize: '14px' }}>
-                                                {isEditing ? 'Update' : 'Upload Class'}
+                                                Upload Class
                                             </Button>
                                         </Box>
                                     </Paper>
@@ -461,7 +375,7 @@ const RecordClass = () => {
                 openSnackbar={openSnackbar}
                 autoHideDuration={5000}
                 handleCloseSnackbar={handleCloseSnackbar}
-                isSuccess={isSuccess || updateSuccess}
+                isSuccess={isSuccess}
             />
         </>
 
