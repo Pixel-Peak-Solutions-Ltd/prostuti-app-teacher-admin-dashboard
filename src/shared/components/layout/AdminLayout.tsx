@@ -61,6 +61,11 @@ const adminDashboardMenus = [
     icon: <RevenueManagementIcon />,
   },
   {
+    path: '/admin/category',
+    name: 'Category',
+    icon: <RevenueManagementIcon />,
+  },
+  {
     path: '/admin/report-compliance',
     name: 'Report & Compliance',
     icon: <ReportComplianceIcon />,
@@ -166,7 +171,7 @@ export const AdminLayout = () => {
         component="main"
         sx={{ flexGrow: 1, bgcolor: 'background.default', px: 4 }}
       >
-        <Toolbar />
+        <Toolbar sx={{ zIndex: -3 }} />
         {/* sidebar menu main content will show here */}
         {location.pathname === '/admin' ? <Welcome /> : <Outlet />}
       </Box>

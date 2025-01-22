@@ -1,10 +1,55 @@
-import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import { createApi, fetchBaseQuery, FetchBaseQueryError } from "@reduxjs/toolkit/query/react";
+import { RootState } from "../store"; // assuming RootState has the auth state type
+import { logout, setUser } from "../features/auth/authSlice";
 
+// Local url -> http://localhost:5000/
+// Production url -> https://prostuti-app-backend-production.up.railway.app
+// Development url -> https://resilient-heart-dev.up.railway.app 
+const baseQuery = fetchBaseQuery({
+    baseUrl: 'https://resilient-heart-dev.up.railway.app/api/v1',
+    credentials: 'include',
+    prepareHeaders: (headers, { getState }) => {
+        const token = (getState() as RootState).auth.token;
+        if (token) {
+            headers.set("authorization", `Bearer ${token}`);
+        }
+        return headers;
+    },
+});
+
+const baseQueryWithRefreshToken: typeof baseQuery = async (args, api, extraOptions) => {
+    const result = await baseQuery(args, api, extraOptions);
+
+    if (result.error && (result.error as FetchBaseQueryError).status === 401) {
+        const res = await fetch('https://resilient-heart-dev.up.railway.app/api/v1/auth/refresh-token', {
+            method: 'POST',
+            credentials: 'include'
+        });
+
+        const data = await res.json();
+
+        const user = (api.getState() as RootState).auth.user;
+
+        // if user token expires this if block will trigger and redirect to login page
+        if (!data.success) {
+            api.dispatch((
+                logout()
+            ));
+        }
+
+        api.dispatch((
+            setUser({ user, token: data.data.accessToken })
+        ));
+
+    }
+    console.log('baseApi', result);
+    return result;
+};
+
+// Use `baseQueryWithRefreshToken` in the base API
 export const baseApi = createApi({
-    reducerPath: 'baseApi',
-    baseQuery: fetchBaseQuery({
-        baseUrl: 'https://prostuti-app-backend-production.up.railway.app/api/v1',
-        credentials: 'include',
-    }),
+    reducerPath: "baseApi",
+    baseQuery: baseQueryWithRefreshToken,
+    tagTypes: ['User', 'Teacher', 'Questions', 'Categories', 'Courses', 'Record', 'Assignment', 'Resource'],
     endpoints: () => ({}),
 });

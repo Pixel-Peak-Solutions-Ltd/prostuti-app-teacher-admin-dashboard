@@ -12,6 +12,8 @@ interface ProtectedRouteProps {
 const ProtectedRoute = ({ children, allowedRoles }: ProtectedRouteProps) => {
     const { token } = useAppSelector((state) => state.auth);
     const user = useAppSelector((state: RootState) => state.auth.user as TUser);
+
+    //* checking whether user is logged in
     if (!token) {
         return <Navigate to='/' replace={true} />;
     }
