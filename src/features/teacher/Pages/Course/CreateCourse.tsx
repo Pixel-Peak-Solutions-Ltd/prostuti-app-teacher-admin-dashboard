@@ -16,6 +16,7 @@ export type FormComponentRef = {
 const FORM_PATHS = {
     COURSE_DETAILS: '/teacher/create-course',
     LESSONS: '/teacher/create-course/create-lessons',
+    PREVIEW: '/teacher/create-course/preview'
 } as const;
 
 // Create a type from the valid paths

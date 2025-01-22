@@ -1,31 +1,24 @@
-import { Box, Button, Paper, Typography } from "@mui/material";
-import { Link } from "react-router-dom";
-import emptybox from '../../../../assets/images/empty_box.png';
-import Grid from '@mui/material/Grid2';
+import { Box, Paper, } from "@mui/material";
+import { useGetCourseByTeacherQuery } from "../../../../redux/features/course/courseApi";
+import Loader from "../../../../shared/components/Loader";
+import CourseCreationScreen from "./CourseCreationScreen";
+import Courses from "./Courses";
 const MyCourse = () => {
+    const { data, isLoading } = useGetCourseByTeacherQuery({});
+
+    if (isLoading) {
+        return <Loader />;
+    }
+
+    const myCourses = data?.data;
+    console.log('All Courses:', data?.data);
     return (
         <>
-            <Box sx={{ width: '100%', height: '100vh' }}>
-                <Paper variant="outlined" sx={{ width: '100%', height: '100vh', borderRadius: '10px', p: 3 }}>
+            <Box sx={{ width: '100%', height: myCourses.length > 6 ? 'auto' : '100vh' }}>
+                <Paper variant="outlined" sx={{ width: '100%', height: myCourses.length > 6 ? '100%' : '100vh', borderRadius: '10px', p: 3 }}>
                     {/* top title and button section */}
                     {/* default section when no course is created */}
-                    <Box component='section' sx={{ mt: 3 }}>
-                        <Grid container spacing={2} sx={{ mt: 3, justifyContent: 'center' }}>
-                            <Grid size={12} sx={{ alignItems: 'center', justifyContent: 'center' }}>
-                                {/* create course button and box section */}
-                                <Box sx={{ width: '100%', height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'center', gap: 3, alignItems: 'center', py: 1, borderRadius: 4 }}>
-                                    <img src={emptybox} style={{ width: '293px', height: '293px' }} />
-                                    <Typography variant="h6">You don't have any courses!</Typography>
-                                    <Link to={`/teacher/create-course`} style={{ textDecoration: 'none', color: '#3F3F46' }}>
-                                        <Button variant='contained' sx={{ width: '522px', height: '44px', borderRadius: '8px', fontSize: '16px' }}>
-                                            + Create Course
-                                        </Button>
-                                    </Link>
-                                </Box>
-                                {/* create course button and box section ends*/}
-                            </Grid>
-                        </Grid>
-                    </Box>
+                    {myCourses.length > 0 ? (<Courses courses={myCourses} />) : <CourseCreationScreen />}
                 </Paper>
             </Box>
         </>

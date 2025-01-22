@@ -12,13 +12,13 @@ const courseApi = baseApi.injectEndpoints({
     endpoints: (builder) => ({
         saveCourse: builder.mutation({
             query: (courseData) => {
-                console.log("from mutation:", courseData.get('courseData'));
                 return {
                     url: '/course',
                     method: 'POST',
                     body: courseData
                 };
-            }
+            },
+            invalidatesTags: ['Courses']
         }),
         saveLesson: builder.mutation({
             query: (lessonData) => {
@@ -28,6 +28,13 @@ const courseApi = baseApi.injectEndpoints({
                     body: lessonData
                 };
             }
+        }),
+        getCourseByTeacher: builder.query({
+            query: () => ({
+                url: '/course/course-by-me',
+                method: 'GET',
+            }),
+            providesTags: ['Courses']
         }),
         getLessonsByCourseId: builder.query({
             query: ({ courseId }) => {
@@ -41,7 +48,15 @@ const courseApi = baseApi.injectEndpoints({
             query: ({ courseId }) => ({
                 url: `/course/${courseId}`,
                 method: 'GET',
-            })
+            }),
+            providesTags: ['Courses']
+        }),
+        getCoursePreview: builder.query({
+            query: ({ courseId }) => ({
+                url: `/course/preview/${courseId}`,
+                method: 'GET',
+            }),
+            providesTags: ['Courses']
         }),
         getCategoryForCourse: builder.query({
             query: (questionObj: Record<string, string>) => {
@@ -75,4 +90,4 @@ const courseApi = baseApi.injectEndpoints({
 });
 
 
-export const { useSaveCourseMutation, useSaveLessonMutation, useGetLessonsByCourseIdQuery, useGetCourseByIdQuery, useGetCategoryForCourseQuery } = courseApi;
+export const { useSaveCourseMutation, useSaveLessonMutation, useGetLessonsByCourseIdQuery, useGetCourseByIdQuery, useGetCategoryForCourseQuery, useGetCourseByTeacherQuery, useGetCoursePreviewQuery } = courseApi;
