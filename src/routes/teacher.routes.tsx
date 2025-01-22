@@ -12,16 +12,12 @@ import CreateCourse from "../features/teacher/Pages/Course/CreateCourse";
 import CourseDetails from "../features/teacher/Pages/Course/CourseDetails";
 import CreateLessons from "../features/teacher/Pages/Course/CreateLessons";
 import AddCourseMaterial from "../features/teacher/Pages/Course/AddCourseMaterial";
-import RecordClass from "../features/teacher/Pages/Materials/RecordClass/RecordClass";
-import AssignmentCreation from "../features/teacher/Pages/Materials/Assignment/AssignmentCreation";
+import RecordClass from "../features/teacher/Pages/Materials/RecordClass";
+import AssignmentCreation from "../features/teacher/Pages/Materials/AssignmentCreation";
 import TestCreation from "../features/teacher/Pages/Materials/Create Test/TestCreation";
-import ResourcesCreation from "../features/teacher/Pages/Materials/Resource/ResourcesCreation";
+import ResourcesCreation from "../features/teacher/Pages/Materials/ResourcesCreation";
 import RoutineCreation from "../features/teacher/Pages/Materials/RoutineCreation";
 import NoticeCreation from "../features/teacher/Pages/Materials/NoticeCreation";
-import CoursePreview from "../features/teacher/Pages/Course/CoursePreview";
-import RecordClassList from "../features/teacher/Pages/Materials/RecordClass/RecordClassList";
-import AssignmentList from "../features/teacher/Pages/Materials/Assignment/AssignmentList";
-import ResourcesList from "../features/teacher/Pages/Materials/Resource/ResourcesList";
 
 export const teacherRoutes = [
     {
@@ -30,7 +26,7 @@ export const teacherRoutes = [
     },
     {
         path: 'my-course',
-        element: <MyCourse />,
+        element: <MyCourse />
     },
     {
         path: 'messages',
@@ -67,57 +63,8 @@ export const teacherRoutes = [
         element: <AddQuestion />
     },
 
-    // course preview route
-    {
-        path: 'course-preview/:courseId',
-        element: <CoursePreview />
-    },
-
-    // course update routes
-    {
-        path: 'record-update/:recordId',
-        element: <RecordClass />
-    },
-    {
-        path: 'assignment-update/:assignmentId',
-        element: <AssignmentCreation />
-    },
-    {
-        path: 'resource-update/:resourceId',
-        element: <ResourcesCreation />
-    },
-    {
-        path: 'test-update/:testId',
-        element: <TestCreation />
-    },
-
-    // course material lists route
-    {
-        path: 'record-class-list',
-        element: <RecordClassList />
-    },
-    {
-        path: 'resources-list',
-        element: <ResourcesList />
-    },
-    {
-        path: 'test-list',
-        element: <RecordClassList />
-    },
-    {
-        path: 'assignment-list',
-        element: <AssignmentList />
-    },
-    {
-        path: 'routine-list',
-        element: <RecordClassList />
-    },
-    {
-        path: 'notice-list',
-        element: <RecordClassList />
-    },
-
     // course paths
+
     {
         path: 'create-course',
         element: <CreateCourse />,
@@ -133,10 +80,6 @@ export const teacherRoutes = [
             {
                 path: 'add-course-material',
                 element: <AddCourseMaterial />
-            },
-            {
-                path: 'course-preview',
-                element: <CoursePreview />
             },
         ]
     },

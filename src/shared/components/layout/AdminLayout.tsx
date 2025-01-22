@@ -171,7 +171,7 @@ export const AdminLayout = () => {
         component="main"
         sx={{ flexGrow: 1, bgcolor: 'background.default', px: 4 }}
       >
-        <Toolbar sx={{ zIndex: -3 }} />
+        <Toolbar />
         {/* sidebar menu main content will show here */}
         {location.pathname === '/admin' ? <Welcome /> : <Outlet />}
       </Box>
