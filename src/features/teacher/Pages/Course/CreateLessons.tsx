@@ -39,6 +39,7 @@ const CreateLessons = () => {
     };
 
 
+    console.log('lesson data object:', lessonData);
     // submitting the form
     const handleSubmit = async (e?: React.FormEvent) => {
         e?.preventDefault();
@@ -50,6 +51,8 @@ const CreateLessons = () => {
             setError(err);
             console.log(err);
         }
+
+        console.log(lessonDataToSubmit);
     };
 
     // triggering the submit button through parent's continue button
