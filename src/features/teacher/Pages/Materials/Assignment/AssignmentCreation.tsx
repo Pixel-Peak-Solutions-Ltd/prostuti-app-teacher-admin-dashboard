@@ -244,13 +244,19 @@ const AssignmentCreation = () => {
                         !assignmentCreationLoading && (
                             <Box sx={{ display: "flex", flexDirection: 'column', gap: '20px' }}>
                                 <form onSubmit={handleAssignmentSubmit}>
-                                    <Paper variant='outlined' sx={{ width: '100%', height: '100%', p: 2, borderRadius: '8px', mb: 3 }}>
+                                    <Paper variant='outlined' sx={{ position: 'relative', width: '100%', height: '100%', p: 2, borderRadius: '8px', mb: 3 }}>
+                                        {/* hint text */}
+                                        <Typography variant="caption" gutterBottom sx={{
+                                            position: 'absolute', display: 'block', color: '#009688', top: isEditing ? '90px' : '184px', fontWeight: 'bold'
+                                        }}>
+                                            {`Duplicate names are not allowed`}
+                                        </Typography>
                                         <Grid container spacing={3} >
                                             {/* 1st row - lesson name */}
                                             {
                                                 !isEditing && (
                                                     <Grid size={12}>
-                                                        <CustomLabel fieldName="Lesson Name" />
+                                                        <CustomLabel fieldName="Lesson Name*" />
                                                         <CustomAutoComplete
                                                             name='lessonName' options={lessonNames || []}
                                                             handleInput={handleAssignmentDetailsInput}
@@ -263,17 +269,17 @@ const AssignmentCreation = () => {
 
                                             {/* 2nd row - resource name, marks & date picker */}
                                             <Grid size={4}>
-                                                <CustomLabel fieldName="Assignment No" />
+                                                <CustomLabel fieldName={isEditing ? "Assignment Name" : "Assignment Name*"} />
                                                 <CustomTextField
                                                     name='assignmentNo'
                                                     handleInput={handleAssignmentDetailsInput}
                                                     value={assignmentDetails?.assignmentNo || ''}
-                                                    placeholder={isEditing ? assignmentNo : "Naming hint: [Subject] AS01"}
+                                                    placeholder={isEditing ? assignmentNo : "Naming hint: Assignment 1"}
                                                     required={isEditing ? false : true}
                                                 />
                                             </Grid>
                                             <Grid size={4}>
-                                                <CustomLabel fieldName="Assignment Marks" />
+                                                <CustomLabel fieldName={isEditing ? "Assignment Marks" : "Assignment Marks*"} />
                                                 <CustomTextField
                                                     name='marks'
                                                     handleInput={(e) => setAssignmentDetails((state) => ({ ...state, marks: Number(e.target.value) }))}
@@ -285,7 +291,7 @@ const AssignmentCreation = () => {
                                             </Grid>
                                             {/* date picker */}
                                             <Grid size={4} sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
-                                                <CustomLabel fieldName="Assignment Unlock" />
+                                                <CustomLabel fieldName={isEditing ? "Assignment Unlock" : "Assignment Unlock*"} />
                                                 <LocalizationProvider dateAdapter={AdapterDayjs}>
                                                     <StyledDatePicker
                                                         value={assignmentDetails?.unlockDate ? dayjs(assignmentDetails.unlockDate) : null}
@@ -295,7 +301,7 @@ const AssignmentCreation = () => {
                                             </Grid>
                                             {/* 3rd row */}
                                             <Grid size={12}>
-                                                <CustomLabel fieldName="Assignment Details" />
+                                                <CustomLabel fieldName={isEditing ? "Assignment Details" : "Assignment Details*"} />
                                                 <CustomTextField
                                                     name="details"
                                                     required={isEditing ? false : true}
@@ -309,7 +315,7 @@ const AssignmentCreation = () => {
                                             {/* file update row */}
                                             <Grid size={12}>
                                                 <Typography variant="h6" sx={{ fontSize: "1rem", fontWeight: "500" }} color="grey.700">
-                                                    Uploaded Assignments
+                                                    Uploaded Assignments*
                                                 </Typography>
                                             </Grid>
                                             {
@@ -404,7 +410,7 @@ const AssignmentCreation = () => {
                                                             }}
                                                         >
                                                             {/* {tempCover ? 'Change Cover Image' : 'Click to Upload'} */}
-                                                            Upload File
+                                                            {isEditing ? 'Upload File' : 'Upload File*'}
                                                             <VisuallyHiddenInput
                                                                 type="file"
                                                                 multiple

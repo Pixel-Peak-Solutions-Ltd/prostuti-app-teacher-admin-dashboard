@@ -7,6 +7,7 @@ import Grid from '@mui/material/Grid2';
 import ArrowOutwardIcon from '@mui/icons-material/ArrowOutward';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import DriveFileRenameOutlineOutlinedIcon from '@mui/icons-material/DriveFileRenameOutlineOutlined';
+import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
 import { Link } from "react-router-dom";
 
 const ResourcesList = () => {
@@ -34,13 +35,22 @@ const ResourcesList = () => {
                     </Box>
                     {/* continue button */}
                     {/* <Link to='/teacher/create-course/add-course-lessons'> */}
-                    <Button
-                        // onClick={handleContinue}
-                        variant='contained'
-                        sx={{ borderRadius: '8px', width: '140px', height: '48px', gap: 1 }}>
-                        <DriveFileRenameOutlineOutlinedIcon fontSize='small' />
-                        Edit
-                    </Button>
+                    <Box sx={{ display: "flex", gap: 2, alignItems: "center" }}>
+                        <Button
+                            // onClick={handleContinue}
+                            variant='outlined'
+                            sx={{ borderRadius: '8px', width: '140px', height: '48px', gap: 1 }}>
+                            <DeleteOutlinedIcon fontSize='small' />
+                            Delete
+                        </Button>
+                        <Button
+                            // onClick={handleContinue}
+                            variant='contained'
+                            sx={{ borderRadius: '8px', width: '140px', height: '48px', gap: 1 }}>
+                            <DriveFileRenameOutlineOutlinedIcon fontSize='small' />
+                            Edit
+                        </Button>
+                    </Box>
                     {/* </Link> */}
                 </Box>
                 {/* main list starts */}

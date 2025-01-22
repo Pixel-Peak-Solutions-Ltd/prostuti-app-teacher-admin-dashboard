@@ -235,7 +235,7 @@ const ResourcesCreation = () => {
                                             {
                                                 !isEditing && (
                                                     <Grid size={12}>
-                                                        <CustomLabel fieldName="Lesson Name" />
+                                                        <CustomLabel fieldName="Lesson Name*" />
                                                         <CustomAutoComplete
                                                             name='lessonName' options={lessonNames || []}
                                                             handleInput={handleResourceDetailsInput}
@@ -248,7 +248,7 @@ const ResourcesCreation = () => {
 
                                             {/* 2nd row - resource name & date picker */}
                                             <Grid size={8}>
-                                                <CustomLabel fieldName="Resource Name" />
+                                                <CustomLabel fieldName={isEditing ? "Resource Name" : "Resource Name*"} />
                                                 <CustomTextField
                                                     name='name'
                                                     handleInput={handleResourceDetailsInput}
@@ -259,7 +259,7 @@ const ResourcesCreation = () => {
                                             </Grid>
                                             {/* date picker */}
                                             <Grid size={4} sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
-                                                <CustomLabel fieldName="Class Date" />
+                                                <CustomLabel fieldName={isEditing ? "Class Date" : "Class Date*"} />
                                                 <LocalizationProvider dateAdapter={AdapterDayjs}>
                                                     <StyledDatePicker
                                                         value={resourceDetails?.resourceDate ? dayjs(resourceDetails?.resourceDate) : null}
@@ -365,7 +365,7 @@ const ResourcesCreation = () => {
                                                             }}
                                                         >
                                                             {/* {tempCover ? 'Change Cover Image' : 'Click to Upload'} */}
-                                                            Upload File
+                                                            {isEditing ? 'Upload File' : 'Upload File*'}
                                                             <VisuallyHiddenInput
                                                                 type="file"
                                                                 multiple

@@ -253,12 +253,18 @@ const RecordClass = () => {
                         !recordClassCreationLoader && (
                             <Box sx={{ display: "flex", flexDirection: 'column', gap: '20px' }}>
                                 <form onSubmit={handleSubmit}>
-                                    <Paper variant='outlined' sx={{ width: '100%', height: '100%', p: 2, borderRadius: '8px', mb: 3 }}>
+                                    <Paper variant='outlined' sx={{ width: '100%', height: '100%', p: 2, borderRadius: '8px', mb: 3, position: 'relative' }}>
+                                        {/* hint text */}
+                                        <Typography variant="caption" gutterBottom sx={{
+                                            position: 'absolute', display: 'block', color: '#009688', top: isEditing ? '90px' : '184px', fontWeight: 'bold'
+                                        }}>
+                                            {`Duplicate names are not allowed`}
+                                        </Typography>
                                         <Grid container spacing={3} >
                                             {/* 1st row --> lesson name selection field */}
                                             {!isEditing && (
                                                 <Grid size={12}>
-                                                    <CustomLabel fieldName="Lesson Name" />
+                                                    <CustomLabel fieldName="Lesson Name *" />
                                                     <CustomAutoComplete
                                                         name='lessonName' options={lessonNames || []}
                                                         handleInput={handleRecordDetailsInput}
@@ -271,7 +277,7 @@ const RecordClass = () => {
 
                                             {/* 2nd row --> record class name */}
                                             <Grid size={8}>
-                                                <CustomLabel fieldName="Record Class Name" />
+                                                <CustomLabel fieldName={isEditing ? "Record Class Name" : "Record Class Name*"} />
                                                 <CustomTextField
                                                     name='recodeClassName'
                                                     handleInput={handleRecordDetailsInput}
@@ -282,7 +288,7 @@ const RecordClass = () => {
                                             </Grid>
                                             {/* date picker */}
                                             <Grid size={4} sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
-                                                <CustomLabel fieldName="Record Class Date" />
+                                                <CustomLabel fieldName={isEditing ? "Record Class Date" : "Record Class Date*"} />
                                                 <LocalizationProvider dateAdapter={AdapterDayjs}>
                                                     {/* <DatePicker sx={{ width: '100%', height: '40px', borderRadius: "10px" }} /> */}
                                                     <StyledDatePicker
@@ -292,7 +298,7 @@ const RecordClass = () => {
                                             </Grid>
                                             {/* 3rd row */}
                                             <Grid size={12}>
-                                                <CustomLabel fieldName="Class Details" />
+                                                <CustomLabel fieldName={isEditing ? "Class Details" : "Class Details*"} />
                                                 <CustomTextField
                                                     name='classDetails' multiline={true} rows={6}
                                                     placeholder="Enter Class Details"
@@ -411,7 +417,7 @@ const RecordClass = () => {
                                                             }}
                                                         >
                                                             {/* {tempCover ? 'Change Cover Image' : 'Click to Upload'} */}
-                                                            Upload File
+                                                            {isEditing ? "Upload File" : "Upload File*"}
                                                             <VisuallyHiddenInput
                                                                 type="file"
                                                                 multiple
