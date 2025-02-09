@@ -12,21 +12,50 @@ import Alert from "../../../../../shared/components/Alert";
 const AddQuestion = () => {
     const [numOfForms, setNumOfForms] = useState(1);
     const [question, setQuestion] = useState<Record<string, string>>({});
+    const [imageFile, setImageFile] = useState<Record<string, File | null>>({});
     const [category_id, setCategory_id] = useState('');
     const [openSnackbar, setOpenSnackbar] = useState(false);
 
     // redux api call
-    const [createQuestion, { error, isError, success, result, isSuccess, isLoading }] = useCreateQuestionMutation();
+    const [createQuestion, { error, isSuccess, isLoading }] = useCreateQuestionMutation();
 
     // const categoryId = categoryData?.data[0]._id || '';
     // console.log('Inside add question form:', category_id);
+
+    // formatting question object to question array
     const questionArray = formatQuestion(question, category_id);
 
     // temporary array
     const handleAddQuestion = async (e: React.FormEvent) => {
         e.preventDefault();
+        checkImageFileAsFormData(imageFile);
         console.log(questionArray);
-        await createQuestion(questionArray);
+
+        const questionData = new FormData();
+
+        questionData.append('data', JSON.stringify(questionArray));
+
+        // checking whether file object not empty
+
+        if (Object.keys(imageFile).length !== 0) {
+            for (const key in imageFile) {
+                // checking whether a key has null value in the object
+                if (imageFile[key] !== null) {
+                    questionData.append(`image${key}`, imageFile[key]);
+                }
+            }
+        }
+
+        // console.log(questionData.get('image2'));
+        // for (const [key, value] of questionData.entries()) {
+        //     console.log(key, value);
+        // }
+        try {
+            await createQuestion(questionData);
+        } catch (err) {
+            console.log(err);
+        }
+
         setQuestion({});
         setOpenSnackbar(true);
     };
@@ -42,6 +71,22 @@ const AddQuestion = () => {
         setOpenSnackbar(false);
     };
 
+    const checkImageFileAsFormData = (fileObj: Record<string, File>) => {
+        const imageData = new FormData();
+        for (const key in fileObj) {
+            imageData.append(`image${key}`, fileObj[key]);
+        }
+
+        console.log('Appended images', imageData.get("image2"));
+
+    };
+
+    // removing the selected file
+
+    const handleRemoveFile = (e: React.MouseEvent, index) => {
+        setImageFile((prev) => ({ ...prev, [`${index}`]: null }));
+    };
+
     // loading screen until all the data are fetched
     if (isLoading) {
         return (<Loader />);
@@ -50,6 +95,8 @@ const AddQuestion = () => {
     if (error) {
         console.log(error);
     }
+
+    console.log('image object:', imageFile);
 
     // console.log('from add question page', questionArr);
     return (
@@ -73,7 +120,10 @@ const AddQuestion = () => {
                                     <Paper key={index} variant='outlined' sx={{ width: '100%', height: '100%', p: 2, borderRadius: '8px', mb: 3 }}>
                                         <Grid container spacing={2} >
                                             <Button
-                                                onClick={() => setNumOfForms((prev) => prev - 1)}
+                                                onClick={(e) => {
+                                                    setNumOfForms((prev) => prev - 1);
+                                                    handleRemoveFile(e, index);
+                                                }}
                                                 variant="outlined"
                                                 size="small"
                                                 sx={{ borderRadius: '5px', width: '15px', minWidth: '15px', height: '15px', borderColor: "grey.700", color: "#3F3F46", position: 'absolute', right: '20px', p: 1, }}>
@@ -84,6 +134,8 @@ const AddQuestion = () => {
                                                 question={question}
                                                 setQuestion={setQuestion}
                                                 setCategory_id={setCategory_id}
+                                                setImageFile={setImageFile}
+                                                imageFile={imageFile}
                                             />
                                         </Grid>
                                     </Paper>

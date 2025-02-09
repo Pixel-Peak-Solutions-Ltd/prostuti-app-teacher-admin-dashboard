@@ -119,6 +119,7 @@ const Profile = () => {
         <Box sx={{ width: '100%', height: '100vh' }}>
             <Paper variant="outlined" sx={{ width: '100%', height: '100vh', borderRadius: '25px', p: 3 }}>
                 <form encType="multipart/form-data" onSubmit={handleSubmit}>
+                    {/* show error */}
                     {
                         noFieldError && (
                             <Box sx={{ width: '100%', height: '100%', backgroundColor: '#fae3e4', color: "#ed5c96", p: 1, borderRadius: 3, mb: 3 }}>
@@ -144,23 +145,25 @@ const Profile = () => {
                                 onMouseOut={() => setIsHovering(false)}
                             />
                             {/* new image upload button */}
-                            {isHovering && (<Button component="label"
-                                role={undefined}
-                                size="small"
-                                variant="outlined"
-                                tabIndex={-1}
-                                startIcon={<CloudUploadIcon />}
-                                sx={{ position: 'absolute', top: "40%", left: '5px', color: "gray.700", borderRadius: "8px", cursor: "pointer" }}
-                                onMouseOver={() => setIsHovering(true)}
-                                onMouseOut={() => setIsHovering(false)}
-                            >
+                            {
+                                isHovering && (
+                                    <Button component="label"
+                                        role={undefined}
+                                        size="small"
+                                        variant="outlined"
+                                        tabIndex={-1}
+                                        startIcon={<CloudUploadIcon />}
+                                        sx={{ position: 'absolute', top: "40%", left: '5px', color: "gray.700", borderRadius: "8px", cursor: "pointer" }}
+                                        onMouseOver={() => setIsHovering(true)}
+                                        onMouseOut={() => setIsHovering(false)}
+                                    >
 
-                                Upload New
-                                <VisuallyHiddenInput
-                                    type="file"
-                                    onChange={handleAvatarChange}
-                                />
-                            </Button>)
+                                        Upload New
+                                        <VisuallyHiddenInput
+                                            type="file"
+                                            onChange={handleAvatarChange}
+                                        />
+                                    </Button>)
 
                             }
                         </Box>
@@ -178,7 +181,7 @@ const Profile = () => {
                             <Grid size={6}>
                                 <CustomLabel fieldName="Name" />
                                 <CustomTextField
-                                    value={name || ""}
+                                    value={name || profileData.name}
                                     // defaultValue={name || ""}
                                     name="name"
                                     placeholder={name || ""}
@@ -189,6 +192,7 @@ const Profile = () => {
                                 <CustomLabel fieldName="Contact Number" />
                                 <CustomTextField
                                     name="phone"
+                                    value={phone || profileData.phone}
                                     // defaultValue={phone || ""}
                                     placeholder={phone || ""}
                                     handleInput={handleInput}
@@ -209,8 +213,9 @@ const Profile = () => {
                                 <CustomLabel fieldName="Subject" />
                                 <CustomTextField
                                     // defaultValue={subject || ''}
+                                    value={subject || profileData.subject}
                                     name="subject"
-                                    placeholder={subject || ''}
+                                    placeholder={subject || profileData.subject}
                                     handleInput={handleInput}
                                 />
                             </Grid>
@@ -218,8 +223,9 @@ const Profile = () => {
                                 <CustomLabel fieldName="Type" />
                                 <CustomTextField
                                     // defaultValue={jobType || ""}
+                                    value={jobType || profileData.jobType}
                                     name="jobType"
-                                    placeholder={jobType || ""}
+                                    placeholder={jobType || profileData.jobType}
                                     handleInput={handleInput}
                                 />
                             </Grid>

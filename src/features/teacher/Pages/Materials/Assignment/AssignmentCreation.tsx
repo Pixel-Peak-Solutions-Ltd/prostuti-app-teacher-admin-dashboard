@@ -67,6 +67,8 @@ const AssignmentCreation = () => {
     const { data: assignmentData, isLoading: assignmentFetching } = useGetAssignmentByIdQuery({ assignmentId }, { skip: !assignmentId });
 
 
+    console.log('selected files', files);
+
     // for updating the record class setting the state to the existing value
     useEffect(() => {
         if (assignmentData && isEditing) {

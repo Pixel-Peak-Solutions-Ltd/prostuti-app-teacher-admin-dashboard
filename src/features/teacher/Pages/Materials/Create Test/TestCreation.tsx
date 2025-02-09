@@ -38,6 +38,7 @@ const TestCreation = () => {
     const [testDetails, setTestDetails] = useState<Record<string, string>>({});
     const [numOfForms, setNumOfForms] = useState(1);
     const [question, setQuestion] = useState<Record<string, string>>({});
+    const [imageFile, setImageFile] = useState<Record<string, File | null>>({});
     const [openSnackbar, setOpenSnackbar] = useState(false);
     // fetching courseId from the local redux store
     const courseId = useAppSelector((state) => state.courseAndLessonId.id.course_id);
@@ -72,6 +73,12 @@ const TestCreation = () => {
     const handleTestQuestionInput = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
         setQuestion((prevState) => ({ ...prevState, [name]: value }));
+    };
+
+    // removing the selected file
+
+    const handleRemoveFile = (e: React.MouseEvent, index) => {
+        setImageFile((prev) => ({ ...prev, [`${index}`]: null }));
     };
 
     //*handle submit function
@@ -211,6 +218,9 @@ const TestCreation = () => {
                                                     testDetails={testDetails}
                                                     setNumOfForms={setNumOfForms}
                                                     numOfForms={numOfForms}
+                                                    setImageFile={setImageFile}
+                                                    imageFile={imageFile}
+                                                    handleRemoveFile={handleRemoveFile}
                                                 />
                                             ))
                                         }

@@ -3,27 +3,32 @@ import CustomLabel from '../../../../../shared/components/CustomLabel';
 import CustomTextField from '../../../../../shared/components/CustomTextField';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import { Box, Button, Divider, IconButton } from '@mui/material';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import AlertDialog from './AlertDialog';
 import { useAppSelector } from '../../../../../redux/hooks';
 import { useGetCategoryByIdQuery } from '../../../../../redux/features/category/categoryApi';
 import { useGetCourseByIdQuery } from '../../../../../redux/features/course/courseApi';
 import Loader from '../../../../../shared/components/Loader';
+import AdornedTextField from '../../../../../shared/components/AdornedTextField';
 
-
-const TestQuestionForm = ({ index, handleTestQuestionInput, question, testDetails, setNumOfForms, numOfForms }:
-    {
-        handleTestQuestionInput?: (e: React.ChangeEvent<HTMLInputElement>) => void;
-        question: Record<string, string>;
-        index: number;
-        testDetails: Record<string, string>;
-        numOfForms?: number;
-        setNumOfForms?: React.Dispatch<React.SetStateAction<number>>;
-    }
+// type declaration for props
+type TTestQuestionForm = {
+    handleTestQuestionInput?: (e: React.ChangeEvent<HTMLInputElement>) => void;
+    question: Record<string, string>;
+    index: number;
+    testDetails: Record<string, string>;
+    numOfForms?: number;
+    setNumOfForms?: React.Dispatch<React.SetStateAction<number>>;
+    setImageFile: React.Dispatch<React.SetStateAction<Record<string, File | null>>>;
+    imageFile: Record<string, File | null>;
+    handleRemoveFile: (e: React.MouseEvent, index: number) => void;
+};
+const TestQuestionForm = ({ index, handleTestQuestionInput, question, testDetails, setNumOfForms, numOfForms, setImageFile, imageFile, handleRemoveFile }: TTestQuestionForm
 ) => {
     // modal state
     const [open, setOpen] = useState(false);
 
+    const fileInputRef = useRef<HTMLInputElement>(null);
     // fetching all academic questions
     const academicFields = ['Division', 'Subject', 'Chapter'];
     const jobFields = ['Subject'];
@@ -46,6 +51,17 @@ const TestQuestionForm = ({ index, handleTestQuestionInput, question, testDetail
 
     const categoryType = singleCategory?.data.type;
 
+    // file input hanlder
+    const handleFileInput = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const { name } = e.target;
+        setImageFile((prevState) => ({ ...prevState, [`${index}`]: e.target.files[0] }));
+    };
+
+    // click on file icon
+    const handleFileIconClick = () => {
+        fileInputRef.current?.click();
+        // setImageFile((prevState)=>({...prevState, `image_${index}`: e.target.files[0]}))
+    };
     //* handler functions
     const handleClickOpen = () => {
         setOpen(true);
@@ -59,12 +75,22 @@ const TestQuestionForm = ({ index, handleTestQuestionInput, question, testDetail
             <Box sx={{ width: '100%', height: '100%', display: 'flex', justifyContent: 'space-between' }}>
                 <Grid size={index > 0 ? 11 : 9}>
                     <CustomLabel fieldName={`Question ${index + 1}`} />
-                    <CustomTextField
+                    {/* <CustomTextField
                         name={`title_${index}`}
                         handleInput={handleTestQuestionInput}
                         placeholder='Write your question here'
                         value={question[`title_${index}`]}
                         required={true}
+                    /> */}
+                    <AdornedTextField
+                        name={`title_${index}`}
+                        handleInput={handleTestQuestionInput}
+                        handleFileIconClick={handleFileIconClick}
+                        placeholder='Write your question here'
+                        fileInputRef={fileInputRef}
+                        required={true}
+                        handleFileInput={handleFileInput}
+                        value={question[`title_${index}`]}
                     />
                 </Grid>
                 {/* conditional rendering the upload from database button */}
@@ -86,10 +112,11 @@ const TestQuestionForm = ({ index, handleTestQuestionInput, question, testDetail
                 <Grid size={1} sx={{ display: 'flex', alignSelf: 'flex-end', justifyContent: 'right' }}>
                     <IconButton
                         disabled={numOfForms === 1 ? true : index !== numOfForms - 1 ? true : false}
-                        onClick={() => {
+                        onClick={(e) => {
                             if (numOfForms > 1) {
                                 setNumOfForms(state => state - 1);
                             }
+                            handleRemoveFile(e, index);
                         }}>
                         <DeleteForeverIcon />
                     </IconButton>
