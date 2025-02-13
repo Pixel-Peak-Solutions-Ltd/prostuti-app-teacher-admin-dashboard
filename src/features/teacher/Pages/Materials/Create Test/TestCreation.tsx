@@ -78,12 +78,17 @@ const TestCreation = () => {
     // removing the selected file
 
     const handleRemoveFile = (e: React.MouseEvent, index) => {
-        setImageFile((prev) => ({ ...prev, [`${index}`]: null }));
+        setImageFile((prev) => {
+            const updatedFiles = { ...prev };
+            delete updatedFiles[`${index}`];
+            return updatedFiles;
+        });
     };
 
     //*handle submit function
     const handleTestSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+        const testData = new FormData();
         const questionList = testQuestionFormation(question, testDetails?.type);
         const questionsFromDatabase = questionIdArrayFormation(selectedDatabaseQuestionId);
 
@@ -100,11 +105,24 @@ const TestCreation = () => {
             questionList: finalQuestionList
         };
 
+        testData.append('data', JSON.stringify(submittableData));
+        // checking whether file object not empty
+
+        if (Object.keys(imageFile).length !== 0) {
+            for (const key in imageFile) {
+                // checking whether a key has null value in the object
+                if (imageFile[key] !== null) {
+                    testData.append(`image${key}`, imageFile[key]);
+                }
+            }
+        }
+
         try {
-            await createTest(submittableData);
+            await createTest(testData);
             setOpenSnackbar(true);
             setTestDetails({});
             setQuestion({});
+            setImageFile({});
             setNumOfForms(1);
             dispatch(resetStoredQuestions());
         } catch (err) {
@@ -222,6 +240,7 @@ const TestCreation = () => {
                                                     numOfForms={numOfForms}
                                                     setImageFile={setImageFile}
                                                     imageFile={imageFile}
+                                                    // handleFileInput={handleFileInput}
                                                     handleRemoveFile={handleRemoveFile}
                                                 />
                                             ))

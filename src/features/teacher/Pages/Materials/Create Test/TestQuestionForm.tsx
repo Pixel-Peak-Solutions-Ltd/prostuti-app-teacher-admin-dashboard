@@ -2,7 +2,7 @@ import Grid from '@mui/material/Grid2';
 import CustomLabel from '../../../../../shared/components/CustomLabel';
 import CustomTextField from '../../../../../shared/components/CustomTextField';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
-import { Box, Button, Divider, IconButton } from '@mui/material';
+import { Box, Button, Divider, IconButton, Typography } from '@mui/material';
 import { useRef, useState } from 'react';
 import AlertDialog from './AlertDialog';
 import { useAppSelector } from '../../../../../redux/hooks';
@@ -10,6 +10,7 @@ import { useGetCategoryByIdQuery } from '../../../../../redux/features/category/
 import { useGetCourseByIdQuery } from '../../../../../redux/features/course/courseApi';
 import Loader from '../../../../../shared/components/Loader';
 import AdornedTextField from '../../../../../shared/components/AdornedTextField';
+import { teal } from '@mui/material/colors';
 
 // type declaration for props
 type TTestQuestionForm = {
@@ -65,8 +66,11 @@ const TestQuestionForm = (
 
     // file input handler
     const handleFileInput = (e: React.ChangeEvent<HTMLInputElement>) => {
-        // const { name } = e.target;
-        setImageFile((prevState) => ({ ...prevState, [`${index}`]: e.target.files[0] }));
+        if (e.target.files.length > 0) {
+            setImageFile((prevState) => ({ ...prevState, [`${index}`]: e.target.files[0] }));
+            // The following line resets input field to allow selecting the same file again
+            e.target.value = '';
+        }
     };
 
     // click on file icon
@@ -134,6 +138,26 @@ const TestQuestionForm = (
                     </IconButton>
                 </Grid>
             </Box>
+
+            {
+                imageFile[`${index}`] &&
+                (
+                    <Grid size={12} sx={{ mt: -2, display: 'flex', justifyContent: "space-between", alignItems: "center" }}>
+                        <Typography variant="h6" sx={{ fontSize: "1rem", fontWeight: "500", bgcolor: teal[50], px: 1, py: 0.5, borderRadius: 2 }} color={teal[500]}>
+                            {imageFile[`${index}`]?.name}
+                        </Typography>
+                        <IconButton
+                            onClick={
+                                (e) => {
+                                    handleRemoveFile(e, index);
+                                }
+                            }
+                        >
+                            <DeleteForeverIcon />
+                        </IconButton>
+                    </Grid>
+                )
+            }
 
             {/* mcq row */}
             {
