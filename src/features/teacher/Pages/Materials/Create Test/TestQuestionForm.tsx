@@ -23,7 +23,19 @@ type TTestQuestionForm = {
     imageFile: Record<string, File | null>;
     handleRemoveFile: (e: React.MouseEvent, index: number) => void;
 };
-const TestQuestionForm = ({ index, handleTestQuestionInput, question, testDetails, setNumOfForms, numOfForms, setImageFile, imageFile, handleRemoveFile }: TTestQuestionForm
+const TestQuestionForm = (
+    {
+        index,
+        handleTestQuestionInput,
+        question,
+        testDetails,
+        setNumOfForms,
+        numOfForms,
+        setImageFile,
+        imageFile,
+        handleRemoveFile
+    }
+        : TTestQuestionForm
 ) => {
     // modal state
     const [open, setOpen] = useState(false);
@@ -51,9 +63,9 @@ const TestQuestionForm = ({ index, handleTestQuestionInput, question, testDetail
 
     const categoryType = singleCategory?.data.type;
 
-    // file input hanlder
+    // file input handler
     const handleFileInput = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const { name } = e.target;
+        // const { name } = e.target;
         setImageFile((prevState) => ({ ...prevState, [`${index}`]: e.target.files[0] }));
     };
 

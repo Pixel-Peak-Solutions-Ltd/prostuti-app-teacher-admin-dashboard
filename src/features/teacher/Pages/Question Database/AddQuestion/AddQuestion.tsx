@@ -46,10 +46,6 @@ const AddQuestion = () => {
             }
         }
 
-        // console.log(questionData.get('image2'));
-        // for (const [key, value] of questionData.entries()) {
-        //     console.log(key, value);
-        // }
         try {
             await createQuestion(questionData);
         } catch (err) {
@@ -57,7 +53,10 @@ const AddQuestion = () => {
         }
 
         setQuestion({});
+        setImageFile({});
+        setNumOfForms(1);
         setOpenSnackbar(true);
+        // set
     };
 
     // close snackbar automatically
@@ -71,7 +70,7 @@ const AddQuestion = () => {
         setOpenSnackbar(false);
     };
 
-    const checkImageFileAsFormData = (fileObj: Record<string, File>) => {
+    const checkImageFileAsFormData = (fileObj: typeof imageFile) => {
         const imageData = new FormData();
         for (const key in fileObj) {
             imageData.append(`image${key}`, fileObj[key]);
@@ -84,7 +83,11 @@ const AddQuestion = () => {
     // removing the selected file
 
     const handleRemoveFile = (e: React.MouseEvent, index) => {
-        setImageFile((prev) => ({ ...prev, [`${index}`]: null }));
+        setImageFile((prev) => {
+            const updatedFiles = { ...prev };
+            delete updatedFiles[`${index}`];
+            return updatedFiles;
+        });
     };
 
     // loading screen until all the data are fetched
@@ -130,6 +133,7 @@ const AddQuestion = () => {
                                                 X
                                             </Button>
                                             <AddQuestionForm
+                                                handleRemoveFile={handleRemoveFile}
                                                 index={index}
                                                 question={question}
                                                 setQuestion={setQuestion}

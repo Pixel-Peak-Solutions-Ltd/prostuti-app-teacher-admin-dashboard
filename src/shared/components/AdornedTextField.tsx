@@ -38,12 +38,6 @@ const AdornedTextField = (
     { defaultValue, name, value, placeholder, handleInput, disabled, multiline, rows, required, error, handlePaste, type, handleFileIconClick, fileInputRef, handleFileInput }: TAprops
 ) => {
 
-    // const handleFileIconClick = (event: React.MouseEvent) => {
-    //     const hiddenInput = event.currentTarget.querySelector('input[type="file"]') as HTMLInputElement;
-    //     hiddenInput?.click();
-    // };
-    // const [imageFiles, setImageFiles] = useState<File[]>([]);
-
     return (
         <OutlinedInput
             disabled={disabled}
@@ -88,10 +82,6 @@ const AdornedTextField = (
                         <VisuallyHiddenInput
                             ref={fileInputRef}
                             type="file"
-                            // onChange={(e) => {
-                            //     setImageFile((prevState) => ({ ...prevState, imageFile: e.target.files[0] }));
-                            //     console.log(e.target.files);
-                            // }}
                             onChange={handleFileInput}
                             multiple
                         />

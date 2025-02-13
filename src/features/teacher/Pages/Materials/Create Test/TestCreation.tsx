@@ -124,6 +124,8 @@ const TestCreation = () => {
         setOpenSnackbar(false);
     };
 
+    console.log('selected image object for test questions:', imageFile);
+
     return (
         <>
             <Box sx={{ width: '100%', height: numOfForms === 1 ? '100vh' : 'auto' }}>
