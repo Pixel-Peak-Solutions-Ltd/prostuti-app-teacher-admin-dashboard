@@ -1,12 +1,13 @@
 import { Box, Paper, Typography } from "@mui/material";
 import SearchBarWithFilter from "./SearchBarWithFilter";
+import TeachersTable from "./TeachersTable";
 
 const TeacherManagement = () => {
   return (
-    <Box sx={{ width: "100%", height: "100vh" }}>
+    <Box sx={{ width: "100%" }}>
       <Paper
         variant="outlined"
-        sx={{ width: "100%", height: "100vh", borderRadius: "10px", p: 3 }}>
+        sx={{ width: "100%", borderRadius: "10px", p: 3 }}>
         {/* top title and button section */}
         <Box
           component="section"
@@ -22,6 +23,7 @@ const TeacherManagement = () => {
         {/* Search + Filter */}
         <SearchBarWithFilter />
         {/* Table */}
+        <TeachersTable />
       </Paper>
     </Box>
   );

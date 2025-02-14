@@ -10,7 +10,7 @@ import {
 
 const SearchBarWithFilter = () => {
   return (
-    <Box display="flex" alignItems="center" gap={2}>
+    <Box display="flex" alignItems="center" gap={2} sx={{ mb: 3 }}>
       <TextField
         variant="outlined"
         placeholder="Search for teacher..."
