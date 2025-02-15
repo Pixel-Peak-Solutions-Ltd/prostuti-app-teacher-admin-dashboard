@@ -9,6 +9,7 @@ import PaymentManagement from "../features/admin/Pages/PaymentManagement";
 import Category from "../features/admin/Pages/Category/Category";
 import AddCategory from "../features/admin/Pages/Category/AddCategory/AddCategory";
 import CourseApproved from "../features/admin/Pages/CourseManagement/CourseApproved/CourseApproved";
+import TeacherProfile from "../features/admin/Pages/TeacherManagement/TeacherProfile/TeacherProfile";
 
 export const adminRoutes = [
   {
@@ -30,6 +31,10 @@ export const adminRoutes = [
   {
     path: "teacher-management",
     element: <TeacherManagement />,
+  },
+  {
+    path: "teacher-management/profile/:id",
+    element: <TeacherProfile />,
   },
   {
     path: "practice-test",

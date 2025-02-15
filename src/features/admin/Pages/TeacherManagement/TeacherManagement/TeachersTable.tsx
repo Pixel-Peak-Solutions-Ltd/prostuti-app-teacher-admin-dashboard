@@ -7,6 +7,7 @@ import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 import IconButton from "@mui/material/IconButton";
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
+import { Link } from "react-router-dom";
 
 function createData(si, teacherName, teacherId, subject, category) {
   return { si, teacherName, teacherId, subject, category };
@@ -50,11 +51,13 @@ const TeachersTable = () => {
               <TableCell>{row.teacherId}</TableCell>
               <TableCell>{row.subject}</TableCell>
               <TableCell>{row.category}</TableCell>
-              <TableCell>
-                <IconButton aria-label="action">
-                  <ArrowForwardIosIcon />
-                </IconButton>
-              </TableCell>
+              <Link to={`profile/${row.teacherId}`}>
+                <TableCell>
+                  <IconButton aria-label="action">
+                    <ArrowForwardIosIcon />
+                  </IconButton>
+                </TableCell>{" "}
+              </Link>
             </TableRow>
           ))}
         </TableBody>
