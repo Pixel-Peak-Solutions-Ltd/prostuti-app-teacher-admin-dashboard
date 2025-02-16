@@ -22,6 +22,7 @@ import RevenueManagementIcon from '../../../assets/Dashboard-SVGs/revenueManagem
 import ReportComplianceIcon from '../../../assets/Dashboard-SVGs/reportCompliance.svg?react';
 import { useAppDispatch } from '../../../redux/hooks';
 import { logout } from '../../../redux/features/auth/authSlice';
+import Coupon from '../../../features/admin/Pages/Coupon/Coupon';
 
 const drawerWidth = 265;
 const adminDashboardMenus = [
@@ -53,6 +54,11 @@ const adminDashboardMenus = [
   {
     path: '/admin/payment-management',
     name: 'Payment Management',
+    icon: <PaymentManagement />,
+  },
+  {
+    path: '/admin/coupon-management',
+    name: 'Coupon Management',
     icon: <PaymentManagement />,
   },
   {

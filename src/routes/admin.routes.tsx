@@ -9,6 +9,8 @@ import PaymentManagement from '../features/admin/Pages/PaymentManagement';
 import Category from '../features/admin/Pages/Category/Category';
 import AddCategory from '../features/admin/Pages/Category/AddCategory/AddCategory';
 import CourseApproved from '../features/admin/Pages/CourseManagement/CourseApproved/CourseApproved';
+import Coupon from '../features/admin/Pages/Coupon/Coupon';
+import AddCoupon from '../features/admin/Pages/Coupon/AddCoupon';
 
 export const adminRoutes = [
   {
@@ -38,6 +40,14 @@ export const adminRoutes = [
   {
     path: 'payment-management',
     element: <PaymentManagement />,
+  },
+  {
+    path: 'coupon-management',
+    element: <Coupon/>,
+  },
+  {
+    path: 'add-coupon',
+    element: <AddCoupon/>,
   },
   {
     path: 'revenue-management',
