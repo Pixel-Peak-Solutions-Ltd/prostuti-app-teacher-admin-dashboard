@@ -118,6 +118,28 @@ const materialApi = baseApi.injectEndpoints({
                     body: testData
                 };
             }
+        }),
+
+        // notice operations
+        getNoticesOfACourse: builder.query({
+            query: ({ courseId }) => {
+                return {
+                    url: `/notice/course/${courseId}`,
+                    method: 'GET',
+                };
+            },
+            providesTags: ['Notice']
+        }),
+        createNotice: builder.mutation({
+            query: (noticeData) => {
+                console.log('data received in redux', noticeData);
+                return {
+                    url: '/notice',
+                    method: 'POST',
+                    body: noticeData
+                };
+            },
+            invalidatesTags: ['Notice']
         })
     })
 });
@@ -134,5 +156,7 @@ export const {
     useGetResourceByIdQuery,
     useUpdateResourceMutation,
     useDeleteRecordClassMutation,
-    useDeleteResourceMutation
+    useDeleteResourceMutation,
+    useCreateNoticeMutation,
+    useGetNoticesOfACourseQuery
 } = materialApi;

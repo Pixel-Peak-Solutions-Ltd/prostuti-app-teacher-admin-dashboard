@@ -17,11 +17,12 @@ import AssignmentCreation from "../features/teacher/Pages/Materials/Assignment/A
 import TestCreation from "../features/teacher/Pages/Materials/Create Test/TestCreation";
 import ResourcesCreation from "../features/teacher/Pages/Materials/Resource/ResourcesCreation";
 import RoutineCreation from "../features/teacher/Pages/Materials/RoutineCreation";
-import NoticeCreation from "../features/teacher/Pages/Materials/NoticeCreation";
+import NoticeCreation from "../features/teacher/Pages/Materials/Notice/NoticeCreation";
 import CoursePreview from "../features/teacher/Pages/Course/CoursePreview";
 import RecordClassList from "../features/teacher/Pages/Materials/RecordClass/RecordClassList";
 import AssignmentList from "../features/teacher/Pages/Materials/Assignment/AssignmentList";
 import ResourcesList from "../features/teacher/Pages/Materials/Resource/ResourcesList";
+import NoticeList from "../features/teacher/Pages/Materials/Notice/NoticeList";
 
 export const teacherRoutes = [
     {
@@ -114,7 +115,7 @@ export const teacherRoutes = [
     },
     {
         path: 'notice-list',
-        element: <RecordClassList />
+        element: <NoticeList />
     },
 
     // course paths
