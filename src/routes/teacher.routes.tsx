@@ -91,6 +91,10 @@ export const teacherRoutes = [
         path: 'test-update/:testId',
         element: <TestCreation />
     },
+    {
+        path: 'notice-update/:noticeId',
+        element: <NoticeCreation />
+    },
 
     // course material lists route
     {

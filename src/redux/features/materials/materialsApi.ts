@@ -130,13 +130,41 @@ const materialApi = baseApi.injectEndpoints({
             },
             providesTags: ['Notice']
         }),
+        getNoticeById: builder.query({
+            query: ({ noticeId }) => {
+                return {
+                    url: `/notice/${noticeId}`,
+                    method: 'GET'
+                };
+            }
+        }),
         createNotice: builder.mutation({
             query: (noticeData) => {
-                console.log('data received in redux', noticeData);
                 return {
                     url: '/notice',
                     method: 'POST',
                     body: noticeData
+                };
+            },
+            invalidatesTags: ['Notice']
+        }),
+        updateNotice: builder.mutation({
+            query: ({ updateNoticeData, noticeId }) => {
+                console.log('recieved update notice data in redux:', updateNoticeData);
+                console.log('recieved update notice id in redux:', noticeId);
+                return {
+                    url: `/notice/${noticeId}`,
+                    method: 'PATCH',
+                    body: updateNoticeData
+                };
+            },
+            invalidatesTags: ['Notice']
+        }),
+        deleteNotice: builder.mutation({
+            query: ({ noticeId }) => {
+                return {
+                    url: `/notice/${noticeId}`,
+                    method: 'DELETE',
                 };
             },
             invalidatesTags: ['Notice']
@@ -158,5 +186,8 @@ export const {
     useDeleteRecordClassMutation,
     useDeleteResourceMutation,
     useCreateNoticeMutation,
-    useGetNoticesOfACourseQuery
+    useGetNoticesOfACourseQuery,
+    useGetNoticeByIdQuery,
+    useUpdateNoticeMutation,
+    useDeleteNoticeMutation
 } = materialApi;
