@@ -23,6 +23,7 @@ import RecordClassList from "../features/teacher/Pages/Materials/RecordClass/Rec
 import AssignmentList from "../features/teacher/Pages/Materials/Assignment/AssignmentList";
 import ResourcesList from "../features/teacher/Pages/Materials/Resource/ResourcesList";
 import NoticeList from "../features/teacher/Pages/Materials/Notice/NoticeList";
+import TestList from "../features/teacher/Pages/Materials/Create Test/TestList";
 
 export const teacherRoutes = [
     {
@@ -107,7 +108,7 @@ export const teacherRoutes = [
     },
     {
         path: 'test-list',
-        element: <RecordClassList />
+        element: <TestList />
     },
     {
         path: 'assignment-list',
