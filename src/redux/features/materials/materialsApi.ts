@@ -110,6 +110,8 @@ const materialApi = baseApi.injectEndpoints({
             },
             invalidatesTags: ['Assignment']
         }),
+
+        // test operations
         createTest: builder.mutation({
             query: (testData) => {
                 return {
@@ -117,7 +119,29 @@ const materialApi = baseApi.injectEndpoints({
                     method: 'POST',
                     body: testData
                 };
-            }
+            },
+            invalidatesTags: ['Test']
+        }),
+
+        getSingleTest: builder.query({
+            query: ({ testId }) => {
+                return {
+                    url: `/test/${testId}`,
+                    method: 'GET'
+                };
+            },
+            providesTags: ['Test']
+        }),
+
+        updateTest: builder.mutation({
+            query: ({ testId, testData }) => {
+                return {
+                    url: `/test/${testId}`,
+                    method: 'PATCH',
+                    body: testData
+                };
+            },
+            invalidatesTags: ['Test']
         }),
 
         // notice operations
@@ -150,8 +174,6 @@ const materialApi = baseApi.injectEndpoints({
         }),
         updateNotice: builder.mutation({
             query: ({ updateNoticeData, noticeId }) => {
-                console.log('recieved update notice data in redux:', updateNoticeData);
-                console.log('recieved update notice id in redux:', noticeId);
                 return {
                     url: `/notice/${noticeId}`,
                     method: 'PATCH',
@@ -189,5 +211,7 @@ export const {
     useGetNoticesOfACourseQuery,
     useGetNoticeByIdQuery,
     useUpdateNoticeMutation,
-    useDeleteNoticeMutation
+    useDeleteNoticeMutation,
+    useGetSingleTestQuery,
+    useUpdateTestMutation,
 } = materialApi;

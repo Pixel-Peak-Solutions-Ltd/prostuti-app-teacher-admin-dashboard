@@ -24,6 +24,7 @@ import AssignmentList from "../features/teacher/Pages/Materials/Assignment/Assig
 import ResourcesList from "../features/teacher/Pages/Materials/Resource/ResourcesList";
 import NoticeList from "../features/teacher/Pages/Materials/Notice/NoticeList";
 import TestList from "../features/teacher/Pages/Materials/Create Test/TestList";
+import TestUpdate from "../features/teacher/Pages/Materials/Create Test/TestUpdate";
 
 export const teacherRoutes = [
     {
@@ -90,7 +91,7 @@ export const teacherRoutes = [
     },
     {
         path: 'test-update/:testId',
-        element: <TestCreation />
+        element: <TestUpdate />
     },
     {
         path: 'notice-update/:noticeId',
