@@ -3,16 +3,11 @@ import {
   Button,
   Grid2,
   Paper,
-  Tab,
-  Tabs,
-  Typography,
+  Typography
 } from "@mui/material";
-import { Link } from "react-router-dom";
-import CouponTabs from "./CouponTabs";
-import SearchBar from "./SearchBar";
-import CouponTable from "./CoupoonTable";
-import AddCouponModal from "./AddCoupon";
 import { useState } from "react";
+import AddCouponModal from "./AddCoupon";
+import CouponTabs from "./CouponTabs";
 
 const Coupon = () => {
   const [open, setOpen] = useState(false);
