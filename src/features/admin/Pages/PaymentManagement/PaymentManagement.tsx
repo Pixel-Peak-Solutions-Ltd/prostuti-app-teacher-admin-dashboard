@@ -18,7 +18,7 @@ const PaymentManagement = () => {
           }}
         >
           <Typography variant="h3">Payment Management</Typography>
-          <div></div>
+          
         </Box>
 
         <Box component="section" sx={{ mt: 3, flexGrow: 1 }}>

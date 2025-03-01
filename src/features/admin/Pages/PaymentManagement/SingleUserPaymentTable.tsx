@@ -29,7 +29,7 @@ const SingleUserPaymentTable = ({ student_id }: { student_id: string }) => {
     <>
       <Box sx={{ mb: 2 }}>
         <Typography variant="subtitle1" fontWeight="bold">
-          Payment History (18)
+          Payment History ({payments?.length})
         </Typography>
       </Box>
 

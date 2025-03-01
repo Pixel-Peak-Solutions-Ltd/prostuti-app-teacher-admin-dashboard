@@ -2,12 +2,13 @@ import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { Avatar, Box, Button, Chip, Grid, Grid2, Paper, Typography } from "@mui/material";
 import { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import AddCouponModal from "../Coupon/AddCoupon";
+
 import AddIcon from '@mui/icons-material/Add';
 import { useGetPaymentByIdQuery } from '../../../../redux/features/payment/paymentApi';
 import Loader from '../../../../shared/components/Loader';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import SingleUserPaymentTable from './SingleUserPaymentTable';
+import AddCouponUserModal from './AddCouponUser';
 const SinglePayment = () => {
   const { id } = useParams();
   console.log(id);
@@ -57,7 +58,7 @@ const SinglePayment = () => {
               <AddIcon/>
               Add Coupon Offer
             </Button>
-            <AddCouponModal open={open} onClose={handleClose} />
+            <AddCouponUserModal open={open} onClose={handleClose} student_id={SinglePayment?.student_id._id} />
           </div>
         </Box>
 
