@@ -1,44 +1,49 @@
-import AdminDashboard from '../features/admin/Pages/AdminDashboard';
-import AddCategory from '../features/admin/Pages/Category/AddCategory/AddCategory';
-import Category from '../features/admin/Pages/Category/Category';
-import Coupon from '../features/admin/Pages/Coupon/Coupon';
-import CourseApproved from '../features/admin/Pages/CourseManagement/CourseApproved/CourseApproved';
-import CourseManagement from '../features/admin/Pages/CourseManagement/CourseManagement';
-import FlashCardManagement from '../features/admin/Pages/FlashCardManagement';
-import PaymentManagement from '../features/admin/Pages/PaymentManagement/PaymentManagement';
-import SinglePayment from '../features/admin/Pages/PaymentManagement/SinglePayment';
-import PracticeTest from '../features/admin/Pages/PracticeTest';
-import ReportCompliance from '../features/admin/Pages/ReportCompliance';
-import RevenueManagement from '../features/admin/Pages/RevenueManagement';
-import TeacherManagement from '../features/admin/Pages/TeacherManagement';
+import AdminDashboard from "../features/admin/Pages/AdminDashboard";
+import AddCategory from "../features/admin/Pages/Category/AddCategory/AddCategory";
+import Category from "../features/admin/Pages/Category/Category";
+import Coupon from "../features/admin/Pages/Coupon/Coupon";
+import CourseApproved from "../features/admin/Pages/CourseManagement/CourseApproved/CourseApproved";
+import CourseManagement from "../features/admin/Pages/CourseManagement/CourseManagement";
+import FlashCardManagement from "../features/admin/Pages/FlashCardManagement";
+import PaymentManagement from "../features/admin/Pages/PaymentManagement/PaymentManagement";
+import SinglePayment from "../features/admin/Pages/PaymentManagement/SinglePayment";
+import PracticeTest from "../features/admin/Pages/PracticeTest";
+import ReportCompliance from "../features/admin/Pages/ReportCompliance";
+import RevenueManagement from "../features/admin/Pages/RevenueManagement";
+import TeacherManagement from "../features/admin/Pages/TeacherManagement";
+import TeacherProfile from "../features/admin/Pages/TeacherManagement/TeacherProfile/TeacherProfile";
 
 export const adminRoutes = [
   {
-    path: 'dashboard',
+    path: "dashboard",
     element: <AdminDashboard />,
   },
   {
-    path: 'course-management',
+    path: "course-management",
     element: <CourseManagement />,
   },
   {
-    path: 'course-approved/:courseId',
+    path: "course-approved/:courseId",
     element: <CourseApproved />,
   },
   {
-    path: 'flashcard-management',
+    path: "flashcard-management",
     element: <FlashCardManagement />,
   },
   {
-    path: 'teacher-management',
+    path: "teacher-management",
     element: <TeacherManagement />,
   },
   {
-    path: 'practice-test',
+    path: "teacher-management/profile/:id",
+    element: <TeacherProfile />,
+  },
+  {
+    path: "practice-test",
     element: <PracticeTest />,
   },
   {
-    path: 'payment-management',
+    path: "payment-management",
     element: <PaymentManagement />,
   },
   {
@@ -54,15 +59,15 @@ export const adminRoutes = [
     element: <RevenueManagement />,
   },
   {
-    path: 'category',
+    path: "category",
     element: <Category />,
   },
   {
-    path: 'add-category',
+    path: "add-category",
     element: <AddCategory />,
   },
   {
-    path: 'report-compliance',
+    path: "report-compliance",
     element: <ReportCompliance />,
   },
 ];
