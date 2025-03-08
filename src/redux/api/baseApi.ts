@@ -6,7 +6,7 @@ import { logout, setUser } from "../features/auth/authSlice";
 // Production url -> https://prostuti-app-backend-production.up.railway.app
 // Development url -> https://resilient-heart-dev.up.railway.app 
 const baseQuery = fetchBaseQuery({
-    baseUrl: 'http://localhost:5000/api/v1',
+    baseUrl: 'https://resilient-heart-dev.up.railway.app/api/v1',
     credentials: 'include',
     prepareHeaders: (headers, { getState }) => {
         const token = (getState() as RootState).auth.token;
