@@ -68,7 +68,7 @@ const paymentAPI = baseApi.injectEndpoints({
         url: `/payment/${id}`,
         method: "GET",
       }),
-      providesTags: (_result, _error, id) => [{ type: 'Payments', id }],
+      providesTags: (_result, _error, id) => [{ type: 'Payment', id }],
     }),
   }),
 });

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   Table,
   TableBody,
@@ -14,6 +14,8 @@ import { Edit, Delete, ThreeDRotation, MoreVert } from "@mui/icons-material";
 import { useGetAllCouponsQuery } from "../../../../redux/features/coupon/couponApi";
 import Loader from "../../../../shared/components/Loader";
 import dayjs from "dayjs";
+import UpdateCouponModal from "./UpdateCoupon";
+import { Edit as EditIcon } from "@mui/icons-material";
 
 interface CouponTableProps {
   activeTab: "course" | "user";
@@ -21,6 +23,13 @@ interface CouponTableProps {
 }
 
 const CouponTable: React.FC<CouponTableProps> = ({ activeTab, searchTerm }) => {
+  const [updateModalOpen, setUpdateModalOpen] = useState(false);
+  const [selectedCouponId, setSelectedCouponId] = useState<string | null>(null);
+
+  const handleEditClick = (id: string) => {
+    setSelectedCouponId(id);
+    setUpdateModalOpen(true);
+  };
   const {
     data: couponsData,
     isLoading,
@@ -46,8 +55,6 @@ const CouponTable: React.FC<CouponTableProps> = ({ activeTab, searchTerm }) => {
             display: "flex",
             justifyContent: "center",
             alignItems: "center",
-
-            
           }}
         >
           NO Coupons found
@@ -92,9 +99,21 @@ const CouponTable: React.FC<CouponTableProps> = ({ activeTab, searchTerm }) => {
                   {dayjs(coupon.endDate).format("MMMM D, YYYY")}
                 </TableCell>
                 <TableCell>
-                  <IconButton onClick={() => handleEdit(coupon._id)}>
-                    <MoreVert />
+                  <IconButton
+                    color="primary"
+                    onClick={() => handleEditClick(coupon._id)}
+                  >
+                    <EditIcon />
                   </IconButton>
+                  <UpdateCouponModal
+                    open={updateModalOpen}
+                    onClose={() => {
+                      setUpdateModalOpen(false);
+                      setSelectedCouponId(null);
+                    }}
+                    couponId={selectedCouponId}
+                  />
+
                   {/* <IconButton color="secondary" onClick={() => handleDelete(coupon.id)}>
                     <Delete />
                   </IconButton> */}
@@ -106,16 +125,6 @@ const CouponTable: React.FC<CouponTableProps> = ({ activeTab, searchTerm }) => {
       )}
     </TableContainer>
   );
-
-  function handleEdit(id: string) {
-    console.log("Edit coupon with ID:", id);
-    // Add your edit logic here
-  }
-
-  function handleDelete(id: number) {
-    console.log("Delete coupon with ID:", id);
-    // Add your delete logic here
-  }
 };
 
 export default CouponTable;

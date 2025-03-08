@@ -49,7 +49,7 @@ const SingleUserPaymentTable = ({ student_id }: { student_id: string }) => {
   {payments?.map((payment, index) => (
     <TableRow key={payment._id}>
       <TableCell sx={{ py: 2 }}>{index + 1}</TableCell>
-      <TableCell sx={{ py: 2 }}>Invoice#{payment._id}</TableCell>
+      <TableCell sx={{ py: 2 }}>Invoice#{payment.transactionId}</TableCell>
       <TableCell sx={{ py: 2 }}>{payment?.amount}</TableCell>
       <TableCell sx={{ py: 2 }}>{payment?.amount}</TableCell>
 

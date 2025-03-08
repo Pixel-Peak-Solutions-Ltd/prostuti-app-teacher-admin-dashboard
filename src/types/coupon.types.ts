@@ -51,6 +51,13 @@ export interface ICoupon {
     course_id?: string;
   }
   // Update coupon payload type
-export interface IUpdateCouponPayload {
+  export interface IUpdateCouponPayload {
     id: string;
+    title?: string;
+    discountType?: 'Percentage' | 'Amount';
+    discountValue?: number;
+    startDate?: string;
+    endDate?: string;
+    student_id?: string;
+    course_id?: string;
   }

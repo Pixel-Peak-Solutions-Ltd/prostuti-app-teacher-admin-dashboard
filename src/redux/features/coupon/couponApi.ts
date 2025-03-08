@@ -1,4 +1,4 @@
-import { ICouponFilters, ICouponResponse, ICreateCouponPayload, IUpdateCouponPayload } from "../../../types/coupon.types";
+import { ICoupon, ICouponFilters, ICouponResponse, ICreateCouponPayload, IUpdateCouponPayload } from "../../../types/coupon.types";
 import { baseApi } from "../../api/baseApi";
 
 const couponAPI = baseApi.injectEndpoints({
@@ -47,22 +47,25 @@ const couponAPI = baseApi.injectEndpoints({
     }),
 
     // Update a coupon
-    updateCoupon: builder.mutation<ICouponResponse, IUpdateCouponPayload>({
-      query: ({ id}) => ({
+    updateCoupon: builder.mutation<any, IUpdateCouponPayload>({
+      query: ({id,...coupon}) => ({
         url: `/voucher/${id}`,
         method: "PATCH",
-        
+        body:coupon,
       }),
-      invalidatesTags: ["Coupons"],
+      invalidatesTags: (_result, _error, { id }) => [
+        "Coupons",
+        { type: 'Coupon', id }
+      ],
     }),
 
     // Get a single coupon
-    getCouponById: builder.query<ICouponResponse, string>({
+    getCouponById: builder.query<any, string>({
       query: (id) => ({
         url: `/voucher/${id}`,
         method: "GET",
       }),
-      providesTags: (_result, _error, id) => [{ type: 'Coupons', id }],
+      providesTags: (_result, _error, id) => [{ type: 'Coupon', id }],
     }),
   }),
 });

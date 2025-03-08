@@ -13,6 +13,8 @@ import {
   Select,
   MenuItem,
   FormHelperText,
+  FormControlLabel,
+  Switch,
 } from "@mui/material";
 import { Close as CloseIcon } from "@mui/icons-material";
 import { useForm, Controller } from "react-hook-form";
@@ -30,11 +32,10 @@ interface CouponFormData {
   title: string;
   discountType: "Percentage" | "Amount";
   discountValue: number;
-  voucherType: "All_Course" | "Specific_Course" | "Specific_Student";
+  activeForAllCourses: boolean;
+  course_id?: string;
   startDate: dayjs.Dayjs;
   endDate: dayjs.Dayjs;
-  course_id?: string;
-  student_id?: string;
 }
 
 // Zod schema for form validation
@@ -43,32 +44,25 @@ const couponSchema = z
     title: z.string().min(3, "Coupon title must be at least 3 characters"),
     discountType: z.enum(["Percentage", "Amount"]),
     discountValue: z.number().positive("Discount value must be positive"),
-    voucherType: z.enum(["All_Course", "Specific_Course", "Specific_Student"]),
+    activeForAllCourses: z.boolean(),
+    course_id: z.string().optional(),
     startDate: z.any().refine((val) => dayjs(val).isValid(), {
       message: "Invalid start date",
     }),
     endDate: z.any().refine((val) => dayjs(val).isValid(), {
       message: "Invalid end date",
     }),
-    course_id: z.string().optional(),
-    student_id: z.string().optional(),
   })
   .refine((data) => dayjs(data.endDate).isAfter(dayjs(data.startDate)), {
     message: "End date must be after start date",
     path: ["endDate"],
   })
   .refine(
-    (data) => !(data.voucherType === "Specific_Course" && !data.course_id),
+    (data) =>
+      data.activeForAllCourses || (!data.activeForAllCourses && data.course_id),
     {
-      message: "Course ID is required for Specific Course voucher",
+      message: "Course ID is required when not active for all courses",
       path: ["course_id"],
-    }
-  )
-  .refine(
-    (data) => !(data.voucherType === "Specific_Student" && !data.student_id),
-    {
-      message: "Student ID is required for Specific Student voucher",
-      path: ["student_id"],
     }
   );
 
@@ -92,29 +86,35 @@ const AddCouponModal: React.FC<AddCouponModalProps> = ({ open, onClose }) => {
       title: "",
       discountType: "Percentage",
       discountValue: 0,
-      voucherType: "All_Course",
+      activeForAllCourses: true,
       startDate: dayjs(),
       endDate: dayjs().add(1, "month"),
     },
   });
 
-  const voucherType = watch("voucherType");
+  const activeForAllCourses = watch("activeForAllCourses");
 
   const onSubmit = async (data: CouponFormData) => {
-    const { voucherType, ...payload } = data;
-  try {
-    const apiPayload: ICreateCouponPayload = {
-      ...payload,
-      startDate: data.startDate.toISOString(),
-      endDate: data.endDate.toISOString()
-    };
-    await createCoupon(apiPayload).unwrap();
-    reset();
-    onClose();
-  } catch (error) {
-    console.error('Failed to create coupon:', error);
-  }
-  }
+    try {
+      const {activeForAllCourses,...payload}=data
+      const apiPayload: ICreateCouponPayload = {
+        ...payload,
+        startDate: data.startDate.toISOString(),
+        endDate: data.endDate.toISOString(),
+      };
+
+      // Remove unnecessary fields before sending to API
+      if (activeForAllCourses) {
+        delete apiPayload.course_id;
+      }
+
+      await createCoupon(apiPayload).unwrap();
+      reset();
+      onClose();
+    } catch (error) {
+      console.error("Failed to create coupon:", error);
+    }
+  };
 
   const handleClose = () => {
     reset();
@@ -190,27 +190,7 @@ const AddCouponModal: React.FC<AddCouponModalProps> = ({ open, onClose }) => {
               )}
             />
 
-            <FormControl fullWidth margin="normal" error={!!errors.voucherType}>
-              <InputLabel>Voucher Type</InputLabel>
-              <Controller
-                name="voucherType"
-                control={control}
-                render={({ field }) => (
-                  <Select {...field} label="Voucher Type">
-                    <MenuItem value="All_Course">All Courses</MenuItem>
-                    <MenuItem value="Specific_Course">Specific Course</MenuItem>
-                    <MenuItem value="Specific_Student">
-                      Specific Student
-                    </MenuItem>
-                  </Select>
-                )}
-              />
-              {errors.voucherType && (
-                <FormHelperText>{errors.voucherType.message}</FormHelperText>
-              )}
-            </FormControl>
-
-            {voucherType === "Specific_Course" && (
+            {!activeForAllCourses && (
               <Controller
                 name="course_id"
                 control={control}
@@ -221,23 +201,6 @@ const AddCouponModal: React.FC<AddCouponModalProps> = ({ open, onClose }) => {
                     label="Course ID"
                     error={!!errors.course_id}
                     helperText={errors.course_id?.message}
-                    margin="normal"
-                  />
-                )}
-              />
-            )}
-
-            {voucherType === "Specific_Student" && (
-              <Controller
-                name="student_id"
-                control={control}
-                render={({ field }) => (
-                  <TextField
-                    {...field}
-                    fullWidth
-                    label="Student ID"
-                    error={!!errors.student_id}
-                    helperText={errors.student_id?.message}
                     margin="normal"
                   />
                 )}
@@ -287,6 +250,26 @@ const AddCouponModal: React.FC<AddCouponModalProps> = ({ open, onClose }) => {
                 )}
               />
             </LocalizationProvider>
+            <Box sx={{ gridColumn: "span 3" }}>
+  <Controller
+    name="activeForAllCourses"
+    control={control}
+    render={({ field: { onChange, value } }) => (
+      <FormControlLabel
+        control={
+          <Switch
+            checked={value}
+            onChange={(e) => onChange(e.target.checked)}
+            color="primary"
+          />
+        }
+        label="Active for all courses"
+        sx={{ marginTop: 2 }}
+      />
+    )}
+  />
+</Box>
+           
           </Box>
         </DialogContent>
         <DialogActions>
