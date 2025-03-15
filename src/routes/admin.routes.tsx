@@ -1,4 +1,4 @@
-import AdminDashboard from "../features/admin/Pages/AdminDashboard";
+import AdminDashboard from "../features/admin/Pages/AdminDashboard/AdminDashboard";
 import AddCategory from "../features/admin/Pages/Category/AddCategory/AddCategory";
 import Category from "../features/admin/Pages/Category/Category";
 import Coupon from "../features/admin/Pages/Coupon/Coupon";
@@ -10,7 +10,8 @@ import SinglePayment from "../features/admin/Pages/PaymentManagement/SinglePayme
 import PracticeTest from "../features/admin/Pages/PracticeTest";
 import ReportCompliance from "../features/admin/Pages/ReportCompliance";
 import RevenueManagement from "../features/admin/Pages/RevenueManagement";
-import TeacherManagement from "../features/admin/Pages/TeacherManagement";
+import TeacherManagement from "../features/admin/Pages/TeacherManagement/TeacherManagement/TeacherManagement";
+
 import TeacherProfile from "../features/admin/Pages/TeacherManagement/TeacherProfile/TeacherProfile";
 
 export const adminRoutes = [
