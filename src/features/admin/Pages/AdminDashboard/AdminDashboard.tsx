@@ -1,9 +1,11 @@
 import { Box, Grid, Paper } from "@mui/material";
-import EngagementChart from "./EngagementChart";
-import TopSellingCourses from "./TopSellingCourse.";
 import CompletionRate from "./CompletionRate";
-import SalesSummary from "./SalesSummery";
+import EngagementChart from "./EngagementChart";
+import FlashcardUsageChart from "./FlashCardUsageChart";
+import PracticeTestStats from "./PracticeTestChart";
 import SalesChart from "./SalesChart";
+import SalesSummary from "./SalesSummery";
+import TopSellingCourses from "./TopSellingCourse.";
 
 const AdminDashboard = () => {
   return (
@@ -28,6 +30,12 @@ const AdminDashboard = () => {
             </Grid>
             <Grid item xs={12} md={4}>
               <SalesChart/>
+            </Grid>
+            <Grid item xs={12} md={12}>
+              <FlashcardUsageChart/>
+            </Grid>
+            <Grid item xs={12} md={12}>
+              <PracticeTestStats/>
             </Grid>
           </Grid>
         </Box>
