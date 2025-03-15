@@ -2,6 +2,8 @@ import { Box, Grid, Paper } from "@mui/material";
 import EngagementChart from "./EngagementChart";
 import TopSellingCourses from "./TopSellingCourse.";
 import CompletionRate from "./CompletionRate";
+import SalesSummary from "./SalesSummery";
+import SalesChart from "./SalesChart";
 
 const AdminDashboard = () => {
   return (
@@ -20,6 +22,12 @@ const AdminDashboard = () => {
             </Grid>
             <Grid item xs={12} md={12}>
               <CompletionRate />
+            </Grid>
+            <Grid item xs={12} md={8}>
+              <SalesSummary/>
+            </Grid>
+            <Grid item xs={12} md={4}>
+              <SalesChart/>
             </Grid>
           </Grid>
         </Box>

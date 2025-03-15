@@ -18,9 +18,7 @@ const TopSellingCourses: React.FC = () => {
     { id: 5, name: 'Apple iPhone 13', price: '$999.29' },
     { id: 6, name: 'Apple iPhone 13', price: '$999.29' },
     { id: 7, name: 'Apple iPhone 13', price: '$999.29' },
-    { id: 8, name: 'Apple iPhone 13', price: '$999.29' },
-    { id: 9, name: 'Apple iPhone 13', price: '$999.29' },
-    { id: 10, name: 'Apple iPhone 13', price: '$999.29' },
+    
   ];
 
   return (
