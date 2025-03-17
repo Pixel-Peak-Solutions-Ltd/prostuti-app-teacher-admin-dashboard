@@ -1,8 +1,16 @@
-import { Box, Paper, Typography } from "@mui/material";
+import { Box, Button, Paper, Typography } from "@mui/material";
+import { useState } from "react";
+import { AddTeacherModal } from "./AddTeacherModal";
 import SearchBarWithFilter from "./SearchBarWithFilter";
 import TeachersTable from "./TeachersTable";
 
 const TeacherManagement = () => {
+  const [open, setOpen] = useState(false);
+
+  const handleClose = () => {
+    setOpen(false);
+  };
+
   return (
     <Box sx={{ width: "100%" }}>
       <Paper
@@ -18,6 +26,16 @@ const TeacherManagement = () => {
             mb: 3,
           }}>
           <Typography variant="h3">Teacher Management</Typography>
+
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={() => setOpen(true)}>
+            Add Teacher
+          </Button>
+
+          {/* Modal */}
+          <AddTeacherModal open={open} onClose={handleClose} />
         </Box>
 
         {/* Search + Filter */}

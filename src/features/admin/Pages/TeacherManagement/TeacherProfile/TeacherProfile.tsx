@@ -1,5 +1,6 @@
 import AccessTimeOutlinedIcon from "@mui/icons-material/AccessTimeOutlined";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
 import {
   Avatar,
   Box,
@@ -10,6 +11,7 @@ import {
   Typography,
 } from "@mui/material";
 import Grid from "@mui/material/Grid2";
+import { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import CustomLabel from "../../../../../shared/components/CustomLabel";
 import CustomTextField from "../../../../../shared/components/CustomTextField";
@@ -44,9 +46,38 @@ const courses = [
   },
 ];
 
+const assignedWorks = [
+  {
+    id: 1,
+    name: "Flashcard",
+  },
+  {
+    id: 2,
+    name: "Questions",
+  },
+  {
+    id: 3,
+    name: "Course",
+  },
+  {
+    id: 4,
+    name: "Messages",
+  },
+];
+
 const TeacherProfile = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+  const [selectedWorks, setSelectedWorks] = useState([]);
+
+  const handleWorkSelection = (work) => {
+    if (selectedWorks.includes(work)) {
+      setSelectedWorks(selectedWorks.filter((item) => item !== work));
+    } else {
+      setSelectedWorks([...selectedWorks, work]);
+    }
+  };
+
   return (
     <Box sx={{ width: "100%" }}>
       <Paper
@@ -117,7 +148,6 @@ const TeacherProfile = () => {
                 src={""}
                 sx={{ width: "130px", height: "130px" }}
               />
-              {/* new image upload button */}
             </Box>
             {/* avatar section ends */}
             <Box
@@ -193,11 +223,41 @@ const TeacherProfile = () => {
                   placeholder={"Job"}
                 />
               </Grid>
+              {/* ************************Assigned Work */}
               <Grid size={6}>
                 <CustomLabel fieldName="Assigned Work" />
-                <CustomTextField name="assignedWork" />
+                <Box sx={{ display: "flex", gap: 2, mt: 1 }}>
+                  {assignedWorks.map((work) => (
+                    <Button
+                      key={work.id}
+                      variant="outlined"
+                      onClick={() => handleWorkSelection(work.name)}
+                      sx={{
+                        borderRadius: "8px",
+                        px: 2,
+                        py: 1,
+                        color: selectedWorks.includes(work.name)
+                          ? "primary.main"
+                          : "text.secondary",
+                        borderColor: selectedWorks.includes(work.name)
+                          ? "primary.main"
+                          : "grey.300",
+                        display: "flex",
+                        alignItems: "center",
+                        gap: 1,
+                      }}>
+                      {work.name}
+                      {selectedWorks.includes(work.name) && (
+                        <CheckCircleOutlineIcon
+                          color="primary"
+                          fontSize="small"
+                        />
+                      )}
+                    </Button>
+                  ))}
+                </Box>
               </Grid>
-              {/* date field */}
+              {/* ************************Assigned Work */}
             </Grid>
             <Divider sx={{ mt: 3 }} />
           </Box>
@@ -225,8 +285,9 @@ const TeacherProfile = () => {
           </Typography>
           <Grid container spacing={2}>
             <Grid size={12}>
-              {activities.map((val) => (
+              {activities.map((val, index) => (
                 <Card
+                  key={index}
                   variant="outlined"
                   sx={{
                     display: "flex",
