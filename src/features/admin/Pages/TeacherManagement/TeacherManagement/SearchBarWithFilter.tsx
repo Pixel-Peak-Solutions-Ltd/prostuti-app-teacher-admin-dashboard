@@ -13,6 +13,8 @@ import {
 import SearchIcon from "@mui/icons-material/Search";
 import TuneIcon from "@mui/icons-material/Tune";
 import CloseIcon from "@mui/icons-material/Close";
+import { useGetAllCategoryTypesQuery } from "../../../../../redux/features/category/categoryApi";
+import { useGetAllCategorySubjectsQuery } from "../../../../../redux/features/teacherManagement/teacherManagementApi";
 
 const selectStyles = {
   mb: 2,
@@ -32,15 +34,20 @@ const selectStyles = {
   },
 };
 
-const SearchBarWithFilter = () => {
+const SearchBarWithFilter = ({ setSearchTerm, setSubject, setCategory }) => {
   const [open, setOpen] = useState(false);
-  const [subject, setSubject] = useState("");
-  const [category, setCategory] = useState("");
+  // Fetch Category and Subject Data
+  const { data: categories } = useGetAllCategoryTypesQuery({});
+  const { data: subjects } = useGetAllCategorySubjectsQuery({});
 
-  // Handle Search
+  // Filter states
+  const [fetchedSubject, setFetchedSubject] = useState("");
+  const [fetchedcategory, setFetchedCategory] = useState("");
+
+  // Handle Filter
   const handleSearch = () => {
-    // Handle search logic here
-    console.log(subject, category);
+    setSubject(fetchedSubject);
+    setCategory(fetchedcategory);
 
     setOpen(false);
   };
@@ -52,6 +59,7 @@ const SearchBarWithFilter = () => {
           variant="outlined"
           placeholder="Search for teacher..."
           fullWidth
+          onChange={(e) => setSearchTerm(e.target.value)}
           slotProps={{
             input: {
               startAdornment: (
@@ -120,15 +128,16 @@ const SearchBarWithFilter = () => {
           </Typography>
           <Select
             fullWidth
-            value={subject}
-            onChange={(e) => setSubject(e.target.value)}
+            value={fetchedSubject}
+            onChange={(e) => setFetchedSubject(e.target.value)}
             displayEmpty
             sx={selectStyles}>
             <MenuItem value="" disabled>
               Select Subject
             </MenuItem>
-            <MenuItem value="Math">Math</MenuItem>
-            <MenuItem value="Science">Science</MenuItem>
+            {subjects?.data.map((subject) => (
+              <MenuItem value={subject}>{subject}</MenuItem>
+            ))}
           </Select>
 
           <Typography variant="body2" fontWeight={500} mb={1}>
@@ -136,15 +145,16 @@ const SearchBarWithFilter = () => {
           </Typography>
           <Select
             fullWidth
-            value={category}
-            onChange={(e) => setCategory(e.target.value)}
+            value={fetchedcategory}
+            onChange={(e) => setFetchedCategory(e.target.value)}
             displayEmpty
             sx={selectStyles}>
             <MenuItem value="" disabled>
               Select Category
             </MenuItem>
-            <MenuItem value="Primary">Primary</MenuItem>
-            <MenuItem value="Secondary">Secondary</MenuItem>
+            {categories?.data.map((category) => (
+              <MenuItem value={category}>{category}</MenuItem>
+            ))}
           </Select>
 
           <Button

@@ -10,6 +10,7 @@ import {
 } from "@mui/material";
 import { useState } from "react";
 import CustomTextField from "../../../../../shared/components/CustomTextField";
+import { SelectChangeEvent } from "@mui/material/Select";
 
 const selectStyles = {
   mb: 2,
@@ -54,7 +55,7 @@ export const AddTeacherModal: React.FC<AddCouponModalProps> = ({
     });
   };
 
-  const handleSelectChange = (e: any, field: string) => {
+  const handleSelectChange = (e: SelectChangeEvent, field: string) => {
     setFormData({
       ...formData,
       [field]: e.target.value,
@@ -64,7 +65,7 @@ export const AddTeacherModal: React.FC<AddCouponModalProps> = ({
   //   Handle Form Submit
   const handleSubmit = () => {
     // Handle form submission here
-    console.log("Form submitted with data:", formData);
+    // console.log("Form submitted with data:", formData);
     // You can add validation here
     // After successful submission, close the modal
     onClose();

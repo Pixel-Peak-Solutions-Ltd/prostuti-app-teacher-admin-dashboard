@@ -6,6 +6,8 @@ import {
   Box,
   Button,
   Card,
+  CardContent,
+  CardMedia,
   Divider,
   Paper,
   Typography,
@@ -13,9 +15,10 @@ import {
 import Grid from "@mui/material/Grid2";
 import { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import { useGetTeacherByIdQuery } from "../../../../../redux/features/teacherManagement/teacherManagementApi";
 import CustomLabel from "../../../../../shared/components/CustomLabel";
 import CustomTextField from "../../../../../shared/components/CustomTextField";
-import { CourseCard } from "../../CourseManagement/Components/CourseCard";
+import Loader from "../../../../../shared/components/Loader";
 
 const activities = [
   { detail: "Accepted Flashcard", time: "3 minutes ago" },
@@ -26,24 +29,6 @@ const activities = [
   { detail: "Accepted flashcard", time: "3 minutes ago" },
   { detail: 'Edited a card in "World War" flashcard', time: "3 minutes ago" },
   { detail: 'Deleted a card in "World War" flashcard', time: "3 minutes ago" },
-];
-
-const courses = [
-  {
-    id: 1,
-    title: "BCS কোর্স ৪র্থ বর্ষ সমাপনী পরীক্ষা প্রস্তুতি",
-    image: "https://fps.cdnpk.net/images/home/subhome-ai.webp?w=649&h=649",
-  },
-  {
-    id: 2,
-    title: "BCS কোর্স ৪র্থ বর্ষ সমাপনী পরীক্ষা প্রস্তুতি",
-    image: "https://fps.cdnpk.net/images/home/subhome-ai.webp?w=649&h=649",
-  },
-  {
-    id: 3,
-    title: "BCS কোর্স ৪র্থ বর্ষ সমাপনী পরীক্ষা প্রস্তুতি",
-    image: "https://fps.cdnpk.net/images/home/subhome-ai.webp?w=649&h=649",
-  },
 ];
 
 const assignedWorks = [
@@ -67,6 +52,8 @@ const assignedWorks = [
 
 const TeacherProfile = () => {
   const { id } = useParams();
+  const { data, isLoading } = useGetTeacherByIdQuery(id);
+
   const navigate = useNavigate();
   const [selectedWorks, setSelectedWorks] = useState([]);
 
@@ -77,6 +64,12 @@ const TeacherProfile = () => {
       setSelectedWorks([...selectedWorks, work]);
     }
   };
+
+  if (isLoading) {
+    return <Loader />;
+  }
+
+  const { teacher, courses } = data.data;
 
   return (
     <Box sx={{ width: "100%" }}>
@@ -144,8 +137,8 @@ const TeacherProfile = () => {
             {/* avatar section */}
             <Box sx={{ position: "relative" }}>
               <Avatar
-                alt="teacher-photo"
-                src={""}
+                alt={`teacher-photo-${teacher.teacherId}`}
+                src={teacher?.image?.path || ""}
                 sx={{ width: "130px", height: "130px" }}
               />
             </Box>
@@ -159,9 +152,9 @@ const TeacherProfile = () => {
                 alignItems: "flex-start",
                 gap: 0.5,
               }}>
-              <Typography variant="h3">teacher@gmail.com</Typography>
+              <Typography variant="h3">{teacher.email}</Typography>
               <Typography variant="h6" sx={{ fontWeight: "650" }}>
-                {id}
+                {teacher.teacherId}
               </Typography>
             </Box>
           </Box>
@@ -176,17 +169,17 @@ const TeacherProfile = () => {
                 <CustomLabel fieldName="Name" />
                 <CustomTextField
                   value={""}
-                  // defaultValue={name || ""}
                   name="name"
-                  placeholder={"Teacher"}
+                  placeholder={teacher?.name || ""}
+                  disabled
                 />
               </Grid>
               <Grid size={6}>
                 <CustomLabel fieldName="Contact Number" />
                 <CustomTextField
                   name="phone"
-                  // defaultValue={phone || ""}
-                  placeholder={"018745869547"}
+                  placeholder={teacher?.phone || ""}
+                  disabled
                 />
               </Grid>
               {/* date field */}
@@ -197,17 +190,17 @@ const TeacherProfile = () => {
                 <CustomLabel fieldName="Joined Date" />
                 <CustomTextField
                   value={""}
-                  // defaultValue={name || ""}
                   name="joinedDate"
-                  placeholder={"January 09, 2024"}
+                  placeholder={teacher?.joinedDate || ""}
+                  disabled
                 />
               </Grid>
               <Grid size={6}>
                 <CustomLabel fieldName="Subject" />
                 <CustomTextField
                   name="subject"
-                  // defaultValue={phone || ""}
-                  placeholder={"Physic"}
+                  placeholder={teacher?.subject || ""}
+                  disabled
                 />
               </Grid>
               {/* date field */}
@@ -217,10 +210,9 @@ const TeacherProfile = () => {
               <Grid size={6}>
                 <CustomLabel fieldName="Type" />
                 <CustomTextField
-                  value={""}
-                  // defaultValue={name || ""}
                   name="type"
-                  placeholder={"Job"}
+                  placeholder={teacher?.jobType || ""}
+                  disabled
                 />
               </Grid>
               {/* ************************Assigned Work */}
@@ -272,11 +264,35 @@ const TeacherProfile = () => {
           display="grid"
           gridTemplateColumns="repeat(auto-fill, minmax(300px, 1fr))"
           gap={3}>
-          {courses.map((course) => (
-            <Box key={course.id}>
-              <CourseCard course={course} />
-            </Box>
-          ))}
+          {courses.length === 0 ? (
+            <Typography variant="h6" sx={{ fontWeight: "600", mb: 3 }}>
+              No Courses
+            </Typography>
+          ) : (
+            courses.map((course) => (
+              <Box key={course._id}>
+                {/* <CourseCard course={course} /> */}
+                <Card>
+                  <CardMedia
+                    component="img"
+                    height="140"
+                    sx={{ objectFit: "cover" }}
+                    image={course.image?.path}
+                    alt={course?.name}
+                  />
+                  <CardContent>
+                    <Typography
+                      sx={{ fontSize: "18px", fontWeight: "bold" }}
+                      gutterBottom
+                      variant="h6"
+                      component="div">
+                      {course?.name}
+                    </Typography>
+                  </CardContent>
+                </Card>
+              </Box>
+            ))
+          )}
         </Box>
         {/* ---------------------------Teacher Activity */}
         <Box component="section" sx={{ mt: 3, flexGrow: 1 }}>
