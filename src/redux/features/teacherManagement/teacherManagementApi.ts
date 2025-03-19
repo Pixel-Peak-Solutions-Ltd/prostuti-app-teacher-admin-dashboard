@@ -37,7 +37,17 @@ const teacherManagementAPI = baseApi.injectEndpoints({
         url: "/category/subject",
         method: "GET",
       }),
-      providesTags: ["Categories"],
+      providesTags: ["Subjects"],
+    }),
+
+    // Create Teacher
+    createTeacher: builder.mutation({
+      query: (data) => ({
+        url: "/user/create-teacher",
+        method: "POST",
+        body: data,
+      }),
+      invalidatesTags: ["Teacher-Management"],
     }),
   }),
 });
@@ -46,4 +56,5 @@ export const {
   useGetAllTeacherQuery,
   useGetTeacherByIdQuery,
   useGetAllCategorySubjectsQuery,
+  useCreateTeacherMutation,
 } = teacherManagementAPI;

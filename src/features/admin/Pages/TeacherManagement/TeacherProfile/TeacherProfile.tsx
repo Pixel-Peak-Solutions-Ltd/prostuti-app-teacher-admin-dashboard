@@ -19,6 +19,7 @@ import { useGetTeacherByIdQuery } from "../../../../../redux/features/teacherMan
 import CustomLabel from "../../../../../shared/components/CustomLabel";
 import CustomTextField from "../../../../../shared/components/CustomTextField";
 import Loader from "../../../../../shared/components/Loader";
+import { teacherAssignedWorks } from "../../../../../constants";
 
 const activities = [
   { detail: "Accepted Flashcard", time: "3 minutes ago" },
@@ -29,25 +30,6 @@ const activities = [
   { detail: "Accepted flashcard", time: "3 minutes ago" },
   { detail: 'Edited a card in "World War" flashcard', time: "3 minutes ago" },
   { detail: 'Deleted a card in "World War" flashcard', time: "3 minutes ago" },
-];
-
-const assignedWorks = [
-  {
-    id: 1,
-    name: "Flashcard",
-  },
-  {
-    id: 2,
-    name: "Questions",
-  },
-  {
-    id: 3,
-    name: "Course",
-  },
-  {
-    id: 4,
-    name: "Messages",
-  },
 ];
 
 const TeacherProfile = () => {
@@ -219,27 +201,27 @@ const TeacherProfile = () => {
               <Grid size={6}>
                 <CustomLabel fieldName="Assigned Work" />
                 <Box sx={{ display: "flex", gap: 2, mt: 1 }}>
-                  {assignedWorks.map((work) => (
+                  {teacherAssignedWorks.map((work) => (
                     <Button
-                      key={work.id}
+                      key={work}
                       variant="outlined"
-                      onClick={() => handleWorkSelection(work.name)}
+                      onClick={() => handleWorkSelection(work)}
                       sx={{
                         borderRadius: "8px",
                         px: 2,
                         py: 1,
-                        color: selectedWorks.includes(work.name)
+                        color: selectedWorks.includes(work)
                           ? "primary.main"
                           : "text.secondary",
-                        borderColor: selectedWorks.includes(work.name)
+                        borderColor: selectedWorks.includes(work)
                           ? "primary.main"
                           : "grey.300",
                         display: "flex",
                         alignItems: "center",
                         gap: 1,
                       }}>
-                      {work.name}
-                      {selectedWorks.includes(work.name) && (
+                      {work}
+                      {selectedWorks.includes(work) && (
                         <CheckCircleOutlineIcon
                           color="primary"
                           fontSize="small"

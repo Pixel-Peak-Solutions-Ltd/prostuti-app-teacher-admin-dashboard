@@ -2,21 +2,31 @@ import CloseIcon from "@mui/icons-material/Close";
 import {
   Box,
   Button,
+  Checkbox,
   IconButton,
+  ListItemText,
   MenuItem,
   Modal,
+  OutlinedInput,
   Select,
   Typography,
 } from "@mui/material";
 import { useState } from "react";
 import CustomTextField from "../../../../../shared/components/CustomTextField";
 import { SelectChangeEvent } from "@mui/material/Select";
+import { teacherAssignedWorks } from "../../../../../constants";
+import {
+  useCreateTeacherMutation,
+  useGetAllCategorySubjectsQuery,
+} from "../../../../../redux/features/teacherManagement/teacherManagementApi";
+import toast from "react-hot-toast";
+import { z } from "zod";
 
 const selectStyles = {
   mb: 2,
   borderRadius: "8px",
   "& .MuiOutlinedInput-input": {
-    padding: "8.5px 12px", // Match TextField height
+    padding: "8.5px 12px",
   },
   "& .MuiOutlinedInput-notchedOutline": {
     borderRadius: "8px",
@@ -30,21 +40,42 @@ const selectStyles = {
   },
 };
 
-interface AddCouponModalProps {
+// Validation schema
+const validationSchema = z.object({
+  email: z.string().email("Invalid email format"),
+  password: z
+    .string()
+    .min(8, "Password must be at least 8 characters long")
+    .max(20, "Password must not exceed 20 characters")
+    .regex(
+      /^(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?])/,
+      "Password must contain at least one uppercase letter, one number, and one special character"
+    ),
+});
+
+interface AddTeacherModalProps {
   open: boolean;
   onClose: () => void;
 }
 
-export const AddTeacherModal: React.FC<AddCouponModalProps> = ({
+export const AddTeacherModal: React.FC<AddTeacherModalProps> = ({
   open,
   onClose,
 }) => {
+  const [createTeacher] = useCreateTeacherMutation();
+  const { data: subjects } = useGetAllCategorySubjectsQuery({});
+
   const [formData, setFormData] = useState({
     name: "",
     email: "",
     password: "",
     subject: "",
-    assignedWork: "",
+    assignedWorks: [] as string[],
+  });
+
+  const [errors, setErrors] = useState({
+    email: "",
+    password: "",
   });
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -52,6 +83,10 @@ export const AddTeacherModal: React.FC<AddCouponModalProps> = ({
     setFormData({
       ...formData,
       [name]: value,
+    });
+    setErrors({
+      ...errors,
+      [name]: "", // Clear error when user types
     });
   };
 
@@ -62,13 +97,45 @@ export const AddTeacherModal: React.FC<AddCouponModalProps> = ({
     });
   };
 
-  //   Handle Form Submit
-  const handleSubmit = () => {
-    // Handle form submission here
-    // console.log("Form submitted with data:", formData);
-    // You can add validation here
-    // After successful submission, close the modal
-    onClose();
+  const handleMultiSelectChange = (e: SelectChangeEvent<string[]>) => {
+    const { value } = e.target;
+    setFormData({
+      ...formData,
+      assignedWorks: typeof value === "string" ? value.split(",") : value,
+    });
+  };
+
+  const handleSubmit = async () => {
+    const result = validationSchema.safeParse({
+      email: formData.email,
+      password: formData.password,
+    });
+
+    if (!result.success) {
+      const fieldErrors = result.error.format();
+      setErrors({
+        email: fieldErrors.email?._errors[0] || "",
+        password: fieldErrors.password?._errors[0] || "",
+      });
+      return;
+    }
+
+    try {
+      await createTeacher(formData).unwrap();
+      toast.success("Teacher Created Successfully");
+
+      onClose();
+      setFormData({
+        name: "",
+        email: "",
+        password: "",
+        subject: "",
+        assignedWorks: [],
+      });
+      setErrors({ email: "", password: "" });
+    } catch (error) {
+      console.error("Failed to create teacher:", error);
+    }
   };
 
   return (
@@ -118,11 +185,17 @@ export const AddTeacherModal: React.FC<AddCouponModalProps> = ({
         </Typography>
         <CustomTextField
           name="email"
+          required
           value={formData.email}
           placeholder="Enter teacher email"
           handleInput={handleInputChange}
           type="email"
         />
+        {errors.email && (
+          <Typography color="error" fontSize={12} mt={0.5}>
+            {errors.email}
+          </Typography>
+        )}
 
         {/* Password */}
         <Typography variant="body2" fontWeight={500} mb={1} mt={2}>
@@ -130,12 +203,19 @@ export const AddTeacherModal: React.FC<AddCouponModalProps> = ({
         </Typography>
         <CustomTextField
           name="password"
+          required
           value={formData.password}
           placeholder="Enter teacher password"
           handleInput={handleInputChange}
-          type="email"
+          type="password"
         />
+        {errors.password && (
+          <Typography color="error" fontSize={12} mt={0.5}>
+            {errors.password}
+          </Typography>
+        )}
 
+        {/* Subject */}
         <Typography variant="body2" fontWeight={500} mb={1} mt={2}>
           Subject
         </Typography>
@@ -148,24 +228,35 @@ export const AddTeacherModal: React.FC<AddCouponModalProps> = ({
           <MenuItem value="" disabled>
             Select Subject
           </MenuItem>
-          <MenuItem value="Math">Math</MenuItem>
-          <MenuItem value="Science">Science</MenuItem>
+          {subjects?.data.map((subject, index) => (
+            <MenuItem key={index} value={subject}>
+              {subject}
+            </MenuItem>
+          ))}
         </Select>
 
+        {/* Assigned Works */}
         <Typography variant="body2" fontWeight={500} mb={1}>
-          Assigned Work
+          Assigned Works
         </Typography>
         <Select
           fullWidth
-          value={formData.assignedWork}
-          onChange={(e) => handleSelectChange(e, "assignedWork")}
+          multiple
+          value={formData.assignedWorks}
+          onChange={handleMultiSelectChange}
+          input={<OutlinedInput />}
+          renderValue={(selected) => (selected as string[]).join(", ")}
           displayEmpty
           sx={selectStyles}>
           <MenuItem value="" disabled>
-            Select Category
+            Select Work Types
           </MenuItem>
-          <MenuItem value="Flashcard">Flashcard</MenuItem>
-          <MenuItem value="Question">Question</MenuItem>
+          {teacherAssignedWorks.map((work, index) => (
+            <MenuItem key={index} value={work}>
+              <Checkbox checked={formData.assignedWorks.indexOf(work) > -1} />
+              <ListItemText primary={work} />
+            </MenuItem>
+          ))}
         </Select>
 
         <Button
