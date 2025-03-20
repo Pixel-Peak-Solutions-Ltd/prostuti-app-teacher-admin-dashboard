@@ -26,9 +26,9 @@ const teacherManagementAPI = baseApi.injectEndpoints({
         url: `/teacher-management/${id}`,
         method: "GET",
       }),
-      providesTags: (_result, _error, id) => [
-        { type: "Teacher-Management", id },
-      ],
+      providesTags: (_result, _error, id) => {
+        return [{ type: "Teacher-Management", id }];
+      },
     }),
 
     // Get All Category Subjects
@@ -49,6 +49,21 @@ const teacherManagementAPI = baseApi.injectEndpoints({
       }),
       invalidatesTags: ["Teacher-Management"],
     }),
+
+    // Update Teacher Assigned Works
+    updateTeacherAssignedWorks: builder.mutation({
+      query: ({ id, data }) => ({
+        url: "/teacher-management/assigned-works",
+        method: "PATCH",
+        body: data,
+      }),
+
+      invalidatesTags: (_result, _error, { id }) => {
+        return ["Teacher-Management", { type: "Teacher-Management", id }];
+      },
+    }),
+
+    // ***
   }),
 });
 
@@ -57,4 +72,5 @@ export const {
   useGetTeacherByIdQuery,
   useGetAllCategorySubjectsQuery,
   useCreateTeacherMutation,
+  useUpdateTeacherAssignedWorksMutation,
 } = teacherManagementAPI;

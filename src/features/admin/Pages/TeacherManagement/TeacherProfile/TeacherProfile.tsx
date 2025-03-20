@@ -13,13 +13,17 @@ import {
   Typography,
 } from "@mui/material";
 import Grid from "@mui/material/Grid2";
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { useGetTeacherByIdQuery } from "../../../../../redux/features/teacherManagement/teacherManagementApi";
+import {
+  useGetTeacherByIdQuery,
+  useUpdateTeacherAssignedWorksMutation,
+} from "../../../../../redux/features/teacherManagement/teacherManagementApi";
 import CustomLabel from "../../../../../shared/components/CustomLabel";
 import CustomTextField from "../../../../../shared/components/CustomTextField";
 import Loader from "../../../../../shared/components/Loader";
 import { teacherAssignedWorks } from "../../../../../constants";
+import toast from "react-hot-toast";
 
 const activities = [
   { detail: "Accepted Flashcard", time: "3 minutes ago" },
@@ -35,15 +39,50 @@ const activities = [
 const TeacherProfile = () => {
   const { id } = useParams();
   const { data, isLoading } = useGetTeacherByIdQuery(id);
-
+  const [updateAssignedWorks, { isLoading: isUpdating }] =
+    useUpdateTeacherAssignedWorksMutation();
   const navigate = useNavigate();
+
+  // Initialize selectedWorks with proper data or empty array
   const [selectedWorks, setSelectedWorks] = useState([]);
 
+  // Use useMemo to extract teacher and courses data
+  const { teacher, courses } = useMemo(() => {
+    return data?.data ? data.data : { teacher: {}, courses: [] };
+  }, [data]);
+
+  // Set initial values when data loads
+  useEffect(() => {
+    if (teacher?.assignedWorks && Array.isArray(teacher.assignedWorks)) {
+      setSelectedWorks(teacher.assignedWorks);
+    }
+  }, [teacher]);
+
+  // Optimized work selection handler
   const handleWorkSelection = (work) => {
-    if (selectedWorks.includes(work)) {
-      setSelectedWorks(selectedWorks.filter((item) => item !== work));
-    } else {
-      setSelectedWorks([...selectedWorks, work]);
+    setSelectedWorks((prev) =>
+      prev.includes(work)
+        ? prev.filter((item) => item !== work)
+        : [...prev, work]
+    );
+  };
+
+  // Handle Teacher Update Assigned Works
+  const handleUpdateAssignedWorks = async () => {
+    try {
+      const data = {
+        teacherProfileId: teacher._id,
+        assignedWorks: selectedWorks,
+      };
+
+      await updateAssignedWorks({
+        id,
+        data,
+      }).unwrap();
+
+      toast.success("Assigned Works Updated Successfully");
+    } catch (error) {
+      console.error("Failed to update assigned works:", error);
     }
   };
 
@@ -51,15 +90,13 @@ const TeacherProfile = () => {
     return <Loader />;
   }
 
-  const { teacher, courses } = data.data;
-
   return (
     <Box sx={{ width: "100%" }}>
       <Paper
         variant="outlined"
         sx={{ width: "100%", borderRadius: "25px", p: 3 }}>
         {/* ---------------------------Teacher Information */}
-        <form encType="multipart/form-data">
+        <Box>
           {/* top profile title and button section */}
           <Box
             component="section"
@@ -97,6 +134,7 @@ const TeacherProfile = () => {
             <Button
               variant="contained"
               type="submit"
+              onClick={handleUpdateAssignedWorks}
               sx={{
                 width: "120px",
                 height: "38px",
@@ -231,11 +269,10 @@ const TeacherProfile = () => {
                   ))}
                 </Box>
               </Grid>
-              {/* ************************Assigned Work */}
             </Grid>
             <Divider sx={{ mt: 3 }} />
           </Box>
-        </form>
+        </Box>
         {/* ---------------------------Teacher Courses */}
         <Box component="section" sx={{ mt: 3, flexGrow: 1 }}>
           <Typography variant="h5" sx={{ fontWeight: "600", mb: 3 }}>
