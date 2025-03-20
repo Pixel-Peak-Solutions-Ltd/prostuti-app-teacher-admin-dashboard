@@ -7,6 +7,13 @@ import TeachersTable from "./TeachersTable";
 const TeacherManagement = () => {
   const [open, setOpen] = useState(false);
 
+  // SearchTerm
+  const [searchTerm, setSearchTerm] = useState("");
+
+  // Filter states
+  const [subject, setSubject] = useState("");
+  const [category, setCategory] = useState("");
+
   const handleClose = () => {
     setOpen(false);
   };
@@ -39,9 +46,17 @@ const TeacherManagement = () => {
         </Box>
 
         {/* Search + Filter */}
-        <SearchBarWithFilter />
+        <SearchBarWithFilter
+          setSearchTerm={setSearchTerm}
+          setSubject={setSubject}
+          setCategory={setCategory}
+        />
         {/* Table */}
-        <TeachersTable />
+        <TeachersTable
+          searchTerm={searchTerm}
+          subject={subject}
+          category={category}
+        />
       </Paper>
     </Box>
   );
