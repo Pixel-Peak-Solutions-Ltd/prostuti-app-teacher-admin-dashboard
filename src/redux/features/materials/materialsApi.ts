@@ -144,6 +144,14 @@ const materialApi = baseApi.injectEndpoints({
             invalidatesTags: ['Test']
         }),
 
+        getTestHistory: builder.query({
+            query: ({ testId }) => {
+                return {
+                    url: `/test-history/all-test-history?test_id=${testId}`,
+                    method: 'GET'
+                };
+            }
+        }),
         // notice operations
         getNoticesOfACourse: builder.query({
             query: ({ courseId }) => {
@@ -214,4 +222,5 @@ export const {
     useDeleteNoticeMutation,
     useGetSingleTestQuery,
     useUpdateTestMutation,
+    useGetTestHistoryQuery
 } = materialApi;

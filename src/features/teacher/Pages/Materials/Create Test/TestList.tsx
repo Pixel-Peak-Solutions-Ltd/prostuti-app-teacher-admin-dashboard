@@ -1,31 +1,35 @@
-import {Box, Button, Card, Paper, Typography} from '@mui/material';
-import {Link} from 'react-router-dom';
+import { Box, Button, Card, Paper, Typography } from '@mui/material';
+import { Link } from 'react-router-dom';
 import ArrowOutwardIcon from '@mui/icons-material/ArrowOutward';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-import {useAppSelector} from '../../../../../redux/hooks';
-import {useGetCoursePreviewQuery} from '../../../../../redux/features/course/courseApi';
+import { useAppDispatch, useAppSelector } from '../../../../../redux/hooks';
+import { useGetCoursePreviewQuery } from '../../../../../redux/features/course/courseApi';
 import Loader from '../../../../../shared/components/Loader';
 import Grid from '@mui/material/Grid2';
 import test_icon from '../../../../../assets/images/test-icon.png';
+import { saveTestStore } from '../../../../../redux/features/course/courseSlice';
 
 const TestList = () => {
+
     const courseId = useAppSelector((state) => state.courseAndLessonId.id.course_id);
-    const {data: courseData, isLoading} = useGetCoursePreviewQuery({courseId});
+    const { data: courseData, isLoading } = useGetCoursePreviewQuery({ courseId });
+    // setting the data to local redux store
+    const dispatch = useAppDispatch();
 
     if (isLoading) {
-        <Loader/>;
+        <Loader />;
     }
 
     const lessons = courseData?.data.lessons;
 
     return (
         <>
-            <Paper variant="outlined" sx={{width: '100%', height: 'auto', borderRadius: '10px', p: 3}}>
+            <Paper variant="outlined" sx={{ width: '100%', height: 'auto', borderRadius: '10px', p: 3 }}>
                 {/* top title and button section */}
                 <Box component="section"
-                     sx={{display: 'flex', gap: '20px', justifyContent: 'space-between', alignItems: 'center', mb: 3}}>
+                    sx={{ display: 'flex', gap: '20px', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
                     {/* back button and title */}
-                    <Box component="section" sx={{display: 'flex', gap: '20px'}}>
+                    <Box component="section" sx={{ display: 'flex', gap: '20px' }}>
                         <Link to={`/teacher/course-preview/${courseId}`}>
                             <Button variant="outlined" sx={{
                                 width: '36px',
@@ -35,7 +39,7 @@ const TestList = () => {
                                 borderColor: "grey.700",
                                 color: "#3F3F46"
                             }}>
-                                <ArrowBackIcon fontSize="small"/>
+                                <ArrowBackIcon fontSize="small" />
                             </Button>
                         </Link>
                         <Typography variant="h3">Tests</Typography>
@@ -44,14 +48,14 @@ const TestList = () => {
                     {/* </Link> */}
                 </Box>
                 {/* loading state */}
-                {isLoading && (<Loader/>)}
+                {isLoading && (<Loader />)}
                 {/* main list starts */}
 
                 {
                     !isLoading && (
                         <Box>
-                            <Paper variant="outlined" sx={{p: 2, borderRadius: 2}}>
-                                <Grid container spacing={2} sx={{mt: 3,}}>
+                            <Paper variant="outlined" sx={{ p: 2, borderRadius: 2 }}>
+                                <Grid container spacing={2} sx={{ mt: 3, }}>
                                     {lessons.map((lesson, index) => (
                                         <Grid size={12} key={index}>
                                             <Typography variant="h6" sx={{
@@ -65,22 +69,23 @@ const TestList = () => {
                                                     <Box>
                                                         {lesson?.tests.map((test, index) => (
                                                             <Link to={`/teacher/test-update/${test?._id}`}
-                                                                  style={{textDecoration: "none"}}>
+                                                                style={{ textDecoration: "none" }}>
                                                                 <Card variant="outlined"
-                                                                      sx={{
-                                                                          display: "flex",
-                                                                          alignItems: "center",
-                                                                          gap: 2,
-                                                                          my: 1,
-                                                                          px: 1.5,
-                                                                          py: 0.8,
-                                                                          borderRadius: 2
-                                                                      }}>
+                                                                    sx={{
+                                                                        display: "flex",
+                                                                        alignItems: "center",
+                                                                        gap: 2,
+                                                                        my: 1,
+                                                                        px: 1.5,
+                                                                        py: 0.8,
+                                                                        borderRadius: 2
+                                                                    }}
+                                                                    onClick={() => dispatch(saveTestStore({ test_id: test?._id }))}>
                                                                     <Box sx={{
                                                                         width: "3%"
                                                                     }}>
                                                                         <img src={test_icon}
-                                                                             style={{width: "24px", height: "24px"}}/>
+                                                                            style={{ width: "24px", height: "24px" }} />
                                                                     </Box>
                                                                     <Box sx={{
                                                                         width: "97%",
@@ -98,8 +103,8 @@ const TestList = () => {
                                                                                 fontWeight: "500"
                                                                             }} color="#475467">{test?.name}</Typography>
                                                                         </Box>
-                                                                        <Box sx={{justifySelf: 'flex-end'}}>
-                                                                            <ArrowOutwardIcon color="primary"/>
+                                                                        <Box sx={{ justifySelf: 'flex-end' }}>
+                                                                            <ArrowOutwardIcon color="primary" />
                                                                         </Box>
                                                                     </Box>
                                                                 </Card>

@@ -35,6 +35,7 @@ export { useState, useEffect } from "react";
 export { useParams } from "react-router-dom";
 export { useGetSingleTestQuery } from "../../../../../redux/features/materials/materialsApi";
 export { useUpdateTestMutation } from "../../../../../redux/features/materials/materialsApi";
+export { useGetTestHistoryQuery } from '../../../../../redux/features/materials/materialsApi';
 
 // test creation import backups
 // import { Box, Button, Paper, SnackbarCloseReason, Typography, styled } from "@mui/material";

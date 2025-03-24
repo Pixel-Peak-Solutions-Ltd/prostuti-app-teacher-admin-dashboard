@@ -17,6 +17,9 @@ const TestUpdate = () => {
     const [testDetails, setTestDetails] = useState<Record<string, string>>({});
     const [openSnackbar, setOpenSnackbar] = useState(false);
 
+    // fetching courseId from the local redux store
+    const courseId = useAppSelector((state) => state.courseAndLessonId.id.course_id);
+
     // api call through redux
     const { data: existingTestData, isLoading: testDataLoader } = useGetSingleTestQuery({ testId }, { skip: !testId });
     const [updateTest, { isSuccess: testUpdateSuccess, isLoading: testUpdateLoader }] = useUpdateTestMutation();
@@ -80,6 +83,13 @@ const TestUpdate = () => {
         setOpenSnackbar(false);
     };
 
+
+    const totalQuestion = existingTestData?.data.questionList.length;
+    // extracting date to check whether test deadline is over or not
+    const currentTime = new Date(Date.now());
+    const publishedDate = new Date(existingTestData?.data.publishDate);
+    const isExpired = ((currentTime.getTime() > publishedDate.getTime()));
+
     return (
         <>
             <Box sx={{ width: '100%', height: 'auto' }}>
@@ -88,7 +98,7 @@ const TestUpdate = () => {
                     <Box component="section" sx={{ display: 'flex', gap: '20px', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
                         {/* back button and title */}
                         <Box component="section" sx={{ display: 'flex', gap: '20px' }}>
-                            <Link to='/teacher/create-course/add-course-material'>
+                            <Link to='/teacher/test-list'>
                                 <Button variant='outlined' sx={{ width: '36px', height: '36px', minWidth: '36px', borderRadius: '8px', borderColor: "grey.700", color: "#3F3F46" }}>
                                     <ArrowBackIcon fontSize='small' />
                                 </Button>
@@ -96,23 +106,35 @@ const TestUpdate = () => {
                             <Typography variant='h3'>Test Update</Typography>
                         </Box>
                         {/* continue button */}
-                        {/* <Link to='/teacher/create-course/add-course-lessons'> */}
                         <Box sx={{ display: 'flex', gap: '20px' }}>
-                            <Button
-                                onClick={handleTestSubmit}
-                                variant='contained'
-                                sx={{ borderRadius: '8px', width: '140px', height: '48px' }}>
-                                Update <CloudUploadIcon sx={{ ml: 1 }} />
-                            </Button>
-                            <Button
-                                // onClick={handleContinue}
-                                variant='outlined'
-                                sx={{ borderRadius: '8px', width: '140px', height: '48px' }}>
-                                Archive <ArchiveIcon sx={{ ml: 1 }} />
-                            </Button>
-                        </Box>
+                            {isExpired ? (
+                                <>
+                                    <Link to="/teacher/test-history">
+                                        <Button
+                                            variant='contained'
+                                            sx={{ borderRadius: '8px', width: 'auto', height: '48px' }}>
+                                            View Result
+                                        </Button>
+                                    </Link>
+                                </>
+                            ) : (
+                                <>
+                                    <Button
+                                        onClick={handleTestSubmit}
+                                        variant='contained'
+                                        sx={{ borderRadius: '8px', width: '140px', height: '48px' }}>
+                                        Update <CloudUploadIcon sx={{ ml: 1 }} />
+                                    </Button>
+                                    <Button
+                                        // onClick={handleContinue}
+                                        variant='outlined'
+                                        sx={{ borderRadius: '8px', width: '140px', height: '48px' }}>
+                                        Archive <ArchiveIcon sx={{ ml: 1 }} />
+                                    </Button>
+                                </>
+                            )}
 
-                        {/* </Link> */}
+                        </Box>
                     </Box>
                     {testUpdateLoader && <Loader />}
                     {
@@ -125,7 +147,7 @@ const TestUpdate = () => {
                                             <Grid container spacing={3}>
                                                 {/* 2nd row --> , , total question, test date */}
                                                 {/* test name */}
-                                                <Grid size={3}>
+                                                <Grid size={2.4}>
                                                     <CustomLabel fieldName="Test Name" />
                                                     <CustomTextField
                                                         name="name"
@@ -135,7 +157,7 @@ const TestUpdate = () => {
                                                     />
                                                 </Grid>
                                                 {/* test type */}
-                                                <Grid size={3}>
+                                                <Grid size={2.4}>
                                                     <CustomLabel fieldName="Test Type" />
                                                     <CustomAutoComplete
                                                         disabled={true}
@@ -146,7 +168,7 @@ const TestUpdate = () => {
                                                     />
                                                 </Grid>
                                                 {/* test time */}
-                                                <Grid size={3}>
+                                                <Grid size={2.4}>
                                                     <CustomLabel fieldName="Test Time (Minutes)" />
                                                     <CustomTextField
                                                         name="time"
@@ -156,7 +178,7 @@ const TestUpdate = () => {
                                                     />
                                                 </Grid>
                                                 {/* Test date */}
-                                                <Grid size={3} sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+                                                <Grid size={2.4} sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
                                                     <CustomLabel fieldName="Test Date" />
                                                     <LocalizationProvider dateAdapter={AdapterDayjs}>
                                                         <StyledDatePicker
@@ -164,6 +186,17 @@ const TestUpdate = () => {
                                                             value={testDetails?.publishDate ? dayjs(testDetails?.publishDate) : null}
                                                         />
                                                     </LocalizationProvider>
+                                                </Grid>
+                                                {/* question count */}
+                                                <Grid size={2.4} sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+                                                    <CustomLabel fieldName="Total Questions" />
+                                                    <CustomTextField
+                                                        disabled={true}
+                                                        name="questionCount"
+                                                        type="text"
+                                                        value={totalQuestion}
+                                                        handleInput={handleTestDetailsInput}
+                                                    />
                                                 </Grid>
                                             </Grid>
 

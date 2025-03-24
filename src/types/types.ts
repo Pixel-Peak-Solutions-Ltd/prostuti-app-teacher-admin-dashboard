@@ -2,14 +2,14 @@ export type TUserInfo = {
     email: string;
     password: string;
     rememberMe?: string;
-}
+};
 
 export type TUser = {
     registeredId: string;
     exp: number;
     iat: number;
     role: string;
-}
+};
 
 // error handling types
 export interface TErrorData {
@@ -18,14 +18,14 @@ export interface TErrorData {
             message: string;
             path: string;
         },
-    ]
+    ];
     message: string;
     success: boolean;
 }
 
 export interface TLoginError {
     status: number;
-    data: TErrorData
+    data: TErrorData;
 }
 
 export interface ICategory {
@@ -35,17 +35,21 @@ export interface ICategory {
     universityType?: string;
     updatedAt?: string;
     __v?: number;
-    _id: string
+    _id: string;
     createdAt?: string;
     chapter: string;
     division: string;
 }
 
 export interface CourseState {
+    testHistoryData: {
+        history: any;
+    },
     id: {
         course_id: string;
         lesson_id: string;
-    }
+        test_id: string;
+    };
 
 }
 

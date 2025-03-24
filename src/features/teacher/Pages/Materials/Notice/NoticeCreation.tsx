@@ -148,7 +148,7 @@ const NoticeCreation = () => {
                     }}>
                         {/* back button and title */}
                         <Box component="section" sx={{ display: 'flex', gap: '20px' }}>
-                            <Link to="/teacher/create-course/add-course-material">
+                            <Link to={isEditing ? "/teacher/notice-list" : "/teacher/create-course/add-course-material"}>
                                 <Button variant="outlined" sx={{
                                     width: '36px',
                                     height: '36px',

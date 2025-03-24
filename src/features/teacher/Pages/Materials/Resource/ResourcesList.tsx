@@ -16,7 +16,7 @@ const ResourcesList = () => {
         <Loader />;
     }
 
-    const { lessons } = courseData.data;
+    const lessons = courseData?.data.lessons;
     return (
         <>
             <Paper variant="outlined" sx={{ width: '100%', height: 'auto', borderRadius: '10px', p: 3 }}>

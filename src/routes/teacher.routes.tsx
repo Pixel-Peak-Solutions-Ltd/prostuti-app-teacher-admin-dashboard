@@ -25,6 +25,8 @@ import ResourcesList from "../features/teacher/Pages/Materials/Resource/Resource
 import NoticeList from "../features/teacher/Pages/Materials/Notice/NoticeList";
 import TestList from "../features/teacher/Pages/Materials/Create Test/TestList";
 import TestUpdate from "../features/teacher/Pages/Materials/Create Test/TestUpdate";
+import TestHistory from "../features/teacher/Pages/Materials/Create Test/TestHistory";
+import AnswerSheet from "../features/teacher/Pages/Materials/Create Test/AnswerSheet";
 
 export const teacherRoutes = [
     {
@@ -107,9 +109,18 @@ export const teacherRoutes = [
         path: 'resources-list',
         element: <ResourcesList />
     },
+    // test routes
     {
         path: 'test-list',
         element: <TestList />
+    },
+    {
+        path: 'test-history',
+        element: <TestHistory />
+    },
+    {
+        path: 'answer-sheet/:testHistoryId',
+        element: <AnswerSheet />
     },
     {
         path: 'assignment-list',

@@ -244,7 +244,7 @@ const RecordClass = () => {
                     <Box component="section" sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
                         {/* back button and title */}
                         <Box component="section" sx={{ display: 'flex', gap: '20px' }}>
-                            <Link to='/teacher/create-course/add-course-material'>
+                            <Link to={isEditing ? "/teacher/record-class-list" : "/teacher/create-course/add-course-material"}>
                                 <Button variant='outlined' sx={{ width: '36px', height: '36px', minWidth: '36px', borderRadius: '8px', borderColor: "grey.700", color: "#3F3F46" }}>
                                     <ArrowBackIcon fontSize='small' />
                                 </Button>

@@ -16,7 +16,7 @@ const RecordClassList = () => {
         <Loader />;
     }
 
-    const { lessons } = courseData.data;
+    const lessons = courseData?.data.lessons;
 
     console.log(courseId);
     console.log(lessons);
