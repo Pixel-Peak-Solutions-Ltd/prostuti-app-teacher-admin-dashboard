@@ -8,7 +8,7 @@ import FlashCardManagement from "../features/admin/Pages/FlashCardManagement";
 import PaymentManagement from "../features/admin/Pages/PaymentManagement/PaymentManagement";
 import SinglePayment from "../features/admin/Pages/PaymentManagement/SinglePayment";
 import PracticeTest from "../features/admin/Pages/PracticeTest";
-import ReportCompliance from "../features/admin/Pages/ReportCompliance";
+import ReportAndCompliance from "../features/admin/Pages/ReportAndCompliance/ReportAndCompliance";
 import RevenueManagement from "../features/admin/Pages/RevenueManagement";
 import TeacherManagement from "../features/admin/Pages/TeacherManagement/TeacherManagement/TeacherManagement";
 
@@ -48,15 +48,15 @@ export const adminRoutes = [
     element: <PaymentManagement />,
   },
   {
-    path: 'payment-management/:id',
+    path: "payment-management/:id",
     element: <SinglePayment />,
   },
   {
-    path: 'coupon-management',
-    element: <Coupon/>,
+    path: "coupon-management",
+    element: <Coupon />,
   },
   {
-    path: 'revenue-management',
+    path: "revenue-management",
     element: <RevenueManagement />,
   },
   {
@@ -69,6 +69,6 @@ export const adminRoutes = [
   },
   {
     path: "report-compliance",
-    element: <ReportCompliance />,
+    element: <ReportAndCompliance />,
   },
 ];
