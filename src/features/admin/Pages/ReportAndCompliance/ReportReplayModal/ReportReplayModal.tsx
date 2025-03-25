@@ -11,7 +11,7 @@ import {
 } from "@mui/material";
 import { useState } from "react";
 
-const AppReportReplyModal = ({ open, onClose, report }) => {
+const ReportReplyModal = ({ open, onClose, report }) => {
   const [replyText, setReplyText] = useState("");
 
   // Return early if no report is selected
@@ -127,4 +127,4 @@ const AppReportReplyModal = ({ open, onClose, report }) => {
   );
 };
 
-export default AppReportReplyModal;
+export default ReportReplyModal;
