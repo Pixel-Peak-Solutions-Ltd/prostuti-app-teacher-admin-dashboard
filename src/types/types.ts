@@ -45,10 +45,14 @@ export interface CourseState {
     testHistoryData: {
         history: any;
     },
+    assignmentHistory: {
+        history: any;
+    },
     id: {
         course_id: string;
         lesson_id: string;
         test_id: string;
+        assignment_id: string;
     };
 
 }

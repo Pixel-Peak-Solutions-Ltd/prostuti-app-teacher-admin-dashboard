@@ -27,6 +27,8 @@ import TestList from "../features/teacher/Pages/Materials/Create Test/TestList";
 import TestUpdate from "../features/teacher/Pages/Materials/Create Test/TestUpdate";
 import TestHistory from "../features/teacher/Pages/Materials/Create Test/TestHistory";
 import AnswerSheet from "../features/teacher/Pages/Materials/Create Test/AnswerSheet";
+import AssignmentSubmissionList from "../features/teacher/Pages/Materials/Assignment/AssignmentSubmissionList";
+import ViewAsSubmission from "../features/teacher/Pages/Materials/Assignment/ViewAsSubmission";
 
 export const teacherRoutes = [
     {
@@ -122,9 +124,18 @@ export const teacherRoutes = [
         path: 'answer-sheet/:testHistoryId',
         element: <AnswerSheet />
     },
+    // assignment routes
     {
         path: 'assignment-list',
         element: <AssignmentList />
+    },
+    {
+        path: 'assignment-submission-list',
+        element: <AssignmentSubmissionList />
+    },
+    {
+        path: 'assignment-submission-list/:assignmentHistoryId',
+        element: <ViewAsSubmission />
     },
     {
         path: 'routine-list',

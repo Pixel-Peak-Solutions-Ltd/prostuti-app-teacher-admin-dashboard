@@ -110,7 +110,13 @@ const materialApi = baseApi.injectEndpoints({
             },
             invalidatesTags: ['Assignment']
         }),
-
+        getSubmittedAssignmentList: builder.query({
+            query: ({ courseId, assignmentId }) => ({
+                url: `/assignment-submission/${courseId}/${assignmentId}`,
+                method: 'GET'
+            }),
+            providesTags: ['AssignmentSubmission']
+        }),
         // test operations
         createTest: builder.mutation({
             query: (testData) => {
@@ -222,5 +228,6 @@ export const {
     useDeleteNoticeMutation,
     useGetSingleTestQuery,
     useUpdateTestMutation,
-    useGetTestHistoryQuery
+    useGetTestHistoryQuery,
+    useGetSubmittedAssignmentListQuery
 } = materialApi;

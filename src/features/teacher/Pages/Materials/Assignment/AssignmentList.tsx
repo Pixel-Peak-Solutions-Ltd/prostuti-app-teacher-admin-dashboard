@@ -1,6 +1,6 @@
 import { Box, Button, Card, Paper, Typography } from "@mui/material";
 import { useGetCoursePreviewQuery } from "../../../../../redux/features/course/courseApi";
-import { useAppSelector } from "../../../../../redux/hooks";
+import { useAppDispatch, useAppSelector } from "../../../../../redux/hooks";
 import Loader from "../../../../../shared/components/Loader";
 import Grid from '@mui/material/Grid2';
 import ArrowOutwardIcon from '@mui/icons-material/ArrowOutward';
@@ -8,9 +8,11 @@ import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import DriveFileRenameOutlineOutlinedIcon from '@mui/icons-material/DriveFileRenameOutlineOutlined';
 import assignment_icon from '../../../../../assets/images/assignment-icon.png';
 import { Link } from "react-router-dom";
+import { saveAssignmentIdToStore } from "../../../../../redux/features/course/courseSlice";
 
 const AssignmentList = () => {
     const courseId = useAppSelector((state) => state.courseAndLessonId.id.course_id);
+    const dispatch = useAppDispatch();
     const { data: courseData, isLoading } = useGetCoursePreviewQuery({ courseId });
 
     if (isLoading) {
@@ -60,7 +62,10 @@ const AssignmentList = () => {
                                                         {lesson?.assignments.map((assignment, index) => (
                                                             <Link to={`/teacher/assignment-update/${assignment?._id}`} style={{ textDecoration: "none" }}>
                                                                 <Card variant="outlined"
-                                                                    sx={{ display: "flex", alignItems: "center", gap: 2, my: 1, px: 1.5, py: 0.8, borderRadius: 2 }}>
+                                                                    sx={{ display: "flex", alignItems: "center", gap: 2, my: 1, px: 1.5, py: 0.8, borderRadius: 2 }}
+                                                                    // saving assignment id to store
+                                                                    onClick={() => dispatch(saveAssignmentIdToStore({ assignment_id: assignment?._id }))}
+                                                                >
                                                                     <Box sx={{ width: "3%" }}>
                                                                         <img src={assignment_icon} style={{ width: "24px", height: "24px" }} />
                                                                     </Box>

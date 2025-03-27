@@ -5,10 +5,14 @@ const initialState: CourseState = {
     testHistoryData: {
         history: {}
     },
+    assignmentHistory: {
+        history: {}
+    },
     id: {
         course_id: '',
         lesson_id: '',
         test_id: '',
+        assignment_id: '',
     }
 };
 
@@ -27,9 +31,15 @@ export const courseSlice = createSlice({
         },
         saveTestHistory: (state, action) => {
             state.testHistoryData = { ...state.testHistoryData, ...action.payload };
+        },
+        saveAssignmentIdToStore: (state, action) => {
+            state.id = { ...state.id, ...action.payload };
+        },
+        saveAssignmentHistory: (state, action) => {
+            state.assignmentHistory = { ...state.assignmentHistory, ...action.payload };
         }
     }
 });
 
-export const { saveCourseIdToStore, saveLessonIdToStore, saveTestStore, saveTestHistory } = courseSlice.actions;
+export const { saveCourseIdToStore, saveLessonIdToStore, saveTestStore, saveTestHistory, saveAssignmentIdToStore, saveAssignmentHistory } = courseSlice.actions;
 export default courseSlice.reducer;

@@ -53,7 +53,8 @@ export const baseApi = createApi({
     tagTypes: [
         'User', 'Teacher', 'Questions',
         'Categories', 'Courses', 'Record',
-        'Assignment', 'Resource', 'Notice', 'Test'
+        'Assignment', 'Resource', 'Notice', 'Test',
+        'AssignmentSubmission'
     ],
     endpoints: () => ({}),
 });
