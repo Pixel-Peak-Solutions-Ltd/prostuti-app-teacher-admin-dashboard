@@ -15,7 +15,7 @@ import { useAppDispatch } from '../../../../../redux/hooks';
 import { saveAssignmentHistory } from '../../../../../redux/features/course/courseSlice';
 
 interface Column {
-    id: 'sl' | 'student_name' | 'student_id' | 'marks' | 'submission_date' | 'action';
+    id: 'sl' | 'student_name' | 'student_id' | 'submission' | 'marks' | 'submission_date' | 'action';
     label: string;
     minWidth?: number;
     align?: 'right';
