@@ -1,4 +1,4 @@
-import FlashCard from "../features/teacher/Pages/FlashCard";
+import FlashCard from "../features/teacher/Pages/Flashcard/FlashCard";
 import Messages from "../features/teacher/Pages/Messages";
 import MyCourse from "../features/teacher/Pages/Course/MyCourse";
 import Profile from "../features/teacher/Pages/Profile";
