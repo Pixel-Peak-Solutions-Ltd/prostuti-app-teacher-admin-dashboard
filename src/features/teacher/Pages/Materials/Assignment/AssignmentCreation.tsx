@@ -67,6 +67,9 @@ const AssignmentCreation = () => {
     const { data: assignmentData, isLoading: assignmentFetching } = useGetAssignmentByIdQuery({ assignmentId }, { skip: !assignmentId });
 
 
+    // console.log('selected files', files);
+    console.log('selected assignment data', assignmentData?.data);
+
     // for updating the record class setting the state to the existing value
     useEffect(() => {
         if (assignmentData && isEditing) {
@@ -208,6 +211,13 @@ const AssignmentCreation = () => {
         setOpenSnackbar(false);
     };
 
+
+    // extracting date to check whether test deadline is over or not
+    const currentTime = new Date(Date.now());
+    const publishedDate = new Date(assignmentData?.data.unlockDate);
+    const isExpired = ((currentTime.getTime() > publishedDate.getTime()));
+    console.log('is deadline over:', isExpired);
+
     return (
         <>
             <Box sx={{ width: '100%', height: files.length > 3 ? 'auto' : '100vh' }}>
@@ -216,7 +226,7 @@ const AssignmentCreation = () => {
                     <Box component="section" sx={{ display: 'flex', gap: '20px', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
                         {/* back button and title */}
                         <Box component="section" sx={{ display: 'flex', gap: '20px' }}>
-                            <Link to='/teacher/create-course/add-course-material'>
+                            <Link to={isEditing ? "/teacher/assignment-list" : "/teacher/create-course/add-course-material"}>
                                 <Button variant='outlined' sx={{ width: '36px', height: '36px', minWidth: '36px', borderRadius: '8px', borderColor: "grey.700", color: "#3F3F46" }}>
                                     <ArrowBackIcon fontSize='small' />
                                 </Button>
@@ -224,14 +234,27 @@ const AssignmentCreation = () => {
                             <Typography variant='h3'>Assignment Creation</Typography>
                         </Box>
                         {/* continue button */}
-                        {/* <Link to='/teacher/create-course/add-course-lessons'> */}
-                        <Button
-                            // onClick={handleContinue}
-                            variant='contained'
-                            sx={{ borderRadius: '8px', width: '140px', height: '48px' }}>
-                            Continue <ChevronRightIcon />
-                        </Button>
-                        {/* </Link> */}
+                        {
+                            isExpired ? (
+                                <Link to='/teacher/assignment-submission-list'>
+                                    <Button
+                                        // onClick={handleContinue}
+                                        variant='contained'
+                                        sx={{ borderRadius: '8px', width: 'auto', height: '48px' }}>
+                                        View Submissions <ChevronRightIcon />
+                                    </Button>
+                                </Link>
+                            ) :
+                                (
+                                    <Button
+                                        // onClick={handleContinue}
+                                        variant='contained'
+                                        sx={{ borderRadius: '8px', width: '140px', height: '48px' }}>
+                                        Continue <ChevronRightIcon />
+                                    </Button>
+                                )
+                        }
+
                     </Box>
                     {/* form section starts here */}
                     {
@@ -276,6 +299,7 @@ const AssignmentCreation = () => {
                                                     value={assignmentDetails?.assignmentNo || ''}
                                                     placeholder={isEditing ? assignmentNo : "Naming hint: Assignment 1"}
                                                     required={isEditing ? false : true}
+                                                    disabled={isExpired ? true : false}
                                                 />
                                             </Grid>
                                             <Grid size={4}>
@@ -286,6 +310,7 @@ const AssignmentCreation = () => {
                                                     value={assignmentDetails?.marks || ''}
                                                     placeholder="Enter Allocated Marks"
                                                     required={isEditing ? false : true}
+                                                    disabled={isExpired ? true : false}
                                                     type="number"
                                                 />
                                             </Grid>
@@ -296,6 +321,7 @@ const AssignmentCreation = () => {
                                                     <StyledDatePicker
                                                         value={assignmentDetails?.unlockDate ? dayjs(assignmentDetails.unlockDate) : null}
                                                         onChange={handleDateChange}
+                                                        disabled={isExpired ? true : false}
                                                     />
                                                 </LocalizationProvider>
                                             </Grid>
@@ -310,6 +336,7 @@ const AssignmentCreation = () => {
                                                     placeholder="Enter Assignment Details"
                                                     multiline
                                                     rows={6}
+                                                    disabled={isExpired ? true : false}
                                                 />
                                             </Grid>
                                             {/* file update row */}
@@ -350,6 +377,7 @@ const AssignmentCreation = () => {
                                                                         }
 
                                                                     }
+                                                                    disabled={isExpired ? true : false}
                                                                 >
                                                                     <DeleteForeverIcon />
                                                                 </IconButton>
@@ -399,6 +427,7 @@ const AssignmentCreation = () => {
                                                     <Box sx={{ zIndex: 3 }}>
                                                         {/* new image upload button */}
                                                         <Button component="label"
+                                                            disabled={isExpired ? true : false}
                                                             size="small"
                                                             variant="text"
                                                             tabIndex={-1}
@@ -442,6 +471,7 @@ const AssignmentCreation = () => {
                                                 variant='contained'
                                                 size='small'
                                                 startIcon={<CloudUploadIcon />}
+                                                disabled={isExpired ? true : false}
                                                 sx={{ width: '170px', height: '40px', borderRadius: '8px', fontSize: '14px' }}>
                                                 {isEditing ? 'Update' : 'Upload Assignment'}
                                             </Button>

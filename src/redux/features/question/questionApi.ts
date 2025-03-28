@@ -37,11 +37,11 @@ const questionAPI = baseApi.injectEndpoints({
             }
         }),
         createQuestion: builder.mutation({
-            query: (questions) => {
+            query: (questionData) => {
                 return {
                     url: '/question',
                     method: 'POST',
-                    body: questions
+                    body: questionData
                 };
             },
             invalidatesTags: ['Questions']

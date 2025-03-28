@@ -1,5 +1,5 @@
 import { Box, Button, Card, IconButton, Paper, SnackbarCloseReason, Typography, styled } from "@mui/material";
-import { Link, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import Grid from '@mui/material/Grid2';
@@ -18,8 +18,14 @@ import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import PDF from '../../../../../assets/images/PDF.png';
 import LinearWithValueLabel from "../../../../../shared/components/ProgessBar";
-import { useCreateResourceMutation, useGetResourceByIdQuery, useUpdateResourceMutation } from "../../../../../redux/features/materials/materialsApi";
+import {
+    useCreateResourceMutation,
+    useDeleteResourceMutation,
+    useGetResourceByIdQuery,
+    useUpdateResourceMutation
+} from "../../../../../redux/features/materials/materialsApi";
 import Alert from "../../../../../shared/components/Alert";
+import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
 
 const StyledDatePicker = styled(DatePicker)({
     width: '100%',
@@ -41,6 +47,7 @@ const VisuallyHiddenInput = styled('input')({
     width: 1,
 });
 const ResourcesCreation = () => {
+    const navigate = useNavigate();
     const { resourceId } = useParams();
     // checking if user coming form course preview page
     const isEditing = resourceId ? true : false;
@@ -59,10 +66,19 @@ const ResourcesCreation = () => {
     const [createResource, { isLoading: resourceCreationLoading, isSuccess }] = useCreateResourceMutation();
 
     // making api call to update the record class
-    const [updateResource, { isSuccess: resourceUpdateSuccess, isLoading: resourceUpdateLoader }] = useUpdateResourceMutation();
+    const [updateResource, {
+        isSuccess: resourceUpdateSuccess,
+        isLoading: resourceUpdateLoader
+    }] = useUpdateResourceMutation();
 
     // api call to get existing record class data for update operation
-    const { data: resourceData, isLoading: resourceFetching } = useGetResourceByIdQuery({ resourceId }, { skip: !resourceId });
+    const {
+        data: resourceData,
+        isLoading: resourceFetching
+    } = useGetResourceByIdQuery({ resourceId }, { skip: !resourceId });
+    // delete resource
+
+    const [deleteResource, { isSuccess: deleteSuccess, isLoading: deleteLoader }] = useDeleteResourceMutation();
 
     // for updating the record class setting the state to the existing value
     useEffect(() => {
@@ -75,7 +91,7 @@ const ResourcesCreation = () => {
         }
     }, [resourceData, isEditing]);
 
-    if (courseLoading || resourceFetching || resourceUpdateLoader) {
+    if (courseLoading || resourceFetching || resourceUpdateLoader || deleteLoader) {
         return (<Loader />);
     }
 
@@ -88,7 +104,7 @@ const ResourcesCreation = () => {
     const lessonNames = lessonData?.data.map((item: typeof lessonData) => item.name);
     const lesson_id = lessonData?.data.filter((item: typeof lessonData) => item.name === resourceDetails?.lessonName);
 
-    // //^ handling dayjs for date field
+    //^ handling dayjs for date field
     const handleDateChange = (date: Dayjs | null) => {
         if (date) {
             setResourceDetails({ ...resourceDetails, resourceDate: date.toISOString() }); // converting date to iso string
@@ -159,8 +175,7 @@ const ResourcesCreation = () => {
             for (const pdf of files) {
                 resourceData.append('files', pdf);
             }
-        }
-        else {
+        } else {
             console.error('Expected files to be an array of File objects');
         }
 
@@ -183,6 +198,15 @@ const ResourcesCreation = () => {
 
     };
 
+    //*handling recordClass delete
+    const handleResourceDelete = async () => {
+        try {
+            await deleteResource({ resourceId });
+        } catch (error) {
+            console.log(error);
+        }
+    };
+
     // close snackbar automatically
     const handleCloseSnackbar = (
         event: React.SyntheticEvent | Event,
@@ -194,29 +218,63 @@ const ResourcesCreation = () => {
         setOpenSnackbar(false);
     };
 
+    if (deleteSuccess) {
+        navigate(`/teacher/resources-list`);
+    }
+
     return (
         <>
             <Box sx={{ width: '100%', height: files.length > 3 ? 'auto' : '100vh' }}>
                 <Paper variant="outlined" sx={{ width: '100%', height: 'auto', borderRadius: '10px', p: 3 }}>
                     {/* top title and button section */}
-                    <Box component="section" sx={{ display: 'flex', gap: '20px', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
+                    <Box component="section" sx={{
+                        display: 'flex',
+                        gap: '20px',
+                        justifyContent: 'space-between',
+                        alignItems: 'center',
+                        mb: 3
+                    }}>
                         {/* back button and title */}
                         <Box component="section" sx={{ display: 'flex', gap: '20px' }}>
-                            <Link to='/teacher/create-course/add-course-material'>
-                                <Button variant='outlined' sx={{ width: '36px', height: '36px', minWidth: '36px', borderRadius: '8px', borderColor: "grey.700", color: "#3F3F46" }}>
-                                    <ArrowBackIcon fontSize='small' />
+                            <Link to={isEditing ? "/teacher/resources-list" : "/teacher/create-course/add-course-material"}>
+                                <Button variant="outlined" sx={{
+                                    width: '36px',
+                                    height: '36px',
+                                    minWidth: '36px',
+                                    borderRadius: '8px',
+                                    borderColor: "grey.700",
+                                    color: "#3F3F46"
+                                }}>
+                                    <ArrowBackIcon fontSize="small" />
                                 </Button>
                             </Link>
-                            <Typography variant='h3'>Resource Creation</Typography>
+                            <Typography variant="h3">Resource Creation</Typography>
                         </Box>
+
+                        {
+                            isEditing && (
+                                <Button
+                                    onClick={handleResourceDelete}
+                                    variant="outlined"
+                                    sx={{ borderRadius: '8px', width: '140px', height: '48px', gap: 1 }}>
+                                    <DeleteOutlinedIcon fontSize="small" />
+                                    Delete
+                                </Button>
+                            )
+                        }
                         {/* continue button */}
                         {/* <Link to='/teacher/create-course/add-course-lessons'> */}
-                        <Button
-                            // onClick={handleContinue}
-                            variant='contained'
-                            sx={{ borderRadius: '8px', width: '140px', height: '48px' }}>
-                            Continue <ChevronRightIcon />
-                        </Button>
+                        {
+                            !isEditing && (
+                                <Button
+                                    // onClick={handleContinue}
+                                    variant="contained"
+                                    sx={{ borderRadius: '8px', width: '140px', height: '48px' }}>
+                                    Continue <ChevronRightIcon />
+                                </Button>
+                            )
+                        }
+
                         {/* </Link> */}
                     </Box>
                     {/* form section starts here */}
@@ -229,15 +287,16 @@ const ResourcesCreation = () => {
                         !resourceCreationLoading && (
                             <Box sx={{ display: "flex", flexDirection: 'column', gap: '20px' }}>
                                 <form onSubmit={handleResourceSubmit}>
-                                    <Paper variant='outlined' sx={{ width: '100%', height: '100%', p: 2, borderRadius: '8px', mb: 3 }}>
-                                        <Grid container spacing={3} >
+                                    <Paper variant="outlined"
+                                        sx={{ width: '100%', height: '100%', p: 2, borderRadius: '8px', mb: 3 }}>
+                                        <Grid container spacing={3}>
                                             {/* 1st row - lesson name */}
                                             {
                                                 !isEditing && (
                                                     <Grid size={12}>
                                                         <CustomLabel fieldName="Lesson Name*" />
                                                         <CustomAutoComplete
-                                                            name='lessonName' options={lessonNames || []}
+                                                            name="lessonName" options={lessonNames || []}
                                                             handleInput={handleResourceDetailsInput}
                                                             value={resourceDetails?.lessonName}
                                                             required
@@ -250,7 +309,7 @@ const ResourcesCreation = () => {
                                             <Grid size={8}>
                                                 <CustomLabel fieldName={isEditing ? "Resource Name" : "Resource Name*"} />
                                                 <CustomTextField
-                                                    name='name'
+                                                    name="name"
                                                     handleInput={handleResourceDetailsInput}
                                                     value={resourceDetails?.name || ''}
                                                     placeholder="Enter Resource Name"
@@ -258,7 +317,11 @@ const ResourcesCreation = () => {
                                                 />
                                             </Grid>
                                             {/* date picker */}
-                                            <Grid size={4} sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+                                            <Grid size={4} sx={{
+                                                display: 'flex',
+                                                flexDirection: 'column',
+                                                justifyContent: 'space-between'
+                                            }}>
                                                 <CustomLabel fieldName={isEditing ? "Class Date" : "Class Date*"} />
                                                 <LocalizationProvider dateAdapter={AdapterDayjs}>
                                                     <StyledDatePicker
@@ -270,16 +333,27 @@ const ResourcesCreation = () => {
                                             {/* 3rd row */}
                                             {/* Resource file upload field */}
                                             <Grid size={12}>
-                                                <Typography variant="h6" sx={{ fontSize: "1rem", fontWeight: "500" }} color="grey.700">
+                                                <Typography variant="h6" sx={{ fontSize: "1rem", fontWeight: "500" }}
+                                                    color="grey.700">
                                                     Uploaded Resources
                                                 </Typography>
                                             </Grid>
+                                            {/*for editing files*/}
                                             {
                                                 isEditing && filteredUploadFileResources.map((resource, index) => (
                                                     <>
                                                         <Grid size={12} sx={{ zIndex: 3 }} key={index}>
                                                             <Card variant="outlined"
-                                                                sx={{ display: "flex", alignItems: "center", justifyContent: 'space-between', gap: 2, mt: 0.8, px: 1.5, py: 0.8, borderRadius: 2 }}>
+                                                                sx={{
+                                                                    display: "flex",
+                                                                    alignItems: "center",
+                                                                    justifyContent: 'space-between',
+                                                                    gap: 2,
+                                                                    mt: 0.8,
+                                                                    px: 1.5,
+                                                                    py: 0.8,
+                                                                    borderRadius: 2
+                                                                }}>
                                                                 <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
                                                                     <img src={PDF}
                                                                         style={{
@@ -321,18 +395,38 @@ const ResourcesCreation = () => {
                                                             {
                                                                 files.map((file, index) => (
                                                                     <>
-                                                                        <Paper variant='outlined' sx={{
-                                                                            display: 'flex', flexDirection: 'column', justifyContent: 'center', mb: 1, alignItems: 'center', p: 1, borderRadius: '8px', gap: 1
+                                                                        <Paper variant="outlined" sx={{
+                                                                            display: 'flex',
+                                                                            flexDirection: 'column',
+                                                                            justifyContent: 'center',
+                                                                            mb: 1,
+                                                                            alignItems: 'center',
+                                                                            p: 1,
+                                                                            borderRadius: '8px',
+                                                                            gap: 1
                                                                         }}>
-                                                                            <Box sx={{ width: '100%', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                                                                                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                                                                                    <img src={PDF} style={{ width: '40px', height: '40px' }} />
-                                                                                    <Typography key={index} color='grey.700'>
+                                                                            <Box sx={{
+                                                                                width: '100%',
+                                                                                display: 'flex',
+                                                                                justifyContent: 'space-between',
+                                                                                alignItems: 'center'
+                                                                            }}>
+                                                                                <Box sx={{
+                                                                                    display: 'flex',
+                                                                                    alignItems: 'center',
+                                                                                    gap: 1
+                                                                                }}>
+                                                                                    <img src={PDF} style={{
+                                                                                        width: '40px',
+                                                                                        height: '40px'
+                                                                                    }} />
+                                                                                    <Typography key={index} color="grey.700">
                                                                                         {file.name}
                                                                                     </Typography>
                                                                                 </Box>
 
-                                                                                <IconButton onClick={() => handleDeleteFile(index)}>
+                                                                                <IconButton
+                                                                                    onClick={() => handleDeleteFile(index)}>
                                                                                     <DeleteForeverIcon />
                                                                                 </IconButton>
                                                                             </Box>
@@ -360,7 +454,9 @@ const ResourcesCreation = () => {
                                                             tabIndex={-1}
                                                             startIcon={<CloudUploadIcon />}
                                                             sx={{
-                                                                color: "gray.700", borderRadius: "8px", cursor: "pointer",
+                                                                color: "gray.700",
+                                                                borderRadius: "8px",
+                                                                cursor: "pointer",
                                                                 // backgroundColor: tempCover ? "white" : 'transparent'
                                                             }}
                                                         >
@@ -382,7 +478,7 @@ const ResourcesCreation = () => {
 
                                                 fileError && (
                                                     <Grid size={12}>
-                                                        <Typography color="error" align='center' variant="body2">
+                                                        <Typography color="error" align="center" variant="body2">
                                                             {fileError}
                                                         </Typography>
                                                     </Grid>
@@ -393,11 +489,16 @@ const ResourcesCreation = () => {
                                         </Grid>
                                         <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: "20px", mt: 3 }}>
                                             <Button
-                                                type='submit'
-                                                variant='contained'
-                                                size='small'
+                                                type="submit"
+                                                variant="contained"
+                                                size="small"
                                                 startIcon={<CloudUploadIcon />}
-                                                sx={{ width: '170px', height: '40px', borderRadius: '8px', fontSize: '14px' }}>
+                                                sx={{
+                                                    width: '170px',
+                                                    height: '40px',
+                                                    borderRadius: '8px',
+                                                    fontSize: '14px'
+                                                }}>
                                                 Upload Class
                                             </Button>
                                         </Box>

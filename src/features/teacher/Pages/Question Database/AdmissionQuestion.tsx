@@ -13,6 +13,7 @@ import CustomTextField from "../../../../shared/components/CustomTextField";
 import DeleteConfirmation from "../../../../shared/components/DeleteConfirmation";
 import { fieldNameGenerator } from "../../../../utils/fieldNameGenerator";
 import Alert from "../../../../shared/components/Alert";
+import { hasDataProperty } from "../../../../utils/TypeGuardForErrorMessage";
 
 const AdmissionQuestion = () => {
     const [filter, setFilter] = useState<Record<string, string | undefined>>({});
@@ -77,7 +78,7 @@ const AdmissionQuestion = () => {
 
     const getFieldOptions = (fieldName: string) => {
         // using the initial full dataset for dropdown options
-        return fieldNameObj[fieldName as keyof typeof fieldNameObj || []];
+        return fieldNameObj[fieldName as keyof typeof fieldNameObj] || [];
     };
 
     //*delete confirmation functions
@@ -251,13 +252,15 @@ const AdmissionQuestion = () => {
                 open={open}
             />
             {/* Alert message */}
-            <Alert
-                message={error?.data?.message as string}
-                openSnackbar={openSnackbar}
-                autoHideDuration={5000}
-                handleCloseSnackbar={handleCloseSnackbar}
-                isSuccess={isSuccess}
-            />
+            {hasDataProperty(error) && (
+                <Alert
+                    message={error.data.message}
+                    openSnackbar={openSnackbar}
+                    autoHideDuration={5000}
+                    handleCloseSnackbar={handleCloseSnackbar}
+                    isSuccess={isSuccess}
+                />
+            )}
         </Box>
 
     );

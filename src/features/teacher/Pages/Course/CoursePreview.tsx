@@ -1,5 +1,5 @@
-import { Link, useParams } from "react-router-dom";
-import { useGetCoursePreviewQuery } from "../../../../redux/features/course/courseApi";
+import { Link, useNavigate, useParams } from "react-router-dom";
+import { useDeleteCourseMutation, useGetCoursePreviewQuery } from "../../../../redux/features/course/courseApi";
 import Loader from "../../../../shared/components/Loader";
 import { Box, Button, Card, Paper, Typography } from "@mui/material";
 import { useState } from "react";
@@ -11,21 +11,34 @@ import video_icon from '../../../../assets/images/video-icon.png';
 import ArrowOutwardIcon from '@mui/icons-material/ArrowOutward';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
-import DriveFileRenameOutlineOutlinedIcon from '@mui/icons-material/DriveFileRenameOutlineOutlined';
 import { materialsInPreview } from "../../../../utils/Constants";
 
 const CoursePreview = () => {
+    const navigate = useNavigate();
     const { courseId } = useParams();
     const [fullText, setFullText] = useState<boolean>(false);
     const { data: courseData, isLoading } = useGetCoursePreviewQuery({ courseId });
+    const [deleteCourse, { isSuccess: courseDeleteSuccess, isLoading: courseDeleteLoader }] = useDeleteCourseMutation();
 
-    if (isLoading) {
+    if (isLoading || courseDeleteLoader) {
         return <Loader />;
     }
+
+    const handleCourseDelete = async () => {
+        try {
+            await deleteCourse({ courseId });
+        } catch (err) {
+            console.log(err);
+        }
+    };
 
     const { name, details, lessons } = courseData.data;
 
     console.log('course data:', courseData.data);
+
+    if (courseDeleteSuccess) {
+        navigate('/teacher/my-course');
+    }
     return (
         <Box sx={{ borderRadius: '10px', p: 3 }}>
             <Paper variant="outlined" sx={{ borderRadius: '10px', p: 3 }}>
@@ -43,18 +56,11 @@ const CoursePreview = () => {
                     {/* action buttons starts*/}
                     <Box sx={{ display: "flex", gap: 2, alignItems: "center" }} >
                         <Button
-                            // onClick={handleContinue}
+                            onClick={handleCourseDelete}
                             variant='outlined'
                             sx={{ borderRadius: '8px', width: '140px', height: '48px', gap: 1 }}>
                             <DeleteOutlinedIcon fontSize='small' />
                             Delete
-                        </Button>
-                        <Button
-                            // onClick={handleContinue}
-                            variant='contained'
-                            sx={{ borderRadius: '8px', width: '140px', height: '48px', gap: 1 }}>
-                            <DriveFileRenameOutlineOutlinedIcon fontSize='small' />
-                            Edit
                         </Button>
                     </Box>
                     {/* action buttons ends*/}
@@ -209,7 +215,6 @@ const CoursePreview = () => {
                                                 ))}
                                             </Box>)
                                     }
-
                                 </Grid>
                             ))}
                         </Grid>

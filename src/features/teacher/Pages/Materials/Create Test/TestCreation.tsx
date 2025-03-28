@@ -1,29 +1,5 @@
 import { Box, Button, Paper, SnackbarCloseReason, Typography, styled } from "@mui/material";
-import Grid from '@mui/material/Grid2';
-import { Link } from "react-router-dom";
-import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-import ChevronRightIcon from '@mui/icons-material/ChevronRight';
-import CustomAutoComplete from "../../../../../shared/components/CustomAutoComplete";
-import CustomLabel from "../../../../../shared/components/CustomLabel";
-import CustomTextField from "../../../../../shared/components/CustomTextField";
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import { DatePicker } from '@mui/x-date-pickers/DatePicker';
-import { Dayjs } from "dayjs";
-import { QuestionType, testTime } from "../../../../../utils/Constants";
-import { useState } from "react";
-import Divider from '@mui/material/Divider';
-import CloudUploadIcon from '@mui/icons-material/CloudUpload';
-import TestQuestionForm from "./TestQuestionForm";
-import Loader from "../../../../../shared/components/Loader";
-import { useAppDispatch, useAppSelector } from "../../../../../redux/hooks";
-import { useGetLessonsByCourseIdQuery } from "../../../../../redux/features/course/courseApi";
-import DatabaseQuestionViewer from "./DatabaseQuestionViewer";
-import { testQuestionFormation } from "../../../../../utils/testQuestionFormation";
-import { questionIdArrayFormation } from "../../../../../utils/questionIdArrayFormation";
-import { useCreateTestMutation } from "../../../../../redux/features/materials/materialsApi";
-import Alert from "../../../../../shared/components/Alert";
-import { resetStoredQuestions } from "../../../../../redux/features/question/questionSlice";
+import { DatabaseQuestionViewer, CustomLabel, CustomTextField, TestQuestionForm, Loader, testQuestionFormation, questionIdArrayFormation, useCreateTestMutation, resetStoredQuestions, Alert, useAppDispatch, useAppSelector, useGetLessonsByCourseIdQuery, CustomAutoComplete, Link, Grid, ArrowBackIcon, ChevronRightIcon, QuestionType, testTime, CloudUploadIcon, Divider, AdapterDayjs, LocalizationProvider, DatePicker, Dayjs, useState } from '../Create Test';
 
 const StyledDatePicker = styled(DatePicker)({
     width: '100%',
@@ -38,6 +14,7 @@ const TestCreation = () => {
     const [testDetails, setTestDetails] = useState<Record<string, string>>({});
     const [numOfForms, setNumOfForms] = useState(1);
     const [question, setQuestion] = useState<Record<string, string>>({});
+    const [imageFile, setImageFile] = useState<Record<string, File | null>>({});
     const [openSnackbar, setOpenSnackbar] = useState(false);
     // fetching courseId from the local redux store
     const courseId = useAppSelector((state) => state.courseAndLessonId.id.course_id);
@@ -74,9 +51,20 @@ const TestCreation = () => {
         setQuestion((prevState) => ({ ...prevState, [name]: value }));
     };
 
+    // removing the selected file
+
+    const handleRemoveFile = (e: React.MouseEvent, index) => {
+        setImageFile((prev) => {
+            const updatedFiles = { ...prev };
+            delete updatedFiles[`${index}`];
+            return updatedFiles;
+        });
+    };
+
     //*handle submit function
     const handleTestSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+        const testData = new FormData();
         const questionList = testQuestionFormation(question, testDetails?.type);
         const questionsFromDatabase = questionIdArrayFormation(selectedDatabaseQuestionId);
 
@@ -93,11 +81,24 @@ const TestCreation = () => {
             questionList: finalQuestionList
         };
 
+        testData.append('data', JSON.stringify(submittableData));
+        // checking whether file object not empty
+
+        if (Object.keys(imageFile).length !== 0) {
+            for (const key in imageFile) {
+                // checking whether a key has null value in the object
+                if (imageFile[key] !== null) {
+                    testData.append(`image${key}`, imageFile[key]);
+                }
+            }
+        }
+
         try {
-            await createTest(submittableData);
+            await createTest(testData);
             setOpenSnackbar(true);
             setTestDetails({});
             setQuestion({});
+            setImageFile({});
             setNumOfForms(1);
             dispatch(resetStoredQuestions());
         } catch (err) {
@@ -116,6 +117,8 @@ const TestCreation = () => {
         }
         setOpenSnackbar(false);
     };
+
+    console.log('selected image object for test questions:', imageFile);
 
     return (
         <>
@@ -211,6 +214,10 @@ const TestCreation = () => {
                                                     testDetails={testDetails}
                                                     setNumOfForms={setNumOfForms}
                                                     numOfForms={numOfForms}
+                                                    setImageFile={setImageFile}
+                                                    imageFile={imageFile}
+                                                    // handleFileInput={handleFileInput}
+                                                    handleRemoveFile={handleRemoveFile}
                                                 />
                                             ))
                                         }

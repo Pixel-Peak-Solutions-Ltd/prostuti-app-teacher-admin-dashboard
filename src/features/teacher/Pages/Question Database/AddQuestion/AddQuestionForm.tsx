@@ -5,23 +5,47 @@ import Grid from '@mui/material/Grid2';
 import CustomTextField from "../../../../../shared/components/CustomTextField";
 import { useGetCategoryQuery } from "../../../../../redux/features/question/questionApi";
 import Loader from "../../../../../shared/components/Loader";
-import { FormControl, MenuItem, TextField } from "@mui/material";
+import { FormControl, MenuItem, TextField, Typography, IconButton } from "@mui/material";
 import { getUniqueStrings } from "../../../../../utils/typeSafeUniqueArrays";
+import AdornedTextField from "../../../../../shared/components/AdornedTextField";
+import { useRef } from "react";
+import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
+import { teal } from "@mui/material/colors";
 
-const AddQuestionForm = ({ index, setQuestion, question, setCategory_id }:
-    {
-        index: number;
-        setQuestion: React.Dispatch<React.SetStateAction<Record<string, string>>>;
-        question: Record<string, string>;
-        setCategory_id: React.Dispatch<React.SetStateAction<string>>
-    }) => {
+// type declaration
+type TAddQuestionForm = {
+    index: number;
+    setQuestion: React.Dispatch<React.SetStateAction<Record<string, string>>>;
+    question: Record<string, string>;
+    setCategory_id: React.Dispatch<React.SetStateAction<string>>;
+    setImageFile: React.Dispatch<React.SetStateAction<Record<string, File | null>>>;
+    imageFile: Record<string, File | null>;
+    handleRemoveFile: (e: React.MouseEvent, index: number) => void;
+};
+const AddQuestionForm = ({ index, setQuestion, question, setCategory_id, setImageFile, imageFile, handleRemoveFile }: TAddQuestionForm) => {
 
-    //question type selection
+    // creating a reference to capture value of input field
+    const fileInputRef = useRef<HTMLInputElement>(null);
+
+    const handleFileIconClick = () => {
+        fileInputRef.current?.click();
+    };
+
+    // question type selection
 
     const handleInput = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
         setQuestion((prevState) => ({ ...prevState, [name]: value }));
         setCategory_id(categoryId);
+    };
+
+    // file selection
+    const handleFileInput = (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (e.target.files.length > 0) {
+            setImageFile((prevState) => ({ ...prevState, [`${index}`]: e.target.files[0] }));
+            // The following line resets input field to allow selecting the same file again
+            e.target.value = '';
+        }
     };
 
     // creating a query parameter object
@@ -41,7 +65,7 @@ const AddQuestionForm = ({ index, setQuestion, question, setCategory_id }:
 
     //handling the question queries
 
-    console.log("from add question form page:", question);
+    // console.log("from add question form page:", question);
 
     if (isLoading) {
         return <Loader />;
@@ -57,12 +81,6 @@ const AddQuestionForm = ({ index, setQuestion, question, setCategory_id }:
 
     // narrowed down category
     const categoryId = categoryData?.data[0]?._id || '';
-
-    // console.log(questionArray)
-    // console.log('currently fetched data:', categoryData?.data,);
-    // console.log('unique division', divisions);
-    // console.log('unique subject', subjects);
-
 
     return (
         <>
@@ -171,15 +189,40 @@ const AddQuestionForm = ({ index, setQuestion, question, setCategory_id }:
                     </>)
             }
 
+            {/* question title input field */}
             <Grid size={12}>
                 <CustomLabel fieldName='Question' />
-                <CustomTextField
+                <AdornedTextField
                     name={`title_${index}`}
                     handleInput={handleInput}
+                    handleFileIconClick={handleFileIconClick}
                     placeholder='Write your question here'
+                    fileInputRef={fileInputRef}
                     required={true}
+                    handleFileInput={handleFileInput}
                     value={question[`title_${index}`]}
                 />
+                {
+                    imageFile[`${index}`] &&
+                    (
+                        <Grid size={12} sx={{ display: 'flex', justifyContent: "space-between", alignItems: "center" }}>
+
+                            <Typography variant="h6" sx={{ fontSize: "1rem", fontWeight: "500", mt: 0.5, bgcolor: teal[50], px: 1, py: 0.5, borderRadius: 2 }} color={teal[500]}>
+                                {imageFile[`${index}`]?.name}
+                            </Typography>
+                            <IconButton
+                                onClick={
+                                    (e) => {
+                                        handleRemoveFile(e, index);
+                                    }
+                                }
+                            >
+                                <DeleteForeverIcon />
+                            </IconButton>
+                        </Grid>
+                    )
+                }
+
             </Grid>
             {/* mcq row */}
             {

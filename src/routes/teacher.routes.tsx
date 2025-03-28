@@ -17,11 +17,18 @@ import AssignmentCreation from "../features/teacher/Pages/Materials/Assignment/A
 import TestCreation from "../features/teacher/Pages/Materials/Create Test/TestCreation";
 import ResourcesCreation from "../features/teacher/Pages/Materials/Resource/ResourcesCreation";
 import RoutineCreation from "../features/teacher/Pages/Materials/RoutineCreation";
-import NoticeCreation from "../features/teacher/Pages/Materials/NoticeCreation";
+import NoticeCreation from "../features/teacher/Pages/Materials/Notice/NoticeCreation";
 import CoursePreview from "../features/teacher/Pages/Course/CoursePreview";
 import RecordClassList from "../features/teacher/Pages/Materials/RecordClass/RecordClassList";
 import AssignmentList from "../features/teacher/Pages/Materials/Assignment/AssignmentList";
 import ResourcesList from "../features/teacher/Pages/Materials/Resource/ResourcesList";
+import NoticeList from "../features/teacher/Pages/Materials/Notice/NoticeList";
+import TestList from "../features/teacher/Pages/Materials/Create Test/TestList";
+import TestUpdate from "../features/teacher/Pages/Materials/Create Test/TestUpdate";
+import TestHistory from "../features/teacher/Pages/Materials/Create Test/TestHistory";
+import AnswerSheet from "../features/teacher/Pages/Materials/Create Test/AnswerSheet";
+import AssignmentSubmissionList from "../features/teacher/Pages/Materials/Assignment/AssignmentSubmissionList";
+import ViewAsSubmission from "../features/teacher/Pages/Materials/Assignment/ViewAsSubmission";
 
 export const teacherRoutes = [
     {
@@ -88,7 +95,11 @@ export const teacherRoutes = [
     },
     {
         path: 'test-update/:testId',
-        element: <TestCreation />
+        element: <TestUpdate />
+    },
+    {
+        path: 'notice-update/:noticeId',
+        element: <NoticeCreation />
     },
 
     // course material lists route
@@ -100,13 +111,31 @@ export const teacherRoutes = [
         path: 'resources-list',
         element: <ResourcesList />
     },
+    // test routes
     {
         path: 'test-list',
-        element: <RecordClassList />
+        element: <TestList />
     },
+    {
+        path: 'test-history',
+        element: <TestHistory />
+    },
+    {
+        path: 'answer-sheet/:testHistoryId',
+        element: <AnswerSheet />
+    },
+    // assignment routes
     {
         path: 'assignment-list',
         element: <AssignmentList />
+    },
+    {
+        path: 'assignment-submission-list',
+        element: <AssignmentSubmissionList />
+    },
+    {
+        path: 'assignment-submission-list/:assignmentHistoryId',
+        element: <ViewAsSubmission />
     },
     {
         path: 'routine-list',
@@ -114,7 +143,7 @@ export const teacherRoutes = [
     },
     {
         path: 'notice-list',
-        element: <RecordClassList />
+        element: <NoticeList />
     },
 
     // course paths

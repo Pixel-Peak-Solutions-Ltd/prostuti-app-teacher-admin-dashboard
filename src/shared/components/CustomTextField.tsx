@@ -1,12 +1,13 @@
 import { TextField } from "@mui/material";
 
-const CustomTextField = ({ defaultValue, name, value, placeholder, handleInput, disabled, multiline, rows, required, error, helperText, handlePaste, type }:
-    { defaultValue?: string; disabled?: boolean; name: string; value?: string | number; placeholder?: string; handleInput?: (e: React.ChangeEvent<HTMLInputElement>) => void; multiline?: boolean; rows?: number; required?: boolean; error?: boolean; helperText?: string; handlePaste?: (e: React.ClipboardEvent) => void; type?: string }
+const CustomTextField = ({ defaultValue, name, value, placeholder, handleInput, disabled, multiline, rows, required, error, helperText, handlePaste, type, style }:
+    { defaultValue?: string; disabled?: boolean; name: string; value?: string | number; placeholder?: string; handleInput?: (e: React.ChangeEvent<HTMLInputElement>) => void; multiline?: boolean; rows?: number; required?: boolean; error?: boolean; helperText?: string; handlePaste?: (e: React.ClipboardEvent) => void; type?: string; style?: any; }
 ) => {
     return (
         <TextField
             disabled={disabled}
             name={name}
+            style={style}
             onChange={handleInput}
             value={value || ''}
             defaultValue={defaultValue}

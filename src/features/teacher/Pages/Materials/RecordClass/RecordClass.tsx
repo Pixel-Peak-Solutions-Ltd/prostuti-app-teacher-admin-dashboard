@@ -16,10 +16,11 @@ import { useGetLessonsByCourseIdQuery } from "../../../../../redux/features/cour
 import { useAppSelector } from "../../../../../redux/hooks";
 import Loader from "../../../../../shared/components/Loader";
 import Alert from "../../../../../shared/components/Alert";
-import { useCreateRecordClassMutation, useGetRecordClassByIdQuery, useUpdateRecordClassMutation } from "../../../../../redux/features/materials/materialsApi";
+import { useCreateRecordClassMutation, useDeleteRecordClassMutation, useGetRecordClassByIdQuery, useUpdateRecordClassMutation } from "../../../../../redux/features/materials/materialsApi";
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import LinearWithValueLabel from "../../../../../shared/components/ProgessBar";
 import MP4 from '../../../../../assets/images/MP4-icon.png';
+import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
 
 const StyledDatePicker = styled(DatePicker)({
     width: '100%',
@@ -64,6 +65,8 @@ const RecordClass = () => {
 
     // making api call to update the record class
     const [updateRecordClass, { isSuccess: updateSuccess, isLoading: recordClassUpdateLoader }] = useUpdateRecordClassMutation();
+    // delete record class
+    const [deleteRecordClass, { isSuccess: deleteSuccess, isLoading: recordDeleteLoader }] = useDeleteRecordClassMutation();
 
     // api call to get existing record class data for update operation
     const { data: recordData, isLoading: recordClassFetching } = useGetRecordClassByIdQuery({ recordId }, { skip: !recordId });
@@ -81,7 +84,7 @@ const RecordClass = () => {
 
     // handling data loading
 
-    if (courseLoading || recordClassFetching || recordClassUpdateLoader) {
+    if (courseLoading || recordClassFetching || recordClassUpdateLoader || recordDeleteLoader) {
         return (<Loader />);
     }
 
@@ -148,6 +151,7 @@ const RecordClass = () => {
         // taking out the unwanted fields from the details object : ESNext syntax
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
 
+        // eslint-disable-next-line no-unused-vars, @typescript-eslint/no-unused-vars
         const refinedDetails = (({ lessonName, ...rest }) => rest)(recordDetails);
         // constructing the final object for creating record class
         const submissionJSONData = {
@@ -201,6 +205,14 @@ const RecordClass = () => {
 
     };
 
+    //*handling recordClass delete
+    const handleRecordClassDelete = async () => {
+        try {
+            await deleteRecordClass({ recordId });
+        } catch (error) {
+            console.log(error);
+        }
+    };
     //~ handling the custom snackbar to help user know whether request is successful
     //~ close snackbar automatically
     const handleCloseSnackbar = (
@@ -218,6 +230,12 @@ const RecordClass = () => {
         navigate(`/teacher/course-preview/${course_id}`);
     }
 
+    // take use to course preview once record class list
+
+    if (deleteSuccess) {
+        navigate(`/teacher/record-class-list`);
+    }
+
     return (
         <>
             <Box sx={{ width: '100%', height: 'auto' }}>
@@ -226,21 +244,36 @@ const RecordClass = () => {
                     <Box component="section" sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
                         {/* back button and title */}
                         <Box component="section" sx={{ display: 'flex', gap: '20px' }}>
-                            <Link to='/teacher/create-course/add-course-material'>
+                            <Link to={isEditing ? "/teacher/record-class-list" : "/teacher/create-course/add-course-material"}>
                                 <Button variant='outlined' sx={{ width: '36px', height: '36px', minWidth: '36px', borderRadius: '8px', borderColor: "grey.700", color: "#3F3F46" }}>
                                     <ArrowBackIcon fontSize='small' />
                                 </Button>
                             </Link>
                             <Typography variant='h3'>{isEditing ? `Update Record Class` : `Record Class Creation`}</Typography>
                         </Box>
+                        {
+                            isEditing && (
+                                <Button
+                                    onClick={handleRecordClassDelete}
+                                    variant='outlined'
+                                    sx={{ borderRadius: '8px', width: '140px', height: '48px', gap: 1 }}>
+                                    <DeleteOutlinedIcon fontSize='small' />
+                                    Delete
+                                </Button>
+                            )
+                        }
                         {/* continue button */}
                         {/* <Link to='/teacher/create-course/create-lessons'> */}
-                        <Button
-                            // onClick={handleContinue}
-                            variant='contained'
-                            sx={{ borderRadius: '8px', width: '140px', height: '48px' }}>
-                            Continue <ChevronRightIcon />
-                        </Button>
+                        {
+                            !isEditing && (
+                                <Button
+                                    // onClick={handleContinue}
+                                    variant='contained'
+                                    sx={{ borderRadius: '8px', width: '140px', height: '48px' }}>
+                                    Continue <ChevronRightIcon />
+                                </Button>
+                            )
+                        }
                         {/* </Link> */}
                     </Box>
                     {/* form section starts here */}

@@ -22,10 +22,16 @@ const persistQuestions = {
     storage
 };
 
+const persistedTestId = {
+    key: 'test_id',
+    storage
+};
+
 const persistedAuthReducer = persistReducer(persistConfig, authReducer);
 const persistedCourseCreateReducer = persistReducer(persistCourseIds, courseReducer);
 
 const persistedQuestionReducer = persistReducer(persistQuestions, questionReducer);
+const persistedTestIdReducer = persistReducer(persistedTestId, courseReducer);
 
 export const store = configureStore({
     reducer: {
@@ -33,7 +39,8 @@ export const store = configureStore({
         [baseApi.reducerPath]: baseApi.reducer,
         // courseDetails: courseReducer,
         courseAndLessonId: persistedCourseCreateReducer,
-        pickedQuestions: persistedQuestionReducer
+        pickedQuestions: persistedQuestionReducer,
+        test_id: persistedTestIdReducer
     },
     middleware: (getDefaultMiddleware) =>
         getDefaultMiddleware({
@@ -45,8 +52,8 @@ export const store = configureStore({
 });
 
 // Infer the `RootState` and `AppDispatch` types from the store itself
-export type RootState = ReturnType<typeof store.getState>
+export type RootState = ReturnType<typeof store.getState>;
 // Inferred type: {posts: PostsState, comments: CommentsState, users: UsersState}
-export type AppDispatch = typeof store.dispatch
+export type AppDispatch = typeof store.dispatch;
 
 export const persistor = persistStore(store);

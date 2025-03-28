@@ -31,6 +31,15 @@ const materialApi = baseApi.injectEndpoints({
             },
             invalidatesTags: ['Record']
         }),
+        deleteRecordClass: builder.mutation({
+            query: ({ recordClassId }) => {
+                return {
+                    url: `/recoded-class/${recordClassId}`,
+                    method: 'DELETE',
+                };
+            },
+            invalidatesTags: ['Record']
+        }),
         // resource operations
         createResource: builder.mutation({
             query: (resourceData) => {
@@ -58,6 +67,15 @@ const materialApi = baseApi.injectEndpoints({
                     url: `/resource/${resourceId}`,
                     method: 'PATCH',
                     body: resourceData
+                };
+            },
+            invalidatesTags: ['Resource']
+        }),
+        deleteResource: builder.mutation({
+            query: ({ resourceId }) => {
+                return {
+                    url: `/resource/${resourceId}`,
+                    method: 'DELETE',
                 };
             },
             invalidatesTags: ['Resource']
@@ -92,6 +110,14 @@ const materialApi = baseApi.injectEndpoints({
             },
             invalidatesTags: ['Assignment']
         }),
+        getSubmittedAssignmentList: builder.query({
+            query: ({ courseId, assignmentId }) => ({
+                url: `/assignment-submission/${courseId}/${assignmentId}`,
+                method: 'GET'
+            }),
+            providesTags: ['AssignmentSubmission']
+        }),
+        // test operations
         createTest: builder.mutation({
             query: (testData) => {
                 return {
@@ -99,7 +125,85 @@ const materialApi = baseApi.injectEndpoints({
                     method: 'POST',
                     body: testData
                 };
+            },
+            invalidatesTags: ['Test']
+        }),
+
+        getSingleTest: builder.query({
+            query: ({ testId }) => {
+                return {
+                    url: `/test/${testId}`,
+                    method: 'GET'
+                };
+            },
+            providesTags: ['Test']
+        }),
+
+        updateTest: builder.mutation({
+            query: ({ testId, testData }) => {
+                return {
+                    url: `/test/${testId}`,
+                    method: 'PATCH',
+                    body: testData
+                };
+            },
+            invalidatesTags: ['Test']
+        }),
+
+        getTestHistory: builder.query({
+            query: ({ testId }) => {
+                return {
+                    url: `/test-history/all-test-history?test_id=${testId}`,
+                    method: 'GET'
+                };
             }
+        }),
+        // notice operations
+        getNoticesOfACourse: builder.query({
+            query: ({ courseId }) => {
+                return {
+                    url: `/notice/course/${courseId}`,
+                    method: 'GET',
+                };
+            },
+            providesTags: ['Notice']
+        }),
+        getNoticeById: builder.query({
+            query: ({ noticeId }) => {
+                return {
+                    url: `/notice/${noticeId}`,
+                    method: 'GET'
+                };
+            }
+        }),
+        createNotice: builder.mutation({
+            query: (noticeData) => {
+                return {
+                    url: '/notice',
+                    method: 'POST',
+                    body: noticeData
+                };
+            },
+            invalidatesTags: ['Notice']
+        }),
+        updateNotice: builder.mutation({
+            query: ({ updateNoticeData, noticeId }) => {
+                return {
+                    url: `/notice/${noticeId}`,
+                    method: 'PATCH',
+                    body: updateNoticeData
+                };
+            },
+            invalidatesTags: ['Notice']
+        }),
+        deleteNotice: builder.mutation({
+            query: ({ noticeId }) => {
+                return {
+                    url: `/notice/${noticeId}`,
+                    method: 'DELETE',
+                };
+            },
+            invalidatesTags: ['Notice']
         })
     })
 });
@@ -114,5 +218,16 @@ export const {
     useGetAssignmentByIdQuery,
     useUpdateAssignmentMutation,
     useGetResourceByIdQuery,
-    useUpdateResourceMutation
+    useUpdateResourceMutation,
+    useDeleteRecordClassMutation,
+    useDeleteResourceMutation,
+    useCreateNoticeMutation,
+    useGetNoticesOfACourseQuery,
+    useGetNoticeByIdQuery,
+    useUpdateNoticeMutation,
+    useDeleteNoticeMutation,
+    useGetSingleTestQuery,
+    useUpdateTestMutation,
+    useGetTestHistoryQuery,
+    useGetSubmittedAssignmentListQuery
 } = materialApi;

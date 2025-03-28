@@ -1,14 +1,12 @@
 import { Box, Button, Card, Paper, Typography } from "@mui/material";
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { Link } from "react-router-dom";
-import DriveFileRenameOutlineOutlinedIcon from '@mui/icons-material/DriveFileRenameOutlineOutlined';
 import video_icon from '../../../../../assets/images/video-icon.png';
 import { useAppSelector } from "../../../../../redux/hooks";
 import { useGetCoursePreviewQuery } from "../../../../../redux/features/course/courseApi";
 import Loader from "../../../../../shared/components/Loader";
 import Grid from '@mui/material/Grid2';
 import ArrowOutwardIcon from '@mui/icons-material/ArrowOutward';
-import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
 
 const RecordClassList = () => {
     const courseId = useAppSelector((state) => state.courseAndLessonId.id.course_id);
@@ -18,7 +16,7 @@ const RecordClassList = () => {
         <Loader />;
     }
 
-    const { lessons } = courseData.data;
+    const lessons = courseData?.data.lessons;
 
     console.log(courseId);
     console.log(lessons);
@@ -37,26 +35,6 @@ const RecordClassList = () => {
                         </Link>
                         <Typography variant='h3'>Record Class</Typography>
                     </Box>
-                    {/* Action buttons */}
-                    {/* <Link to='/teacher/create-course/add-course-lessons'> */}
-                    <Box sx={{ display: "flex", gap: 2, alignItems: "center" }}>
-                        <Button
-                            // onClick={handleContinue}
-                            variant='outlined'
-                            sx={{ borderRadius: '8px', width: '140px', height: '48px', gap: 1 }}>
-                            <DeleteOutlinedIcon fontSize='small' />
-                            Delete
-                        </Button>
-                        <Button
-                            // onClick={handleContinue}
-                            variant='contained'
-                            sx={{ borderRadius: '8px', width: '140px', height: '48px', gap: 1 }}>
-                            <DriveFileRenameOutlineOutlinedIcon fontSize='small' />
-                            Edit
-                        </Button>
-                    </Box>
-
-                    {/* </Link> */}
                 </Box>
                 {/* main list starts */}
                 {isLoading && (<Loader />)}
