@@ -1,6 +1,6 @@
-import React from 'react';
-import { Card, CardContent, CardMedia, Typography } from '@mui/material';
-import { Link } from 'react-router-dom';
+import React from "react";
+import { Card, CardContent, CardMedia, Typography } from "@mui/material";
+import { Link } from "react-router-dom";
 
 interface CourseCardProps {
   course: {
@@ -12,7 +12,9 @@ interface CourseCardProps {
 
 export const CourseCard: React.FC<CourseCardProps> = ({ course }) => {
   return (
-    <Link to={`/admin/course-approved/${course.id}`}>
+    <Link
+      to={`/admin/course-approved/${course.id}`}
+      style={{ textDecoration: "none" }}>
       <Card>
         <CardMedia
           component="img"
@@ -22,11 +24,10 @@ export const CourseCard: React.FC<CourseCardProps> = ({ course }) => {
         />
         <CardContent>
           <Typography
-            sx={{ fontSize: '16px' }}
+            sx={{ fontSize: "16px" }}
             gutterBottom
             variant="h6"
-            component="div"
-          >
+            component="div">
             {course.title}
           </Typography>
         </CardContent>
