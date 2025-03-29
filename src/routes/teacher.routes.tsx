@@ -29,6 +29,7 @@ import TestHistory from "../features/teacher/Pages/Materials/Create Test/TestHis
 import AnswerSheet from "../features/teacher/Pages/Materials/Create Test/AnswerSheet";
 import AssignmentSubmissionList from "../features/teacher/Pages/Materials/Assignment/AssignmentSubmissionList";
 import ViewAsSubmission from "../features/teacher/Pages/Materials/Assignment/ViewAsSubmission";
+import ChildFlashCards from "../features/teacher/Pages/Flashcard/ChildFlashCards";
 
 export const teacherRoutes = [
     {
@@ -51,9 +52,14 @@ export const teacherRoutes = [
         path: 'question-database',
         element: <QuestionDatabase />,
     },
+    // flashcard paths
     {
         path: 'flashcard',
         element: <FlashCard />
+    },
+    {
+        path: 'flashcard/:flashcardId',
+        element: <ChildFlashCards />
     },
 
     // question database paths
@@ -195,4 +201,6 @@ export const teacherRoutes = [
         path: 'notice',
         element: <NoticeCreation />
     },
+
+
 ];
