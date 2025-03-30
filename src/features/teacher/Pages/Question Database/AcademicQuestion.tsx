@@ -39,7 +39,6 @@ const AcademicQuestion = () => {
         navigate('/teacher/question-database');
     };
 
-
     // confirming the filters to fetch data based on that
     const confirmFilter = (e: React.MouseEvent) => {
         e.preventDefault();
@@ -240,6 +239,7 @@ const AcademicQuestion = () => {
             </Paper >
             {/* delete confirmation modal */}
             <DeleteConfirmation
+                type="question"
                 id={questionId}
                 deleteFunction={deleteQuestionFromDatabase}
                 handleDeleteClose={handleDeleteClose}

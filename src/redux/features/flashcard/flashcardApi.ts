@@ -18,7 +18,17 @@ const flashcardApi = baseApi.injectEndpoints({
             }),
             providesTags: ['ChildFlashcards']
         }),
+        deleteChildFlashcards: builder.mutation({
+            query: (flashcardId) => {
+                console.log('received id in delete function:', flashcardId);
+                return {
+                    url: `/flashcard/delete-flashcard-item/${flashcardId}`,
+                    method: 'DELETE',
+                };
+            },
+            invalidatesTags: ['ChildFlashcards']
+        })
     })
 });
 
-export const { useGetAllPublishedFlashcardsQuery, useGetChildFlashcardsQuery } = flashcardApi; 
+export const { useGetAllPublishedFlashcardsQuery, useGetChildFlashcardsQuery, useDeleteChildFlashcardsMutation } = flashcardApi; 

@@ -1,4 +1,5 @@
-import { Backdrop, DialogContentText, DialogTitle, Paper } from '@mui/material';
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { Backdrop, DialogContentText, DialogTitle } from '@mui/material';
 import Button from '@mui/material/Button';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
@@ -9,7 +10,8 @@ type PropTypes = {
     handleDeleteClose: () => void;
     open: boolean;
     id: string;
-}
+    type: string;
+};
 
 const CustomBackdrop = (props: any) => {
     return (
@@ -22,7 +24,7 @@ const CustomBackdrop = (props: any) => {
         />
     );
 };
-const DeleteConfirmation = ({ handleDeleteClose, open, deleteFunction, id }: PropTypes) => {
+const DeleteConfirmation = ({ type, handleDeleteClose, open, deleteFunction, id }: PropTypes) => {
     console.log('Deletable id from delete dialog:', id);
     return (
         <>
@@ -38,12 +40,23 @@ const DeleteConfirmation = ({ handleDeleteClose, open, deleteFunction, id }: Pro
                 }}
             >
                 <DialogTitle id="responsive-dialog-title">
-                    {"Delete Question?"}
+                    {
+                        type === 'question' ? "Delete Question?" : "Delete?"
+                    }
                 </DialogTitle>
                 <DialogContent>
-                    <DialogContentText>
-                        Are you sure to delete the question from the database permanently?
-                    </DialogContentText>
+                    {
+                        type === 'question' ? (
+                            <DialogContentText>
+                                Are you sure to delete the question from the database permanently?
+                            </DialogContentText>
+                        ) : (
+                            <DialogContentText>
+                                Are you sure you want to delete?
+                            </DialogContentText>
+                        )
+                    }
+
                 </DialogContent>
                 <DialogActions>
                     <Button
