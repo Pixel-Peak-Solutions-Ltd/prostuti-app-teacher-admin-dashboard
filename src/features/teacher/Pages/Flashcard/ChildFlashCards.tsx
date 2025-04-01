@@ -1,7 +1,7 @@
 import { Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TablePagination, IconButton, Box, Button, Typography, SnackbarCloseReason } from "@mui/material";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { useDeleteChildFlashcardsMutation, useGetChildFlashcardsQuery } from "../../../../redux/features/flashcard/flashcardApi";
+import { useDeleteChildFlashcardsMutation, useGetChildFlashcardsQuery, useUpdateChildFlashCardMutation } from "../../../../redux/features/flashcard/flashcardApi";
 import Loader from "../../../../shared/components/Loader";
 import DeleteForeverOutlinedIcon from '@mui/icons-material/DeleteForeverOutlined';
 import DriveFileRenameOutlineOutlinedIcon from '@mui/icons-material/DriveFileRenameOutlineOutlined';
@@ -9,12 +9,20 @@ import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import DeleteConfirmation from "../../../../shared/components/DeleteConfirmation";
 import Alert from "../../../../shared/components/Alert";
 import { hasDataProperty } from "../../../../utils/TypeGuardForErrorMessage";
+import EditFlashcardModal from "./EditFlashCardModal";
 
 interface Column {
     id: 'sl' | 'question' | 'answer' | 'action';
     label: string;
     minWidth?: number;
     align?: 'right';
+}
+
+
+interface FlashcardItem {
+    _id: string;
+    term: string;
+    answer: string;
 }
 
 const columns: readonly Column[] = [
@@ -31,12 +39,61 @@ const ChildFlashCards = () => {
     const [childFlashcardId, setChildFlashcardId] = useState<string>('');
     const [open, setOpen] = useState(false);
     const [openSnackbar, setOpenSnackbar] = useState(false);
+    // snackbar message
+    const [message, setMessage] = useState("");
+    const [isSuccessAlert, setIsSuccessAlert] = useState(true);
+    // Separate state for update and delete error messages
+    const [deleteErrorMessage, setDeleteErrorMessage] = useState("");
+    const [updateErrorMessage, setUpdateErrorMessage] = useState("");
+
+    // Edit modal state
+    const [editModalOpen, setEditModalOpen] = useState(false);
+    const [selectedFlashcard, setSelectedFlashcard] = useState<FlashcardItem | null>(null);
 
     // fetching child flashcards
     const { data, isLoading } = useGetChildFlashcardsQuery({ flashcardId });
+    // flashcard update call
+    const [updateChildFlashCard, { isLoading: updateLoading, isSuccess: updateSuccess, error: updateError }] = useUpdateChildFlashCardMutation();
     // delete child flashcard function from redux
-    const [deleteChildFlashcards, { isLoading: flashcardDeleteLoading, isSuccess, error }] = useDeleteChildFlashcardsMutation();
+    const [deleteChildFlashcards, { isLoading: flashcardDeleteLoading, isSuccess: deleteSuccess, error: deleteError }] = useDeleteChildFlashcardsMutation();
     const [rowsPerPage, setRowsPerPage] = useState(10);
+
+    // Effect to handle success messages
+    useEffect(() => {
+        if (deleteSuccess) {
+            setMessage("Flashcard deleted successfully");
+            setIsSuccessAlert(true);
+            setOpenSnackbar(true);
+        }
+        if (updateSuccess) {
+            setMessage("Flashcard updated successfully");
+            setIsSuccessAlert(true);
+            setOpenSnackbar(true);
+        }
+    }, [deleteSuccess, updateSuccess]);
+
+    // Effect to handle error messages
+    useEffect(() => {
+        if (deleteError && hasDataProperty(deleteError)) {
+            setDeleteErrorMessage(deleteError.data.message);
+            setIsSuccessAlert(false);
+            setOpenSnackbar(true);
+        } else {
+            setDeleteErrorMessage("");
+        }
+    }, [deleteError]);
+
+    useEffect(() => {
+        if (updateError && hasDataProperty(updateError)) {
+            setUpdateErrorMessage(updateError.data.message);
+            setIsSuccessAlert(false);
+            setOpenSnackbar(true);
+        } else {
+            setUpdateErrorMessage("");
+        }
+    }, [updateError]);
+
+
     const handleChangePage = (event: unknown, newPage: number) => {
         setPage(newPage);
     };
@@ -63,7 +120,16 @@ const ChildFlashCards = () => {
         setOpen(false);
     };
 
+    //* Edit modal functions
+    const handleEditClickOpen = (flashcard: FlashcardItem) => {
+        setSelectedFlashcard(flashcard);
+        setEditModalOpen(true);
+    };
 
+    const handleEditClose = () => {
+        setEditModalOpen(false);
+        setSelectedFlashcard(null);
+    };
 
     //! close snackbar automatically
     const handleCloseSnackbar = (
@@ -89,7 +155,13 @@ const ChildFlashCards = () => {
         setOpenSnackbar(true);
     };
 
-    console.log('child flashcards', rows);
+    //^handle edit flashcard function
+    // Handle update flashcard
+    const handleUpdateFlashcard = async (data: { items: Array<{ id: string; term: string; answer: string; }>; }) => {
+        console.log(data);
+        await updateChildFlashCard({ flashcardId, data });
+    };
+
     return (
         <>
             {/* table section */}
@@ -105,7 +177,7 @@ const ChildFlashCards = () => {
                     </Box>
                     {/* child flashcard table starts*/}
                     {
-                        !flashcardDeleteLoading ? (
+                        !flashcardDeleteLoading && !updateLoading ? (
                             <Paper variant="outlined" sx={{ width: '100%', overflow: 'hidden', borderRadius: '10px' }}>
                                 <TableContainer sx={{ maxHeight: '70vh' }}>
                                     <Table stickyHeader aria-label="sticky table">
@@ -132,10 +204,12 @@ const ChildFlashCards = () => {
                                                             <TableCell>{row?.term || ''}</TableCell>
                                                             <TableCell align="right">{row?.answer || ''}</TableCell>
                                                             <TableCell align="right">
-                                                                <IconButton aria-label="add an alarm">
+                                                                <IconButton aria-label="edit flashcard"
+                                                                    onClick={() => handleEditClickOpen(row)}
+                                                                >
                                                                     <DriveFileRenameOutlineOutlinedIcon />
                                                                 </IconButton>
-                                                                <IconButton aria-label="add an alarm"
+                                                                <IconButton aria-label="delete flashcard"
                                                                     onClick={() => {
                                                                         handleDeleteClickOpen();
                                                                         setChildFlashcardId(row._id);
@@ -172,16 +246,41 @@ const ChildFlashCards = () => {
                     handleDeleteClose={handleDeleteClose}
                     open={open}
                 />
-                {/* delete alert */}
-                {hasDataProperty(error) && (
+                {/* Edit flashcard modal */}
+                <EditFlashcardModal
+                    open={editModalOpen}
+                    onClose={handleEditClose}
+                    onSave={handleUpdateFlashcard}
+                    flashcard={selectedFlashcard}
+                />
+                {/* Alert notification */}
+                {/* {hasDataProperty(error) ? (
                     <Alert
                         message={error?.data.message}
                         openSnackbar={openSnackbar}
                         autoHideDuration={5000}
                         handleCloseSnackbar={handleCloseSnackbar}
-                        isSuccess={isSuccess}
+                        isSuccess={false}
                     />
-                )}
+                ) : (
+                    (deleteSuccess || updateSuccess) && (
+                        <Alert
+                            successMessage={message}
+                            openSnackbar={openSnackbar}
+                            autoHideDuration={5000}
+                            handleCloseSnackbar={handleCloseSnackbar}
+                            isSuccess={true}
+                        />
+                    )
+                )} */}
+                <Alert
+                    successMessage={isSuccessAlert ? message : ""}
+                    message={!isSuccessAlert ? (deleteErrorMessage || updateErrorMessage) : ""}
+                    openSnackbar={openSnackbar}
+                    autoHideDuration={5000}
+                    handleCloseSnackbar={handleCloseSnackbar}
+                    isSuccess={isSuccessAlert}
+                />
             </Box>
         </>
     );

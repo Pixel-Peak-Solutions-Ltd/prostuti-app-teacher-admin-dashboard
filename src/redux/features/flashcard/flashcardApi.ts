@@ -18,9 +18,19 @@ const flashcardApi = baseApi.injectEndpoints({
             }),
             providesTags: ['ChildFlashcards']
         }),
+        updateChildFlashCard: builder.mutation({
+            query: ({ flashcardId, data }) => {
+                console.log('received data in update function:', data);
+                return {
+                    url: `/flashcard/update-flashcard/${flashcardId}`,
+                    method: 'PATCH',
+                    body: data,
+                };
+            },
+            invalidatesTags: ['ChildFlashcards']
+        }),
         deleteChildFlashcards: builder.mutation({
             query: (flashcardId) => {
-                console.log('received id in delete function:', flashcardId);
                 return {
                     url: `/flashcard/delete-flashcard-item/${flashcardId}`,
                     method: 'DELETE',
@@ -31,4 +41,9 @@ const flashcardApi = baseApi.injectEndpoints({
     })
 });
 
-export const { useGetAllPublishedFlashcardsQuery, useGetChildFlashcardsQuery, useDeleteChildFlashcardsMutation } = flashcardApi; 
+export const {
+    useGetAllPublishedFlashcardsQuery,
+    useGetChildFlashcardsQuery,
+    useDeleteChildFlashcardsMutation,
+    useUpdateChildFlashCardMutation,
+} = flashcardApi; 
