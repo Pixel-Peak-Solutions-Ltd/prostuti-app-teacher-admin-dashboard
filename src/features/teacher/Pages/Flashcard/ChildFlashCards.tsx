@@ -1,7 +1,7 @@
 import { Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TablePagination, IconButton, Box, Button, Typography, SnackbarCloseReason } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { useDeleteChildFlashcardsMutation, useGetChildFlashcardsQuery, useUpdateChildFlashCardMutation } from "../../../../redux/features/flashcard/flashcardApi";
+import { useApproveFlashCardMutation, useDeleteChildFlashcardsMutation, useGetChildFlashcardsQuery, useUpdateChildFlashCardMutation } from "../../../../redux/features/flashcard/flashcardApi";
 import Loader from "../../../../shared/components/Loader";
 import DeleteForeverOutlinedIcon from '@mui/icons-material/DeleteForeverOutlined';
 import DriveFileRenameOutlineOutlinedIcon from '@mui/icons-material/DriveFileRenameOutlineOutlined';
@@ -10,6 +10,8 @@ import DeleteConfirmation from "../../../../shared/components/DeleteConfirmation
 import Alert from "../../../../shared/components/Alert";
 import { hasDataProperty } from "../../../../utils/TypeGuardForErrorMessage";
 import EditFlashcardModal from "./EditFlashCardModal";
+import CloseIcon from '@mui/icons-material/Close';
+import DoneIcon from '@mui/icons-material/Done';
 
 interface Column {
     id: 'sl' | 'question' | 'answer' | 'action';
@@ -50,6 +52,7 @@ const ChildFlashCards = () => {
     const [editModalOpen, setEditModalOpen] = useState(false);
     const [selectedFlashcard, setSelectedFlashcard] = useState<FlashcardItem | null>(null);
 
+    const [approveFlashCard, { isLoading: approvalLoader, error: approvalError, isSuccess: approvalSuccess }] = useApproveFlashCardMutation();
     // fetching child flashcards
     const { data, isLoading } = useGetChildFlashcardsQuery({ flashcardId });
     // flashcard update call
@@ -70,7 +73,12 @@ const ChildFlashCards = () => {
             setIsSuccessAlert(true);
             setOpenSnackbar(true);
         }
-    }, [deleteSuccess, updateSuccess]);
+        if (approvalSuccess) {
+            setMessage("Flashcard approved successfully");
+            setIsSuccessAlert(true);
+            setOpenSnackbar(true);
+        }
+    }, [deleteSuccess, updateSuccess, approvalSuccess]);
 
     // Effect to handle error messages
     useEffect(() => {
@@ -93,6 +101,16 @@ const ChildFlashCards = () => {
         }
     }, [updateError]);
 
+    // approval error handling
+    useEffect(() => {
+        if (approvalError && hasDataProperty(approvalError)) {
+            setUpdateErrorMessage(approvalError.data.message);
+            setIsSuccessAlert(false);
+            setOpenSnackbar(true);
+        } else {
+            setUpdateErrorMessage("");
+        }
+    }, [approvalError]);
 
     const handleChangePage = (event: unknown, newPage: number) => {
         setPage(newPage);
@@ -104,11 +122,12 @@ const ChildFlashCards = () => {
         setPage(0);
     };
 
-    if (isLoading) {
+    if (isLoading || approvalLoader) {
         return <Loader />;
     }
 
     const rows = data?.data.items || [];
+    const approved = data?.data.isApproved;
     const totalRows = rows.length;
 
     //*delete confirmation functions
@@ -146,7 +165,10 @@ const ChildFlashCards = () => {
     const handleGoBack = () => {
         navigate('/teacher/flashcard');
     };
-
+    //^handle approve
+    const handleApproval = async (id: string) => {
+        await approveFlashCard(id);
+    };
     //^handle delete from database
 
     const deleteChildFlashCard = async (id: string) => {
@@ -156,7 +178,6 @@ const ChildFlashCards = () => {
     };
 
     //^handle edit flashcard function
-    // Handle update flashcard
     const handleUpdateFlashcard = async (data: { items: Array<{ id: string; term: string; answer: string; }>; }) => {
         console.log(data);
         await updateChildFlashCard({ flashcardId, data });
@@ -167,14 +188,43 @@ const ChildFlashCards = () => {
             {/* table section */}
             <Box sx={{ width: '100%', height: 'auto' }}>
                 <Paper variant="outlined" sx={{ width: '100%', height: '100%', borderRadius: '10px', p: 3 }}>
-                    <Box component="section" sx={{ display: 'flex', gap: '20px', justifyContent: 'flex-start', alignItems: 'center', mb: 3 }}>
-                        <Button variant='outlined' sx={{ width: '36px', height: '36px', borderRadius: '8px', borderColor: "grey.700", color: "#3F3F46" }}
-                            onClick={handleGoBack}
-                        >
-                            <ArrowBackIcon fontSize='small' />
-                        </Button>
-                        <Typography variant='h3'>{data?.data.title}</Typography>
+                    <Box component="section" sx={{ display: 'flex', gap: '20px', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
+                        <Box sx={{ display: 'flex', gap: '20px', }}>
+                            <Button variant='outlined' sx={{ width: '36px', height: '36px', borderRadius: '8px', borderColor: "grey.700", color: "#3F3F46" }}
+                                onClick={handleGoBack}
+                            >
+                                <ArrowBackIcon fontSize='small' />
+                            </Button>
+                            <Typography variant='h3'>{data?.data.title}</Typography>
+                        </Box>
+
+                        {/* buttons for pending flashcards */}
+                        <Box>
+                            {
+                                !approved && (
+                                    <Box sx={{ display: 'flex', gap: 2 }}>
+                                        <Button
+                                            onClick={handleGoBack}
+                                            variant='outlined'
+                                            sx={{ borderRadius: '8px', width: '140px', height: '48px', gap: 1 }}>
+                                            <CloseIcon fontSize='small' />
+                                            Decline
+                                        </Button>
+                                        <Button
+                                            onClick={() => handleApproval(flashcardId)}
+                                            variant='contained'
+                                            sx={{ borderRadius: '8px', width: '140px', height: '48px', gap: 1 }}>
+                                            <DoneIcon fontSize='small' />
+                                            Approve
+                                        </Button>
+                                    </Box>
+
+
+                                )
+                            }
+                        </Box>
                     </Box>
+
                     {/* child flashcard table starts*/}
                     {
                         !flashcardDeleteLoading && !updateLoading ? (

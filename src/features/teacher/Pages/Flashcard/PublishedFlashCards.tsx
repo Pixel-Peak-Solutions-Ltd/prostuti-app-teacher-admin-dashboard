@@ -1,11 +1,9 @@
 import { Paper, Table, TableBody, TableCell, TableContainer, TableHead, TablePagination, TableRow } from '@mui/material';
 import { useState } from 'react';
-import { Loader } from '../Materials/Create Test';
 import { format } from 'date-fns';
 import { Link } from 'react-router-dom';
 import IconButton from '@mui/material/IconButton';
 import ArrowOutwardOutlinedIcon from '@mui/icons-material/ArrowOutwardOutlined';
-import { useGetAllPublishedFlashcardsQuery } from '../../../../redux/features/flashcard/flashcardApi';
 
 interface Column {
     id: 'sl' | 'title' | 'total_cards' | 'created_by' | 'created_on' | 'explore';
@@ -17,9 +15,9 @@ interface Column {
 const columns: readonly Column[] = [
     { id: 'sl', label: 'Sl', minWidth: 50 },
     { id: 'title', label: 'Flashcard', minWidth: 170 },
-    { id: 'created_by', label: 'Created by', minWidth: 170, align: 'right', },
-    { id: 'created_on', label: 'Created on', minWidth: 100, align: 'right', },
-    { id: 'explore', label: 'Explore', minWidth: 100, align: 'right', },
+    { id: 'created_by', label: 'Created by', minWidth: 170, align: 'right' },
+    { id: 'created_on', label: 'Created on', minWidth: 100, align: 'right' },
+    { id: 'explore', label: 'Explore', minWidth: 100, align: 'right' },
 ];
 
 interface TFlashCardData {
@@ -34,8 +32,7 @@ interface TFlashCardData {
     createdAt: string;
 }
 
-const PublishedFlashCards = () => {
-    const { data, isLoading } = useGetAllPublishedFlashcardsQuery({});
+const PublishedFlashCards = ({ cards }: { cards: any; }) => {
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(10);
     const handleChangePage = (event: unknown, newPage: number) => {
@@ -47,14 +44,10 @@ const PublishedFlashCards = () => {
         setPage(0);
     };
 
-    if (isLoading) {
-        return <Loader />;
-    }
-
-    const rows = data?.data.data || [];
+    const rows = cards || [];
     const totalRows = rows.length;
 
-    console.log(data?.data.data);
+    console.log(cards);
 
     return (
         <>

@@ -3,12 +3,21 @@ import { baseApi } from "../../api/baseApi";
 const flashcardApi = baseApi.injectEndpoints({
     endpoints: (builder) => ({
         getAllPublishedFlashcards: builder.query({
-            query: () => (
-                {
+            query: () => {
+                return {
+                    url: `/flashcard/all-flashcard?visibility=EVERYONE&isApproved=true`,
+                    method: 'GET',
+                };
+            },
+            providesTags: ['Flashcards']
+        }),
+        getAllUnPublishedFlashcards: builder.query({
+            query: () => {
+                return {
                     url: `/flashcard/all-flashcard?visibility=EVERYONE&isApproved=false`,
                     method: 'GET',
-                }
-            ),
+                };
+            },
             providesTags: ['Flashcards']
         }),
         getChildFlashcards: builder.query({
@@ -37,13 +46,25 @@ const flashcardApi = baseApi.injectEndpoints({
                 };
             },
             invalidatesTags: ['ChildFlashcards']
+        }),
+        approveFlashCard: builder.mutation({
+            query: (flashcardId) => {
+                console.log('Flashcard ID in redux:', flashcardId);
+                return {
+                    url: `/flashcard/approve-flashcard/${flashcardId}`,
+                    method: 'PATCH',
+                };
+            },
+            invalidatesTags: ['Flashcards']
         })
     })
 });
 
 export const {
     useGetAllPublishedFlashcardsQuery,
+    useGetAllUnPublishedFlashcardsQuery,
     useGetChildFlashcardsQuery,
     useDeleteChildFlashcardsMutation,
     useUpdateChildFlashCardMutation,
+    useApproveFlashCardMutation
 } = flashcardApi; 

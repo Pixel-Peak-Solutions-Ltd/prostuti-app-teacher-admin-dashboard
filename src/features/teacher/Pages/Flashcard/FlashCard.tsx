@@ -1,8 +1,12 @@
-import { Box, Paper, Tab, Tabs } from "@mui/material";
+import { Box, Button, Paper, Tab, Tabs } from "@mui/material";
 import { useState } from "react";
 import Grid from '@mui/material/Grid2';
 import SearchField from "../../../../shared/components/SearchField";
 import PublishedFlashCards from "./PublishedFlashCards";
+import { useApproveFlashCardMutation, useGetAllPublishedFlashcardsQuery, useGetAllUnPublishedFlashcardsQuery } from "../../../../redux/features/flashcard/flashcardApi";
+import Loader from "../../../../shared/components/Loader";
+
+import { useAppDispatch, useAppSelector } from "../../../../redux/hooks";
 interface TabPanelProps {
     children?: React.ReactNode;
     index: number;
@@ -31,10 +35,22 @@ function a11yProps(index: number) {
 }
 
 const FlashCard = () => {
+    const [approved, setApproved] = useState<boolean>(true);
     const [value, setValue] = useState(0);
+    const { data: publishedFlashCards, isLoading: unpublishedLoader } = useGetAllPublishedFlashcardsQuery({});
+    const { data: unPublishedFlashCards, isLoading: publishedLoader } = useGetAllUnPublishedFlashcardsQuery({});
+
     const handleChange = (event: React.SyntheticEvent, newValue: number) => {
         setValue(newValue);
+        setApproved(!approved);
     };
+
+    if (unpublishedLoader || publishedLoader) {
+        return <Loader />;
+    }
+    const unPublished = unPublishedFlashCards?.data.data || [];
+    const published = publishedFlashCards?.data.data || [];
+
     return (
         <>
             <Box sx={{ width: '100%', height: 'auto' }}>
@@ -49,9 +65,10 @@ const FlashCard = () => {
                         <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
                             <Tabs value={value} onChange={handleChange} aria-label="basic tabs example">
                                 {/* <Box> */}
-                                <Tab label={`Published ()`} {...a11yProps(0)} />
+                                <Tab label={`Published (${published.length})`} {...a11yProps(0)} />
                                 {/* </Box> */}
-                                <Tab label={`Unpublished ()`} {...a11yProps(1)} />
+                                <Tab label={`Pending (${unPublished.length})`} {...a11yProps(1)} />
+
                             </Tabs>
                         </Box>
                         <Grid container spacing={2} sx={{ mt: 2 }}>
@@ -62,11 +79,11 @@ const FlashCard = () => {
 
                         {/*1st tab content */}
                         <CustomTabPanel value={value} index={0}>
-                            <PublishedFlashCards />
+                            <PublishedFlashCards cards={published} />
                         </CustomTabPanel>
                         {/*2nd tab content */}
                         <CustomTabPanel value={value} index={1}>
-                            <h1>Unpublished Flashcards</h1>
+                            <PublishedFlashCards cards={unPublished} />
                         </CustomTabPanel>
                     </Box>
                 </Paper>
