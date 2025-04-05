@@ -1,5 +1,4 @@
 import FlashCard from "../features/teacher/Pages/Flashcard/FlashCard";
-import Messages from "../features/teacher/Pages/Messages";
 import MyCourse from "../features/teacher/Pages/Course/MyCourse";
 import Profile from "../features/teacher/Pages/Profile";
 import AcademicQuestion from "../features/teacher/Pages/Question Database/AcademicQuestion";
@@ -31,6 +30,7 @@ import AssignmentSubmissionList from "../features/teacher/Pages/Materials/Assign
 import ViewAsSubmission from "../features/teacher/Pages/Materials/Assignment/ViewAsSubmission";
 import ChildFlashCards from "../features/teacher/Pages/Flashcard/ChildFlashCards";
 import Routine from "../features/teacher/Pages/Materials/Routine";
+import Messages from "../features/chat/Pages/Messages";
 
 export const teacherRoutes = [
     {
@@ -40,10 +40,6 @@ export const teacherRoutes = [
     {
         path: 'my-course',
         element: <MyCourse />,
-    },
-    {
-        path: 'messages',
-        element: <Messages />
     },
     {
         path: 'profile',
@@ -205,6 +201,12 @@ export const teacherRoutes = [
     {
         path: 'notice',
         element: <NoticeCreation />
+    },
+
+    // messaging route
+    {
+        path: 'messages',
+        element: <Messages />
     },
 
 
