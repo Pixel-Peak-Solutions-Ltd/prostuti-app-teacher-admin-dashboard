@@ -22,6 +22,7 @@ import RevenueManagementIcon from '../../../assets/Dashboard-SVGs/revenueManagem
 import ReportComplianceIcon from '../../../assets/Dashboard-SVGs/reportCompliance.svg?react';
 import { useAppDispatch } from '../../../redux/hooks';
 import { logout } from '../../../redux/features/auth/authSlice';
+import Coupon from '../../../features/admin/Pages/Coupon/Coupon';
 
 const drawerWidth = 265;
 const adminDashboardMenus = [
@@ -56,8 +57,18 @@ const adminDashboardMenus = [
     icon: <PaymentManagement />,
   },
   {
+    path: '/admin/coupon-management',
+    name: 'Coupon Management',
+    icon: <PaymentManagement />,
+  },
+  {
     path: '/admin/revenue-management',
     name: 'Revenue Management',
+    icon: <RevenueManagementIcon />,
+  },
+  {
+    path: '/admin/category',
+    name: 'Category',
     icon: <RevenueManagementIcon />,
   },
   {
@@ -166,7 +177,7 @@ export const AdminLayout = () => {
         component="main"
         sx={{ flexGrow: 1, bgcolor: 'background.default', px: 4 }}
       >
-        <Toolbar />
+        <Toolbar sx={{ zIndex: -3 }} />
         {/* sidebar menu main content will show here */}
         {location.pathname === '/admin' ? <Welcome /> : <Outlet />}
       </Box>

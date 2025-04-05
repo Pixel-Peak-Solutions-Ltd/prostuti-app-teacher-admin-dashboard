@@ -152,11 +152,12 @@ export const TeacherLayout = () => {
       {/* main content section */}
       <Box
         component="main"
-        sx={{ flexGrow: 1, bgcolor: 'background.default', px: 4 }}
+        sx={{ flexGrow: 1, bgcolor: '#FAFAFA', px: 4, minHeight: '100vh' }}
       >
         <Toolbar />
         {/* sidebar menu main content will show here */}
         {location.pathname === '/teacher' ? <Welcome /> : <Outlet />}
+        <Toolbar />
       </Box>
       {/* main content ends */}
     </Box>
