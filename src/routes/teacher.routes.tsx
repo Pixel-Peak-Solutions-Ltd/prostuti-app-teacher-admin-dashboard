@@ -1,4 +1,4 @@
-import FlashCard from "../features/teacher/Pages/FlashCard";
+import FlashCard from "../features/teacher/Pages/Flashcard/FlashCard";
 import Messages from "../features/teacher/Pages/Messages";
 import MyCourse from "../features/teacher/Pages/Course/MyCourse";
 import Profile from "../features/teacher/Pages/Profile";
@@ -29,6 +29,8 @@ import TestHistory from "../features/teacher/Pages/Materials/Create Test/TestHis
 import AnswerSheet from "../features/teacher/Pages/Materials/Create Test/AnswerSheet";
 import AssignmentSubmissionList from "../features/teacher/Pages/Materials/Assignment/AssignmentSubmissionList";
 import ViewAsSubmission from "../features/teacher/Pages/Materials/Assignment/ViewAsSubmission";
+import ChildFlashCards from "../features/teacher/Pages/Flashcard/ChildFlashCards";
+import Routine from "../features/teacher/Pages/Materials/Routine";
 
 export const teacherRoutes = [
     {
@@ -51,9 +53,14 @@ export const teacherRoutes = [
         path: 'question-database',
         element: <QuestionDatabase />,
     },
+    // flashcard paths
     {
         path: 'flashcard',
         element: <FlashCard />
+    },
+    {
+        path: 'flashcard/:flashcardId',
+        element: <ChildFlashCards />
     },
 
     // question database paths
@@ -101,6 +108,10 @@ export const teacherRoutes = [
         path: 'notice-update/:noticeId',
         element: <NoticeCreation />
     },
+    {
+        path: 'routine',
+        element: <Routine />
+    },
 
     // course material lists route
     {
@@ -139,7 +150,7 @@ export const teacherRoutes = [
     },
     {
         path: 'routine-list',
-        element: <RecordClassList />
+        element: <Routine />
     },
     {
         path: 'notice-list',
@@ -195,4 +206,6 @@ export const teacherRoutes = [
         path: 'notice',
         element: <NoticeCreation />
     },
+
+
 ];

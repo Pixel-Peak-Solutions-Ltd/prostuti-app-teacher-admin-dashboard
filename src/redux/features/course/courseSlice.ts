@@ -37,9 +37,20 @@ export const courseSlice = createSlice({
         },
         saveAssignmentHistory: (state, action) => {
             state.assignmentHistory = { ...state.assignmentHistory, ...action.payload };
-        }
+        },
+        saveFlashcardItemIdToStore: (state, action) => {
+            state.id = { ...state.id, ...action.payload };
+        },
     }
 });
 
-export const { saveCourseIdToStore, saveLessonIdToStore, saveTestStore, saveTestHistory, saveAssignmentIdToStore, saveAssignmentHistory } = courseSlice.actions;
+export const {
+    saveCourseIdToStore,
+    saveLessonIdToStore,
+    saveTestStore,
+    saveTestHistory,
+    saveAssignmentIdToStore,
+    saveAssignmentHistory,
+    saveFlashcardItemIdToStore
+} = courseSlice.actions;
 export default courseSlice.reducer;

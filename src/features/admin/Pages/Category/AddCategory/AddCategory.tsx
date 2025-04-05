@@ -16,7 +16,7 @@ const AddCategory = () => {
                                 <ArrowBackIcon fontSize='small' />
                             </Button>
                         </Link>
-                        <Typography variant='h3'>Add Question</Typography>
+                        <Typography variant='h3'>Add Category</Typography>
                     </Box>
                     {/* dynamic form component*/}
                     <Box sx={{ display: "flex", flexDirection: 'column', gap: '20px', position: 'relative' }}>

@@ -70,7 +70,9 @@ export const baseApi = createApi({
     "Subjects",
     "Notice",
     "Test",
-    "AssignmentSubmission"
+    "AssignmentSubmission",
+    "Flashcards",
+    "ChildFlashcards"
   ],
   endpoints: () => ({}),
 });
