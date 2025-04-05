@@ -19,6 +19,15 @@ const categoryApi = baseApi.injectEndpoints({
                 };
             }
         }),
+        getAllCategories: builder.query({
+            query: ({ page = 1, limit = 100 }) => {
+                return {
+                    url: `/category?page=${page}&limit=${limit}`,
+                    method: 'GET',
+                };
+            },
+            providesTags: ['Categories']
+        }),
         createCategory: builder.mutation({
             query: (questions) => {
                 return {
@@ -29,7 +38,33 @@ const categoryApi = baseApi.injectEndpoints({
             },
             invalidatesTags: ['Categories']
         }),
+        updateCategory: builder.mutation({
+            query: ({ id, body }) => {
+                return {
+                    url: `/category/${id}`,
+                    method: 'PATCH',
+                    body
+                };
+            },
+            invalidatesTags: ['Categories']
+        }),
+        deleteCategory: builder.mutation({
+            query: (id) => {
+                return {
+                    url: `/category/${id}`,
+                    method: 'DELETE',
+                };
+            },
+            invalidatesTags: ['Categories']
+        }),
     })
 });
 
-export const { useGetAllCategoryTypesQuery, useGetCategoryByIdQuery, useCreateCategoryMutation } = categoryApi; 
+export const {
+    useGetAllCategoryTypesQuery,
+    useGetAllCategoriesQuery,
+    useGetCategoryByIdQuery,
+    useCreateCategoryMutation,
+    useUpdateCategoryMutation,
+    useDeleteCategoryMutation
+} = categoryApi;
