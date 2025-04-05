@@ -3,18 +3,18 @@ import { baseApi } from "../../api/baseApi";
 const flashcardApi = baseApi.injectEndpoints({
     endpoints: (builder) => ({
         getAllPublishedFlashcards: builder.query({
-            query: () => {
+            query: ({ searchTerm }) => {
                 return {
-                    url: `/flashcard/all-flashcard?visibility=EVERYONE&isApproved=true`,
+                    url: `/flashcard/all-flashcard?visibility=EVERYONE&isApproved=true&searchTerm=${searchTerm}`,
                     method: 'GET',
                 };
             },
             providesTags: ['Flashcards']
         }),
         getAllUnPublishedFlashcards: builder.query({
-            query: () => {
+            query: ({ searchTerm }) => {
                 return {
-                    url: `/flashcard/all-flashcard?visibility=EVERYONE&isApproved=false`,
+                    url: `/flashcard/all-flashcard?visibility=EVERYONE&isApproved=false&searchTerm=${searchTerm}`,
                     method: 'GET',
                 };
             },

@@ -30,6 +30,7 @@ import AnswerSheet from "../features/teacher/Pages/Materials/Create Test/AnswerS
 import AssignmentSubmissionList from "../features/teacher/Pages/Materials/Assignment/AssignmentSubmissionList";
 import ViewAsSubmission from "../features/teacher/Pages/Materials/Assignment/ViewAsSubmission";
 import ChildFlashCards from "../features/teacher/Pages/Flashcard/ChildFlashCards";
+import Routine from "../features/teacher/Pages/Materials/Routine";
 
 export const teacherRoutes = [
     {
@@ -107,6 +108,10 @@ export const teacherRoutes = [
         path: 'notice-update/:noticeId',
         element: <NoticeCreation />
     },
+    {
+        path: 'routine',
+        element: <Routine />
+    },
 
     // course material lists route
     {
@@ -145,7 +150,7 @@ export const teacherRoutes = [
     },
     {
         path: 'routine-list',
-        element: <RecordClassList />
+        element: <Routine />
     },
     {
         path: 'notice-list',

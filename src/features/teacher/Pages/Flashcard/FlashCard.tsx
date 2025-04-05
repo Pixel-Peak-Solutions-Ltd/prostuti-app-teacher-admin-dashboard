@@ -1,12 +1,11 @@
-import { Box, Button, Paper, Tab, Tabs } from "@mui/material";
+import { Box, Paper, Tab, Tabs } from "@mui/material";
 import { useState } from "react";
 import Grid from '@mui/material/Grid2';
 import SearchField from "../../../../shared/components/SearchField";
 import PublishedFlashCards from "./PublishedFlashCards";
-import { useApproveFlashCardMutation, useGetAllPublishedFlashcardsQuery, useGetAllUnPublishedFlashcardsQuery } from "../../../../redux/features/flashcard/flashcardApi";
+import { useGetAllPublishedFlashcardsQuery, useGetAllUnPublishedFlashcardsQuery } from "../../../../redux/features/flashcard/flashcardApi";
 import Loader from "../../../../shared/components/Loader";
 
-import { useAppDispatch, useAppSelector } from "../../../../redux/hooks";
 interface TabPanelProps {
     children?: React.ReactNode;
     index: number;
@@ -36,13 +35,22 @@ function a11yProps(index: number) {
 
 const FlashCard = () => {
     const [approved, setApproved] = useState<boolean>(true);
+    const [searchObj, setSearchObj] = useState<Record<string, string>>({});
+    const searchTerm = searchObj?.searchTerm || "";
     const [value, setValue] = useState(0);
-    const { data: publishedFlashCards, isLoading: unpublishedLoader } = useGetAllPublishedFlashcardsQuery({});
-    const { data: unPublishedFlashCards, isLoading: publishedLoader } = useGetAllUnPublishedFlashcardsQuery({});
+    const { data: publishedFlashCards, isLoading: unpublishedLoader } = useGetAllPublishedFlashcardsQuery({ searchTerm, skip: value === 1 });
+    const { data: unPublishedFlashCards, isLoading: publishedLoader } = useGetAllUnPublishedFlashcardsQuery({ searchTerm, skip: value === 0 });
 
+    // tab changer handler
     const handleChange = (event: React.SyntheticEvent, newValue: number) => {
         setValue(newValue);
         setApproved(!approved);
+    };
+
+    // search field handler
+    const handleSearchTerm = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const { name, value } = e.target;
+        setSearchObj(prev => ({ ...prev, [name]: value }));
     };
 
     if (unpublishedLoader || publishedLoader) {
@@ -73,7 +81,12 @@ const FlashCard = () => {
                         </Box>
                         <Grid container spacing={2} sx={{ mt: 2 }}>
                             <Grid size={12} sx={{ mx: 3 }}>
-                                <SearchField placeholder="Search for flashcard" />
+                                <SearchField
+                                    value={searchObj.searchTerm}
+                                    name="searchTerm"
+                                    placeholder="Search for flashcard"
+                                    handleInput={handleSearchTerm}
+                                />
                             </Grid>
                         </Grid>
 

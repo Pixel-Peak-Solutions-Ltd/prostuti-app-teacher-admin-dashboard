@@ -2,10 +2,11 @@ import { TextField } from '@mui/material';
 import InputAdornment from '@mui/material/InputAdornment';
 import SearchOutlinedIcon from '@mui/icons-material/SearchOutlined';
 
-const SearchField = ({ placeholder, value, handleInput, defaultValue }: { placeholder?: string; value?: string; handleInput?: (e: React.ChangeEvent<HTMLInputElement>) => void; defaultValue?: string; }) => {
+const SearchField = ({ placeholder, value, handleInput, defaultValue, name }: { placeholder?: string; value?: string; handleInput?: (e: React.ChangeEvent<HTMLInputElement>) => void; defaultValue?: string; name: string; }) => {
     return (
         <>
             <TextField
+                name={name}
                 value={value || ''}
                 onChange={handleInput}
                 id="outlined-start-adornment"
