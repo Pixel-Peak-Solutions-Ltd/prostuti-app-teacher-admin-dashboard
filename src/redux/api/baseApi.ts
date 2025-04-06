@@ -76,7 +76,10 @@ export const baseApi = createApi({
     // Add new tags for chat
     "Conversations",
     "Conversation",
-    "Messages"
+    "Messages",
+    "MessageRequests",
+    "Notifications",
+    "NotificationCount",
   ],
   endpoints: () => ({}),
 });
