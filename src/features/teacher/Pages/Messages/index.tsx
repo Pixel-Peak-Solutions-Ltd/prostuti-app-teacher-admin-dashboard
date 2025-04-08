@@ -95,70 +95,110 @@ const Messages = () => {
     }
 
     return (
-        <Box sx={{ display: 'flex', height: 'calc(100vh - 80px)', gap: 2 }}>
-            {/* Left sidebar with tabs for broadcasts and conversations */}
-            <Paper
-                variant="outlined"
-                sx={{
-                    width: '320px',
-                    height: '100%',
-                    borderRadius: '10px',
-                    overflow: 'hidden',
-                    display: 'flex',
-                    flexDirection: 'column'
-                }}
-            >
-                <Tabs
-                    value={tabValue}
-                    onChange={handleTabChange}
-                    variant="fullWidth"
-                    sx={{ borderBottom: 1, borderColor: 'divider' }}
-                >
-                    <Tab
-                        label={
-                            <Badge badgeContent={pendingBroadcastsCount} color="primary">
-                                <Typography>Requests</Typography>
-                            </Badge>
-                        }
-                    />
-                    <Tab
-                        label={
-                            <Badge badgeContent={unreadMessagesCount} color="primary">
-                                <Typography>Conversations</Typography>
-                            </Badge>
-                        }
-                    />
-                </Tabs>
+        <Box>
+            <Paper variant="outlined" sx={{ padding: 2, borderRadius: '10px' }}>
+                <Typography variant='h5' sx={{ marginBottom: 2, fontWeight: '600', fontSize: '30px' }}>Messages</Typography>
+                <Box sx={{ display: 'flex', height: 'calc(100vh - 80px)', gap: 2 }}>
+                    {/* Left sidebar with tabs for broadcasts and conversations */}
+                    <Paper
+                        variant="outlined"
+                        sx={{
+                            width: '320px',
+                            minHeight: '100%',
+                            borderRadius: '10px',
+                            overflow: 'hidden',
+                            display: 'flex',
+                            flexDirection: 'column',
+                        }}
+                    >
 
-                <Box sx={{ flexGrow: 1, overflow: 'auto' }}>
-                    {tabValue === 0 ? (
-                        <BroadcastRequests />
-                    ) : (
-                        <Conversations />
-                    )}
+
+                        <Tabs
+                            value={tabValue}
+                            onChange={handleTabChange}
+                            variant="fullWidth"
+                            sx={{
+                                padding: '16px',
+                                borderBottom: 1,
+                                borderColor: 'divider',
+                                '& .MuiTabs-flexContainer': {
+                                    gap: '10px',
+                                    // Adding gap between tabs
+                                }
+                            }}
+                            textColor="inherit"
+                            indicatorColor="secondary"
+                            TabIndicatorProps={{
+                                style: { display: 'none' }
+                            }}
+                        >
+                            <Tab
+                                label={
+                                    <Badge badgeContent={unreadMessagesCount} color="primary">
+                                        <Typography>Conversations</Typography>
+                                    </Badge>
+                                }
+                                sx={{
+                                    borderRadius: '8px',
+                                    border: '1px solid #2970FF',
+                                    backgroundColor: tabValue === 0 ? '#2970FF' : 'white',
+                                    color: tabValue === 0 ? 'white' : 'inherit',
+                                    '&:hover': {
+                                        backgroundColor: tabValue === 0 ? '#2970FF' : '#f5f5f5',
+                                    },
+                                    transition: 'background-color 0.3s, color 0.3s'
+                                }}
+                            />
+                            <Tab
+                                label={
+                                    <Badge badgeContent={pendingBroadcastsCount} color="primary">
+                                        <Typography>Requests</Typography>
+                                    </Badge>
+                                }
+                                sx={{
+                                    borderRadius: '8px',
+                                    border: '1px solid #2970FF',
+                                    backgroundColor: tabValue === 1 ? '#2970FF' : 'white',
+                                    color: tabValue === 1 ? 'white' : 'inherit',
+                                    '&:hover': {
+                                        backgroundColor: tabValue === 1 ? '#2970FF' : '#f5f5f5',
+                                    },
+                                    transition: 'background-color 0.3s, color 0.3s'
+                                }}
+                            />
+                        </Tabs>
+
+                        <Box sx={{ flexGrow: 1, overflow: 'auto' }}>
+                            {tabValue === 0 ? (
+                                <Conversations />
+                            ) : (
+                                <BroadcastRequests />
+                            )}
+                        </Box>
+                    </Paper>
+
+                    {/* Right side chat window */}
+                    <Paper
+                        variant="outlined"
+                        sx={{
+                            flexGrow: 1,
+                            height: '100%',
+                            borderRadius: '10px',
+                            display: 'flex',
+                            flexDirection: 'column',
+                            justifyContent: 'center',
+                            alignItems: 'center'
+                        }}
+                    >
+                        {activeConversationId ? (
+                            <ChatWindow conversationId={activeConversationId} />
+                        ) : (
+                            <Typography variant="h6" color="textSecondary">
+                                Select a conversation to start chatting
+                            </Typography>
+                        )}
+                    </Paper>
                 </Box>
-            </Paper>
-
-            {/* Right side chat window */}
-            <Paper
-                variant="outlined"
-                sx={{
-                    flexGrow: 1,
-                    height: '100%',
-                    borderRadius: '10px',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    justifyContent: 'center',
-                    alignItems: 'center'
-                }}
-            >
-                {activeConversationId ? (
-                    <ChatWindow conversationId={activeConversationId} />
-                ) : (
-                    <Typography variant="h6" color="textSecondary">
-                        Select a conversation to start chatting
-                    </Typography>
-                )}
             </Paper>
         </Box>
     );
