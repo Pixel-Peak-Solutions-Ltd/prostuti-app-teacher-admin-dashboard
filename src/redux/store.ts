@@ -5,6 +5,7 @@ import { FLUSH, PAUSE, PERSIST, persistReducer, persistStore, PURGE, REGISTER, R
 import storage from 'redux-persist/lib/storage';
 import courseReducer from "./features/course/courseSlice";
 import questionReducer from './features/question/questionSlice';
+import chatReducer from './features/chat/chatSlice';
 
 const persistConfig = {
     key: 'auth',
@@ -40,7 +41,8 @@ export const store = configureStore({
         // courseDetails: courseReducer,
         courseAndLessonId: persistedCourseCreateReducer,
         pickedQuestions: persistedQuestionReducer,
-        test_id: persistedTestIdReducer
+        test_id: persistedTestIdReducer,
+        chat: chatReducer
     },
     middleware: (getDefaultMiddleware) =>
         getDefaultMiddleware({
