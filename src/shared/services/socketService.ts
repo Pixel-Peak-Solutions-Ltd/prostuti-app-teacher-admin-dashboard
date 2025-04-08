@@ -11,7 +11,7 @@ import { SocketEvents } from '../../types/chat.types';
 class SocketService {
     private static instance: SocketService;
     private socket: Socket | null = null;
-    private baseUrl = 'https://resilient-heart-dev.up.railway.app'; // Using the same URL as API calls
+    private baseUrl = 'http://localhost:5001'; // Using the same URL as API calls
 
     private constructor() {
         // Private constructor to enforce singleton pattern
@@ -110,6 +110,14 @@ class SocketService {
                     conversationId: data.conversation_id,
                     isTyping: true
                 }));
+            }
+        });
+
+
+        this.socket.on('send_message', (data) => {
+            console.log('Message send confirmation:', data);
+            if (!data.success) {
+                console.error('Failed to send message:', data);
             }
         });
 

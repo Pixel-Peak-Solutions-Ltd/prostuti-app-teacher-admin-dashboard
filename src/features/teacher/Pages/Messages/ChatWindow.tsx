@@ -30,7 +30,9 @@ const ChatWindow = ({ conversationId }: ChatWindowProps) => {
 
     // Find the current conversation
     const currentConversation = conversations.find(conv => conv.conversation_id === conversationId);
-    const recipientId = currentConversation?.student_id;
+    const recipientId = typeof currentConversation?.student_id === 'object'
+        ? currentConversation?.student_id._id
+        : currentConversation?.student_id;
 
     // Query for chat history
     const { data: chatHistoryData, isLoading } = useGetChatHistoryQuery({ conversationId });
@@ -126,6 +128,17 @@ const ChatWindow = ({ conversationId }: ChatWindowProps) => {
         }));
 
         // Send via socket
+        console.log('Sending message with payload:', {
+            conversation_id: conversationId,
+            message: message.trim(),
+            recipient_id: recipientId
+        });
+        // Before sending the message
+        if (!socketService.isConnected()) {
+            console.error('Socket not connected. Attempting to reconnect...');
+            // socketService.connect(token);
+            return; // Don't send if not connected
+        }
         socketService.sendMessage({
             conversation_id: conversationId,
             message: message.trim(),
