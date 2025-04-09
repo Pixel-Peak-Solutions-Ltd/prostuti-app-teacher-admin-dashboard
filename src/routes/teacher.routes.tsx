@@ -1,5 +1,5 @@
 import FlashCard from "../features/teacher/Pages/Flashcard/FlashCard";
-import Messages from "../features/teacher/Pages/Messages";
+import Messages from "../features/teacher/Pages/Messages/index";
 import MyCourse from "../features/teacher/Pages/Course/MyCourse";
 import Profile from "../features/teacher/Pages/Profile";
 import AcademicQuestion from "../features/teacher/Pages/Question Database/AcademicQuestion";
