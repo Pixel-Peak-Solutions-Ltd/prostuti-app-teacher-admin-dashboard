@@ -11,7 +11,7 @@ import { SocketEvents } from '../../types/chat.types';
 class SocketService {
     private static instance: SocketService;
     private socket: Socket | null = null;
-    private baseUrl = 'http://localhost:5001'; // Using the same URL as API calls
+    private baseUrl = 'https://resilient-heart-dev.up.railway.app'; // Using the same URL as API calls
 
     private constructor() {
         // Private constructor to enforce singleton pattern
@@ -154,7 +154,7 @@ class SocketService {
         }
     }
 
-    public sendMessage(payload: { conversation_id: string; message: string; recipient_id: string }): void {
+    public sendMessage(payload: { conversation_id: string; message: string; recipient_id: string; }): void {
         if (this.socket && this.socket.connected) {
             this.socket.emit('send_message', payload);
         }
