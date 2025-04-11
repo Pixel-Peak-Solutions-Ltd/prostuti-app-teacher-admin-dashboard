@@ -36,6 +36,13 @@ const courseApi = baseApi.injectEndpoints({
             }),
             providesTags: ['Courses']
         }),
+        getCourseForAdminEnd: builder.query({
+            query: () => ({
+                url: '/course/all-course-admin',
+                method: 'GET',
+            }),
+            providesTags: ['Courses']
+        }),
         getLessonsByCourseId: builder.query({
             query: ({ courseId }) => {
                 return {
@@ -44,6 +51,7 @@ const courseApi = baseApi.injectEndpoints({
                 };
             }
         }),
+
         getCourseById: builder.query({
             query: ({ courseId }) => ({
                 url: `/course/${courseId}`,
@@ -99,4 +107,4 @@ const courseApi = baseApi.injectEndpoints({
 });
 
 
-export const { useSaveCourseMutation, useSaveLessonMutation, useGetLessonsByCourseIdQuery, useGetCourseByIdQuery, useGetCategoryForCourseQuery, useGetCourseByTeacherQuery, useGetCoursePreviewQuery, useDeleteCourseMutation } = courseApi;
+export const { useSaveCourseMutation, useSaveLessonMutation, useGetLessonsByCourseIdQuery, useGetCourseByIdQuery, useGetCategoryForCourseQuery, useGetCourseByTeacherQuery, useGetCoursePreviewQuery, useDeleteCourseMutation, useGetCourseForAdminEndQuery } = courseApi;

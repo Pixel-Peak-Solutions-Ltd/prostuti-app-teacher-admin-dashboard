@@ -45,6 +45,7 @@ const CreateCourse = () => {
             formRef.current.submitForm();
             // setActiveSteps((prevState) => prevState + 1);
         }
+        console.log('formRef.current', formRef.current);
     };
 
     return (
