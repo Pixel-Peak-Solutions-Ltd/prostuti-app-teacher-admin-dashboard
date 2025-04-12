@@ -54,6 +54,7 @@ const ResourcesCreation = () => {
     const { previousPath } = usePreviousPath();
     console.log('previousPath', previousPath);
     const user = useAppSelector((state: RootState) => state.auth.user as TUser);
+    const isAdmin = user.role === 'admin' ? true : false;
     const navigate = useNavigate();
     const { resourceId } = useParams();
     // checking if user coming form course preview page
@@ -329,6 +330,7 @@ const ResourcesCreation = () => {
                                                     value={resourceDetails?.name || ''}
                                                     placeholder="Enter Resource Name"
                                                     required
+                                                    disabled={isAdmin}
                                                 />
                                             </Grid>
                                             {/* date picker */}
@@ -342,6 +344,7 @@ const ResourcesCreation = () => {
                                                     <StyledDatePicker
                                                         value={resourceDetails?.resourceDate ? dayjs(resourceDetails?.resourceDate) : null}
                                                         onChange={handleDateChange}
+                                                        disabled={isAdmin}
                                                     />
                                                 </LocalizationProvider>
                                             </Grid>
@@ -464,6 +467,7 @@ const ResourcesCreation = () => {
                                                     <Box>
                                                         {/* new image upload button */}
                                                         <Button component="label"
+                                                            disabled={isAdmin}
                                                             size="small"
                                                             variant="text"
                                                             tabIndex={-1}
@@ -504,6 +508,7 @@ const ResourcesCreation = () => {
                                         </Grid>
                                         <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: "20px", mt: 3 }}>
                                             <Button
+                                                disabled={isAdmin}
                                                 type="submit"
                                                 variant="contained"
                                                 size="small"

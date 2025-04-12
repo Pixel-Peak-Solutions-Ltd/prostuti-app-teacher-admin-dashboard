@@ -50,6 +50,7 @@ const RecordClass = () => {
     const { previousPath } = usePreviousPath();
     const navigate = useNavigate();
     const user = useAppSelector((state: RootState) => state.auth.user as TUser);
+    const isAdmin = user.role === 'admin' ? true : false;
     // record class id while updating
     const { recordId } = useParams();
     // checking if user coming form course preview page
@@ -275,7 +276,7 @@ const RecordClass = () => {
                         } */}
                         {/* continue button */}
                         {/* <Link to='/teacher/create-course/create-lessons'> */}
-                        {
+                        {/* {
                             !isEditing && (
                                 <Button
                                     // onClick={handleContinue}
@@ -284,7 +285,7 @@ const RecordClass = () => {
                                     Continue <ChevronRightIcon />
                                 </Button>
                             )
-                        }
+                        } */}
                         {/* </Link> */}
                     </Box>
                     {/* form section starts here */}
@@ -315,6 +316,7 @@ const RecordClass = () => {
                                                         value={recordDetails?.lessonName}
                                                         // placeholder={}
                                                         required
+                                                        disabled={isAdmin}
                                                     />
                                                 </Grid>
                                             )}
@@ -328,6 +330,7 @@ const RecordClass = () => {
                                                     value={recordDetails?.recodeClassName || ''}
                                                     placeholder={isEditing ? recodeClassName : "Enter Record Class Name"}
                                                     required={isEditing ? false : true}
+                                                    disabled={isAdmin}
                                                 />
                                             </Grid>
                                             {/* date picker */}
@@ -337,7 +340,9 @@ const RecordClass = () => {
                                                     {/* <DatePicker sx={{ width: '100%', height: '40px', borderRadius: "10px" }} /> */}
                                                     <StyledDatePicker
                                                         value={recordDetails?.classDate ? dayjs(recordDetails.classDate) : null}
-                                                        onChange={handleDateChange} />
+                                                        onChange={handleDateChange}
+                                                        disabled={isAdmin}
+                                                    />
                                                 </LocalizationProvider>
                                             </Grid>
                                             {/* 3rd row */}
@@ -349,6 +354,7 @@ const RecordClass = () => {
                                                     handleInput={handleRecordDetailsInput}
                                                     value={recordDetails?.classDetails || ''}
                                                     required={isEditing ? false : true}
+                                                    disabled={isAdmin}
                                                 />
                                             </Grid>
                                             {/* 3rd row --> update row */}
@@ -421,6 +427,7 @@ const RecordClass = () => {
 
                                                                                 <IconButton
                                                                                     onClick={() => handleDeleteFile(index)}
+                                                                                    disabled={isAdmin}
                                                                                 >
                                                                                     <DeleteForeverIcon />
                                                                                 </IconButton>
@@ -451,6 +458,7 @@ const RecordClass = () => {
                                                     <Box>
                                                         {/* new image upload button */}
                                                         <Button component="label"
+                                                            disabled={isAdmin}
                                                             size="small"
                                                             variant="text"
                                                             tabIndex={-1}
@@ -489,6 +497,7 @@ const RecordClass = () => {
                                         {/* upload button */}
                                         <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: "20px", mt: 3 }}>
                                             <Button
+                                                disabled={isAdmin}
                                                 type='submit'
                                                 variant='contained'
                                                 size='small'

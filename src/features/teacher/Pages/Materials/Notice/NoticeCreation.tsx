@@ -178,7 +178,7 @@ const NoticeCreation = () => {
                         }
                         {/* continue button */}
                         {/* <Link to='/teacher/create-course/add-course-lessons'> */}
-                        {
+                        {/* {
                             !isEditing && (
                                 <Button
                                     // onClick={handleContinue}
@@ -187,7 +187,7 @@ const NoticeCreation = () => {
                                     Continue <ChevronRightIcon />
                                 </Button>
                             )
-                        }
+                        } */}
 
                         {/* </Link> */}
                     </Box>

@@ -93,7 +93,6 @@ const courseApi = baseApi.injectEndpoints({
                 };
             }
         }),
-        // courseApi.ts
         approveCourseStatus: builder.mutation({
             query: ({ courseId, data }) => ({
                 url: `/course/approve/${courseId}`,

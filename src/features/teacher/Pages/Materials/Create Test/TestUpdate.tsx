@@ -20,6 +20,7 @@ const TestUpdate = () => {
     const { previousPath } = usePreviousPath();
     const navigate = useNavigate();
     const user = useAppSelector((state: RootState) => state.auth.user as TUser);
+    const isAdmin = user.role === 'admin' ? true : false;
     const { testId } = useParams<{ testId: string; }>();
     const [testDetails, setTestDetails] = useState<Record<string, string>>({});
     const [openSnackbar, setOpenSnackbar] = useState(false);
@@ -114,7 +115,7 @@ const TestUpdate = () => {
                             {/* </Link> */}
                             <Typography variant='h3'>Test Update</Typography>
                         </Box>
-                        {/* continue button */}
+                        {/* action button */}
                         <Box sx={{ display: 'flex', gap: '20px' }}>
                             {user.role === 'admin' && <EditRequestButton resourceType="Test" />}
                             {user.role !== 'admin' && (
@@ -162,6 +163,7 @@ const TestUpdate = () => {
                                                 <Grid size={2.4}>
                                                     <CustomLabel fieldName="Test Name" />
                                                     <CustomTextField
+                                                        disabled={isAdmin}
                                                         name="name"
                                                         value={testDetails?.name}
                                                         handleInput={handleTestDetailsInput}
@@ -183,6 +185,7 @@ const TestUpdate = () => {
                                                 <Grid size={2.4}>
                                                     <CustomLabel fieldName="Test Time (Minutes)" />
                                                     <CustomTextField
+                                                        disabled={isAdmin}
                                                         name="time"
                                                         type="number"
                                                         value={testDetails.time}
@@ -196,6 +199,7 @@ const TestUpdate = () => {
                                                         <StyledDatePicker
                                                             onChange={handleDateChange}
                                                             value={testDetails?.publishDate ? dayjs(testDetails?.publishDate) : null}
+                                                            disabled={isAdmin}
                                                         />
                                                     </LocalizationProvider>
                                                 </Grid>

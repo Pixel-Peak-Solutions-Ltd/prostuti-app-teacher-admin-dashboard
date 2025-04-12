@@ -137,12 +137,12 @@ const TestCreation = () => {
                         </Box>
                         {/* continue button */}
                         {/* <Link to='/teacher/create-course/add-course-lessons'> */}
-                        <Button
+                        {/* <Button
                             // onClick={handleContinue}
                             variant='contained'
                             sx={{ borderRadius: '8px', width: '140px', height: '48px' }}>
                             Continue <ChevronRightIcon />
-                        </Button>
+                        </Button> */}
                         {/* </Link> */}
                     </Box>
                     {/* form section starts here */}

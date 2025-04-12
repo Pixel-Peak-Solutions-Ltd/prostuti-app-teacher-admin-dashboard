@@ -20,7 +20,6 @@ import PracticeTestIcon from '../../../assets/Dashboard-SVGs/practiceTest.svg?re
 import PaymentManagement from '../../../assets/Dashboard-SVGs/paymentManagement.svg?react';
 import RevenueManagementIcon from '../../../assets/Dashboard-SVGs/revenueManagement.svg?react';
 import ReportComplianceIcon from '../../../assets/Dashboard-SVGs/reportCompliance.svg?react';
-import EditIcon from '@mui/icons-material/Edit';
 import { useAppDispatch } from '../../../redux/hooks';
 import { logout } from '../../../redux/features/auth/authSlice';
 import NotificationIcon from '../NotificationIcon';
@@ -63,11 +62,6 @@ const adminDashboardMenus = [
     path: '/admin/coupon-management',
     name: 'Coupon Management',
     icon: <PaymentManagement />,
-  },
-  {
-    path: '/admin/edit-requests',
-    name: 'Edit Requests',
-    icon: <EditIcon />,
   },
   {
     path: '/admin/revenue-management',
