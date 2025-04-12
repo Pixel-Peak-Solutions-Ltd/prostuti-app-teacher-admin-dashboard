@@ -21,6 +21,7 @@ import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import LinearWithValueLabel from "../../../../../shared/components/ProgessBar";
 import MP4 from '../../../../../assets/images/MP4-icon.png';
 import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
+import EditRequestButton from "../../../../../shared/components/EditRequestButton";
 
 const StyledDatePicker = styled(DatePicker)({
     width: '100%',
@@ -251,6 +252,8 @@ const RecordClass = () => {
                             </Link>
                             <Typography variant='h3'>{isEditing ? `Update Record Class` : `Record Class Creation`}</Typography>
                         </Box>
+                        {/* action buttons */}
+                        {isEditing && <EditRequestButton resourceType="Assignment" />}
                         {
                             isEditing && (
                                 <Button

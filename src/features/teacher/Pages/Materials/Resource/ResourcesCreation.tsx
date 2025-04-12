@@ -26,6 +26,7 @@ import {
 } from "../../../../../redux/features/materials/materialsApi";
 import Alert from "../../../../../shared/components/Alert";
 import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
+import EditRequestButton from "../../../../../shared/components/EditRequestButton";
 
 const StyledDatePicker = styled(DatePicker)({
     width: '100%',
@@ -250,7 +251,8 @@ const ResourcesCreation = () => {
                             </Link>
                             <Typography variant="h3">Resource Creation</Typography>
                         </Box>
-
+                        {/* request button for admin */}
+                        {isEditing && <EditRequestButton resourceType="Resource" />}
                         {
                             isEditing && (
                                 <Button

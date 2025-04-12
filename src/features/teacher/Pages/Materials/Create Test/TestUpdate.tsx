@@ -2,6 +2,7 @@ import { Box, Button, Card, Paper, SnackbarCloseReason, Typography, styled } fro
 import { CustomLabel, CustomTextField, Loader, resetStoredQuestions, Alert, useAppDispatch, useAppSelector, CustomAutoComplete, Link, Grid, ArrowBackIcon, QuestionType, testTime, CloudUploadIcon, Divider, LocalizationProvider, DatePicker, Dayjs, useState, useGetSingleTestQuery, useParams, useEffect, ArchiveIcon, useUpdateTestMutation } from '../Create Test';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import dayjs from "dayjs";
+import EditRequestButton from "../../../../../shared/components/EditRequestButton";
 
 
 const StyledDatePicker = styled(DatePicker)({
@@ -107,6 +108,7 @@ const TestUpdate = () => {
                         </Box>
                         {/* continue button */}
                         <Box sx={{ display: 'flex', gap: '20px' }}>
+                            <EditRequestButton resourceType="Test" />
                             {isExpired ? (
                                 <>
                                     <Link to="/teacher/test-history">

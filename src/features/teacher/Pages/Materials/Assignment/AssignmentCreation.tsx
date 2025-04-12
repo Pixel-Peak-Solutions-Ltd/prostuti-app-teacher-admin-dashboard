@@ -20,6 +20,7 @@ import PDF from '../../../../../assets/images/PDF.png';
 import LinearWithValueLabel from "../../../../../shared/components/ProgessBar";
 import Alert from "../../../../../shared/components/Alert";
 import { useCreateAssignmentMutation, useGetAssignmentByIdQuery, useUpdateAssignmentMutation } from "../../../../../redux/features/materials/materialsApi";
+import EditRequestButton from "../../../../../shared/components/EditRequestButton";
 
 const StyledDatePicker = styled(DatePicker)({
     width: '100%',
@@ -41,6 +42,7 @@ const VisuallyHiddenInput = styled('input')({
     width: 1,
 });
 const AssignmentCreation = () => {
+
     // const canceledAssignment: any = [];
     const { assignmentId } = useParams();
     // checking if user coming form course preview page
@@ -234,6 +236,7 @@ const AssignmentCreation = () => {
                             <Typography variant='h3'>Assignment Creation</Typography>
                         </Box>
                         {/* continue button */}
+                        {isEditing && <EditRequestButton resourceType="Assignment" />}
                         {
                             isExpired ? (
                                 <Link to='/teacher/assignment-submission-list'>
