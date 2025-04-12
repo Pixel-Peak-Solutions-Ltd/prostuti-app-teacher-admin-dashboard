@@ -22,6 +22,9 @@ import LinearWithValueLabel from "../../../../../shared/components/ProgessBar";
 import MP4 from '../../../../../assets/images/MP4-icon.png';
 import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
 import EditRequestButton from "../../../../../shared/components/EditRequestButton";
+import { TUser } from "../../../../../types/types";
+import { RootState } from "../../../../../redux/store";
+import { usePreviousPath } from "../../../../../lib/Providers/NavigationProvider";
 
 const StyledDatePicker = styled(DatePicker)({
     width: '100%',
@@ -43,7 +46,10 @@ const VisuallyHiddenInput = styled('input')({
     width: 1,
 });
 const RecordClass = () => {
+    // to know the previous path
+    const { previousPath } = usePreviousPath();
     const navigate = useNavigate();
+    const user = useAppSelector((state: RootState) => state.auth.user as TUser);
     // record class id while updating
     const { recordId } = useParams();
     // checking if user coming form course preview page
@@ -245,16 +251,18 @@ const RecordClass = () => {
                     <Box component="section" sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
                         {/* back button and title */}
                         <Box component="section" sx={{ display: 'flex', gap: '20px' }}>
-                            <Link to={isEditing ? "/teacher/record-class-list" : "/teacher/create-course/add-course-material"}>
-                                <Button variant='outlined' sx={{ width: '36px', height: '36px', minWidth: '36px', borderRadius: '8px', borderColor: "grey.700", color: "#3F3F46" }}>
-                                    <ArrowBackIcon fontSize='small' />
-                                </Button>
-                            </Link>
+                            {/* <Link to={isEditing ? "/teacher/record-class-list" : "/teacher/create-course/add-course-material"}> */}
+                            <Button variant='outlined' sx={{ width: '36px', height: '36px', minWidth: '36px', borderRadius: '8px', borderColor: "grey.700", color: "#3F3F46" }}
+                                onClick={() => navigate(previousPath || "/")}
+                            >
+                                <ArrowBackIcon fontSize='small' />
+                            </Button>
+                            {/* </Link> */}
                             <Typography variant='h3'>{isEditing ? `Update Record Class` : `Record Class Creation`}</Typography>
                         </Box>
                         {/* action buttons */}
-                        {isEditing && <EditRequestButton resourceType="Assignment" />}
-                        {
+                        {user.role === 'admin' && <EditRequestButton resourceType="RecordedClass" />}
+                        {/* {
                             isEditing && (
                                 <Button
                                     onClick={handleRecordClassDelete}
@@ -264,7 +272,7 @@ const RecordClass = () => {
                                     Delete
                                 </Button>
                             )
-                        }
+                        } */}
                         {/* continue button */}
                         {/* <Link to='/teacher/create-course/create-lessons'> */}
                         {

@@ -51,7 +51,6 @@ const courseApi = baseApi.injectEndpoints({
                 };
             }
         }),
-
         getCourseById: builder.query({
             query: ({ courseId }) => ({
                 url: `/course/${courseId}`,
@@ -94,6 +93,15 @@ const courseApi = baseApi.injectEndpoints({
                 };
             }
         }),
+        // courseApi.ts
+        approveCourseStatus: builder.mutation({
+            query: ({ courseId, data }) => ({
+                url: `/course/approve/${courseId}`,
+                method: "POST",
+                body: data,
+            }),
+            invalidatesTags: ['Courses']
+        }),
         deleteCourse: builder.mutation({
             query: ({ courseId }) => {
                 return {
@@ -107,4 +115,4 @@ const courseApi = baseApi.injectEndpoints({
 });
 
 
-export const { useSaveCourseMutation, useSaveLessonMutation, useGetLessonsByCourseIdQuery, useGetCourseByIdQuery, useGetCategoryForCourseQuery, useGetCourseByTeacherQuery, useGetCoursePreviewQuery, useDeleteCourseMutation, useGetCourseForAdminEndQuery } = courseApi;
+export const { useSaveCourseMutation, useSaveLessonMutation, useGetLessonsByCourseIdQuery, useGetCourseByIdQuery, useGetCategoryForCourseQuery, useGetCourseByTeacherQuery, useGetCoursePreviewQuery, useDeleteCourseMutation, useGetCourseForAdminEndQuery, useApproveCourseStatusMutation } = courseApi;

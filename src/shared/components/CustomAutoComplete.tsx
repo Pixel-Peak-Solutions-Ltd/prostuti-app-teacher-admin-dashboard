@@ -2,12 +2,13 @@
 import { FormControl, MenuItem, TextField, } from "@mui/material";
 
 const CustomAutoComplete = (
-    { options, handleInput, name, required, value, disabled, placeholder, defaultValue }:
-        { options: string[]; name: string; handleInput?: (e: React.ChangeEvent<HTMLInputElement>) => void; required?: boolean; value?: string | number; disabled?: boolean; placeholder?: string; defaultValue?: string },
+    { options, handleInput, name, required, value, disabled, placeholder, defaultValue, error }:
+        { options: string[]; name: string; handleInput?: (e: React.ChangeEvent<HTMLInputElement>) => void; required?: boolean; value?: string | number; disabled?: boolean; placeholder?: string; defaultValue?: string; error?: boolean; },
 ) => {
     return (
         <FormControl fullWidth>
             <TextField
+                error={error}
                 name={name}
                 value={value || ''}
                 defaultValue={defaultValue}

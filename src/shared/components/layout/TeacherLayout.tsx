@@ -191,6 +191,7 @@ import { useAppDispatch } from '../../../redux/hooks';
 import { logout } from '../../../redux/features/auth/authSlice';
 import NotificationIcon from '../../../shared/components/NotificationIcon';
 import NotificationDrawer from '../../../shared/components/NotificationDrawer';
+import TeacherDashboard from '../../../features/teacher/Pages/TeacherDashboard';
 
 const drawerWidth = 256;
 const teacherDashboardMenus = [
@@ -346,7 +347,7 @@ export const TeacherLayout = () => {
             >
                 <Toolbar />
                 {/* sidebar menu main content will show here */}
-                {location.pathname === '/teacher' ? <Welcome /> : <Outlet />}
+                {location.pathname === '/teacher' ? <TeacherDashboard /> : <Outlet />}
                 <Toolbar />
             </Box>
             {/* main content ends */}

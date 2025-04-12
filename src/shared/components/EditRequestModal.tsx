@@ -21,9 +21,10 @@ interface EditRequestModalProps {
     open: boolean;
     onClose: () => void;
     resourceType: 'Assignment' | 'RecordedClass' | 'Resource' | 'Notice' | 'Test';
+    resourceId?: string; // Add optional resourceId prop
 }
 
-const EditRequestModal = ({ open, onClose, resourceType }: EditRequestModalProps) => {
+const EditRequestModal = ({ open, onClose, resourceType, resourceId: propResourceId }: EditRequestModalProps) => {
     const [requestTitle, setRequestTitle] = useState('');
     const [requestDescription, setRequestDescription] = useState('');
     const [isSubmitting, setIsSubmitting] = useState(false);
@@ -40,7 +41,7 @@ const EditRequestModal = ({ open, onClose, resourceType }: EditRequestModalProps
     const [requestEdit, { isLoading, isSuccess }] = useRequestEditMutation();
 
     // Determine which ID to use based on the resource type
-    const getResourceId = () => {
+    const getResourceIdFromParams = () => {
         switch (resourceType) {
             case 'Assignment':
                 return assignmentId;
@@ -57,7 +58,8 @@ const EditRequestModal = ({ open, onClose, resourceType }: EditRequestModalProps
         }
     };
 
-    const currentResourceId = getResourceId();
+    // Use the resourceId prop if provided, otherwise try to get it from URL params
+    const currentResourceId = propResourceId || getResourceIdFromParams();
 
     const handleSubmit = async () => {
         if (!requestDescription.trim() || !currentResourceId) return;

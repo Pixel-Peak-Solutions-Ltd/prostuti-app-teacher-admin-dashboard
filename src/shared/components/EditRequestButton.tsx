@@ -7,9 +7,10 @@ import { TUser } from '../../types/types';
 
 interface EditRequestButtonProps {
     resourceType: 'Assignment' | 'RecordedClass' | 'Resource' | 'Notice' | 'Test';
+    resourceId?: string; // Add resourceId prop
 }
 
-const EditRequestButton = ({ resourceType }: EditRequestButtonProps) => {
+const EditRequestButton = ({ resourceType, resourceId }: EditRequestButtonProps) => {
     const [open, setOpen] = useState(false);
     const user = useAppSelector((state) => state.auth.user as TUser);
 
@@ -38,6 +39,7 @@ const EditRequestButton = ({ resourceType }: EditRequestButtonProps) => {
                 open={open}
                 onClose={() => setOpen(false)}
                 resourceType={resourceType}
+                resourceId={resourceId} // Pass resourceId to the modal
             />
         </>
     );

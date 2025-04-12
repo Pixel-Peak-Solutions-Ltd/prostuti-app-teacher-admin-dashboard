@@ -7,8 +7,11 @@ import { useGetCoursePreviewQuery } from "../../../../../redux/features/course/c
 import Loader from "../../../../../shared/components/Loader";
 import Grid from '@mui/material/Grid2';
 import ArrowOutwardIcon from '@mui/icons-material/ArrowOutward';
+import { RootState } from "../../../../../redux/store";
+import { TUser } from "../../../../../types/types";
 
 const RecordClassList = () => {
+    const user = useAppSelector((state: RootState) => state.auth.user as TUser);
     const courseId = useAppSelector((state) => state.courseAndLessonId.id.course_id);
     const { data: courseData, isLoading } = useGetCoursePreviewQuery({ courseId });
 
@@ -17,6 +20,8 @@ const RecordClassList = () => {
     }
 
     const lessons = courseData?.data.lessons;
+    const adminPath = `/admin/course-preview/${courseId}`;
+    const teacherPath = `/teacher/course-preview/${courseId}`;
 
     console.log(courseId);
     console.log(lessons);
@@ -28,7 +33,7 @@ const RecordClassList = () => {
                 <Box component="section" sx={{ display: 'flex', gap: '20px', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
                     {/* back button and title */}
                     <Box component="section" sx={{ display: 'flex', gap: '20px' }}>
-                        <Link to={`/teacher/course-preview/${courseId}`}>
+                        <Link to={user.role === 'admin' ? adminPath : teacherPath}>
                             <Button variant='outlined' sx={{ width: '36px', height: '36px', minWidth: '36px', borderRadius: '8px', borderColor: "grey.700", color: "#3F3F46" }}>
                                 <ArrowBackIcon fontSize='small' />
                             </Button>
@@ -51,7 +56,7 @@ const RecordClassList = () => {
                                                 lesson?.recodedClasses.length > 0 && (
                                                     <Box>
                                                         {lesson?.recodedClasses.map((recordClass, index) => (
-                                                            <Link to={`/teacher/record-update/${recordClass?._id}`} style={{ textDecoration: "none" }}>
+                                                            <Link to={user.role === 'admin' ? `/admin/record-update/${recordClass?._id}` : `/teacher/record-update/${recordClass?._id}`} style={{ textDecoration: "none" }}>
                                                                 <Card variant="outlined"
                                                                     sx={{ display: "flex", alignItems: "center", gap: 2, my: 1, px: 1.5, py: 0.8, borderRadius: 2 }}>
                                                                     <Box sx={{ width: "3%" }}>

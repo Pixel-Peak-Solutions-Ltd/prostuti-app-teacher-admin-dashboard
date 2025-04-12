@@ -3,7 +3,10 @@ import { CustomLabel, CustomTextField, Loader, resetStoredQuestions, Alert, useA
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import dayjs from "dayjs";
 import EditRequestButton from "../../../../../shared/components/EditRequestButton";
-
+import { TUser } from "../../../../../types/types";
+import { RootState } from "../../../../../redux/store";
+import { usePreviousPath } from "../../../../../lib/Providers/NavigationProvider";
+import { useNavigate } from "react-router-dom";
 
 const StyledDatePicker = styled(DatePicker)({
     width: '100%',
@@ -14,6 +17,9 @@ const StyledDatePicker = styled(DatePicker)({
     }
 });
 const TestUpdate = () => {
+    const { previousPath } = usePreviousPath();
+    const navigate = useNavigate();
+    const user = useAppSelector((state: RootState) => state.auth.user as TUser);
     const { testId } = useParams<{ testId: string; }>();
     const [testDetails, setTestDetails] = useState<Record<string, string>>({});
     const [openSnackbar, setOpenSnackbar] = useState(false);
@@ -99,41 +105,45 @@ const TestUpdate = () => {
                     <Box component="section" sx={{ display: 'flex', gap: '20px', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
                         {/* back button and title */}
                         <Box component="section" sx={{ display: 'flex', gap: '20px' }}>
-                            <Link to='/teacher/test-list'>
-                                <Button variant='outlined' sx={{ width: '36px', height: '36px', minWidth: '36px', borderRadius: '8px', borderColor: "grey.700", color: "#3F3F46" }}>
-                                    <ArrowBackIcon fontSize='small' />
-                                </Button>
-                            </Link>
+                            {/* <Link to='/teacher/test-list'> */}
+                            <Button variant='outlined' sx={{ width: '36px', height: '36px', minWidth: '36px', borderRadius: '8px', borderColor: "grey.700", color: "#3F3F46" }}
+                                onClick={() => navigate(previousPath || "/")}
+                            >
+                                <ArrowBackIcon fontSize='small' />
+                            </Button>
+                            {/* </Link> */}
                             <Typography variant='h3'>Test Update</Typography>
                         </Box>
                         {/* continue button */}
                         <Box sx={{ display: 'flex', gap: '20px' }}>
-                            <EditRequestButton resourceType="Test" />
-                            {isExpired ? (
-                                <>
-                                    <Link to="/teacher/test-history">
+                            {user.role === 'admin' && <EditRequestButton resourceType="Test" />}
+                            {user.role !== 'admin' && (
+                                isExpired ? (
+                                    <>
+                                        <Link to="/teacher/test-history">
+                                            <Button
+                                                variant='contained'
+                                                sx={{ borderRadius: '8px', width: 'auto', height: '48px' }}>
+                                                View Result
+                                            </Button>
+                                        </Link>
+                                    </>
+                                ) : (
+                                    <>
                                         <Button
+                                            onClick={handleTestSubmit}
                                             variant='contained'
-                                            sx={{ borderRadius: '8px', width: 'auto', height: '48px' }}>
-                                            View Result
+                                            sx={{ borderRadius: '8px', width: '140px', height: '48px' }}>
+                                            Update <CloudUploadIcon sx={{ ml: 1 }} />
                                         </Button>
-                                    </Link>
-                                </>
-                            ) : (
-                                <>
-                                    <Button
-                                        onClick={handleTestSubmit}
-                                        variant='contained'
-                                        sx={{ borderRadius: '8px', width: '140px', height: '48px' }}>
-                                        Update <CloudUploadIcon sx={{ ml: 1 }} />
-                                    </Button>
-                                    <Button
-                                        // onClick={handleContinue}
-                                        variant='outlined'
-                                        sx={{ borderRadius: '8px', width: '140px', height: '48px' }}>
-                                        Archive <ArchiveIcon sx={{ ml: 1 }} />
-                                    </Button>
-                                </>
+                                        <Button
+                                            // onClick={handleContinue}
+                                            variant='outlined'
+                                            sx={{ borderRadius: '8px', width: '140px', height: '48px' }}>
+                                            Archive <ArchiveIcon sx={{ ml: 1 }} />
+                                        </Button>
+                                    </>
+                                )
                             )}
 
                         </Box>

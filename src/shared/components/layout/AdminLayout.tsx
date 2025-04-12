@@ -25,6 +25,7 @@ import { useAppDispatch } from '../../../redux/hooks';
 import { logout } from '../../../redux/features/auth/authSlice';
 import NotificationIcon from '../NotificationIcon';
 import NotificationDrawer from '../NotificationDrawer';
+import AdminDashboard from '../../../features/admin/Pages/AdminDashboard/AdminDashboard';
 
 const drawerWidth = 265;
 const adminDashboardMenus = [
@@ -90,128 +91,128 @@ export const AdminLayout = () => {
   const dispatch = useAppDispatch();
 
   return (
-      <Box sx={{ display: 'flex' }}>
-        <CssBaseline />
-        <AppBar
-            position="fixed"
-            elevation={0}
-            sx={{
-              width: `calc(100% - ${drawerWidth}px)`,
-              ml: `${drawerWidth}px`,
-              backgroundColor: 'transparent',
-              backdropFilter: 'blur(5px)',
-              borderBottom: '1px solid rgba(230, 230, 230, 0.5)'
-            }}
+    <Box sx={{ display: 'flex' }}>
+      <CssBaseline />
+      <AppBar
+        position="fixed"
+        elevation={0}
+        sx={{
+          width: `calc(100% - ${drawerWidth}px)`,
+          ml: `${drawerWidth}px`,
+          backgroundColor: 'transparent',
+          backdropFilter: 'blur(5px)',
+          borderBottom: '1px solid rgba(230, 230, 230, 0.5)'
+        }}
+      >
+        <Toolbar
+          variant="dense"
+          sx={{
+            justifyContent: 'flex-end',
+            minHeight: '48px',
+            padding: '0 16px'
+          }}
         >
-          <Toolbar
-              variant="dense"
-              sx={{
-                justifyContent: 'flex-end',
-                minHeight: '48px',
-                padding: '0 16px'
-              }}
-          >
-            {/* Add notification icon to toolbar */}
-            <NotificationIcon />
-          </Toolbar>
-        </AppBar>
-        {/* sidebar starts */}
-        <Drawer
-            sx={{
-              width: drawerWidth,
-              flexShrink: 0,
-              '& .MuiDrawer-paper': {
-                width: drawerWidth,
-                boxSizing: 'border-box',
-              },
-            }}
-            variant="permanent"
-            anchor="left"
-        >
-          {/* logo */}
-          <Box
-              sx={{ display: 'flex', justifyContent: 'flex-start', p: 2, ml: 2 }}
-          >
-            <ProstutiLogo />
-          </Box>
-          {/* logo end */}
-          {/* sidebar menu start */}
-          <List sx={{ ml: 2 }}>
-            {adminDashboardMenus.map((item, index) => (
-                <ListItem key={index} disablePadding>
-                  {/* navlink comes from react router dom */}
-                  <NavLink
-                      to={item.path as string}
-                      style={({ isActive }) => {
-                        return isActive
-                            ? {
-                              textDecoration: 'none',
-                              width: '93%',
-                              color: '#2970FF',
-                              backgroundColor: '#EFF4FF',
-                              borderRadius: '10px',
-                            }
-                            : {
-                              color: '#9CA3AF',
-                              textDecoration: 'none',
-                              width: '93%',
-                            };
-                      }}
-                  >
-                    <ListItemButton
-                        sx={{
-                          '&:hover': {
-                            color: '#2970FF',
-                            backgroundColor: '#EFF4FF',
-                            borderRadius: '10px',
-                          },
-                        }}
-                    >
-                      <ListItemIcon sx={{ mr: -3 }}>{item.icon}</ListItemIcon>
-                      <ListItemText primary={item.name} />
-                    </ListItemButton>
-                  </NavLink>
-                </ListItem>
-            ))}
-            {/* logout button */}
-            <ListItem disablePadding>
-              <Box sx={{ width: '93%' }}>
-                <ListItemButton
-                    sx={{
-                      color: '#9CA3AF',
-                      '&:hover': {
-                        color: '#2970FF',
-                        backgroundColor: '#EFF4FF',
-                        borderRadius: '10px',
-                      },
-                    }}
-                    onClick={() => dispatch(logout())}
-                >
-                  <ListItemIcon sx={{ mr: -3 }}>
-                    <LogOutIcon />
-                  </ListItemIcon>
-                  <ListItemText primary="Log Out" />
-                </ListItemButton>
-              </Box>
-            </ListItem>
-          </List>
-          {/* sidebar menu start */}
-        </Drawer>
-        {/* sidebar ends */}
-        {/* main content section */}
+          {/* Add notification icon to toolbar */}
+          <NotificationIcon />
+        </Toolbar>
+      </AppBar>
+      {/* sidebar starts */}
+      <Drawer
+        sx={{
+          width: drawerWidth,
+          flexShrink: 0,
+          '& .MuiDrawer-paper': {
+            width: drawerWidth,
+            boxSizing: 'border-box',
+          },
+        }}
+        variant="permanent"
+        anchor="left"
+      >
+        {/* logo */}
         <Box
-            component="main"
-            sx={{ flexGrow: 1, bgcolor: 'background.default', px: 4 }}
+          sx={{ display: 'flex', justifyContent: 'flex-start', p: 2, ml: 2 }}
         >
-          <Toolbar sx={{ zIndex: -3 }} />
-          {/* sidebar menu main content will show here */}
-          {location.pathname === '/admin' ? <Welcome /> : <Outlet />}
+          <ProstutiLogo />
         </Box>
-        {/* main content ends */}
-
-        {/* Notification drawer */}
-        <NotificationDrawer />
+        {/* logo end */}
+        {/* sidebar menu start */}
+        <List sx={{ ml: 2 }}>
+          {adminDashboardMenus.map((item, index) => (
+            <ListItem key={index} disablePadding>
+              {/* navlink comes from react router dom */}
+              <NavLink
+                to={item.path as string}
+                style={({ isActive }) => {
+                  return isActive
+                    ? {
+                      textDecoration: 'none',
+                      width: '93%',
+                      color: '#2970FF',
+                      backgroundColor: '#EFF4FF',
+                      borderRadius: '10px',
+                    }
+                    : {
+                      color: '#9CA3AF',
+                      textDecoration: 'none',
+                      width: '93%',
+                    };
+                }}
+              >
+                <ListItemButton
+                  sx={{
+                    '&:hover': {
+                      color: '#2970FF',
+                      backgroundColor: '#EFF4FF',
+                      borderRadius: '10px',
+                    },
+                  }}
+                >
+                  <ListItemIcon sx={{ mr: -3 }}>{item.icon}</ListItemIcon>
+                  <ListItemText primary={item.name} />
+                </ListItemButton>
+              </NavLink>
+            </ListItem>
+          ))}
+          {/* logout button */}
+          <ListItem disablePadding>
+            <Box sx={{ width: '93%' }}>
+              <ListItemButton
+                sx={{
+                  color: '#9CA3AF',
+                  '&:hover': {
+                    color: '#2970FF',
+                    backgroundColor: '#EFF4FF',
+                    borderRadius: '10px',
+                  },
+                }}
+                onClick={() => dispatch(logout())}
+              >
+                <ListItemIcon sx={{ mr: -3 }}>
+                  <LogOutIcon />
+                </ListItemIcon>
+                <ListItemText primary="Log Out" />
+              </ListItemButton>
+            </Box>
+          </ListItem>
+        </List>
+        {/* sidebar menu start */}
+      </Drawer>
+      {/* sidebar ends */}
+      {/* main content section */}
+      <Box
+        component="main"
+        sx={{ flexGrow: 1, bgcolor: 'background.default', px: 4 }}
+      >
+        <Toolbar sx={{ zIndex: -3 }} />
+        {/* sidebar menu main content will show here */}
+        {location.pathname === '/admin' ? <AdminDashboard /> : <Outlet />}
       </Box>
+      {/* main content ends */}
+
+      {/* Notification drawer */}
+      <NotificationDrawer />
+    </Box>
   );
 };
 

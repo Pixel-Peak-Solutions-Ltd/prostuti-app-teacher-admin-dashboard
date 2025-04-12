@@ -27,6 +27,9 @@ import {
 import Alert from "../../../../../shared/components/Alert";
 import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
 import EditRequestButton from "../../../../../shared/components/EditRequestButton";
+import { TUser } from "../../../../../types/types";
+import { RootState } from "../../../../../redux/store";
+import { usePreviousPath } from "../../../../../lib/Providers/NavigationProvider";
 
 const StyledDatePicker = styled(DatePicker)({
     width: '100%',
@@ -48,6 +51,9 @@ const VisuallyHiddenInput = styled('input')({
     width: 1,
 });
 const ResourcesCreation = () => {
+    const { previousPath } = usePreviousPath();
+    console.log('previousPath', previousPath);
+    const user = useAppSelector((state: RootState) => state.auth.user as TUser);
     const navigate = useNavigate();
     const { resourceId } = useParams();
     // checking if user coming form course preview page
@@ -223,6 +229,8 @@ const ResourcesCreation = () => {
         navigate(`/teacher/resources-list`);
     }
 
+
+
     return (
         <>
             <Box sx={{ width: '100%', height: files.length > 3 ? 'auto' : '100vh' }}>
@@ -237,8 +245,12 @@ const ResourcesCreation = () => {
                     }}>
                         {/* back button and title */}
                         <Box component="section" sx={{ display: 'flex', gap: '20px' }}>
-                            <Link to={isEditing ? "/teacher/resources-list" : "/teacher/create-course/add-course-material"}>
-                                <Button variant="outlined" sx={{
+                            {/* <Link to={isEditing ? "/teacher/resources-list" : "/teacher/create-course/add-course-material"}> */}
+                            {/* <Link to={user.role === 'admin' ? routeForAdmin : routeForTeacher}> */}
+                            <Button
+                                onClick={() => navigate(previousPath || "/")}
+                                variant="outlined"
+                                sx={{
                                     width: '36px',
                                     height: '36px',
                                     minWidth: '36px',
@@ -246,15 +258,15 @@ const ResourcesCreation = () => {
                                     borderColor: "grey.700",
                                     color: "#3F3F46"
                                 }}>
-                                    <ArrowBackIcon fontSize="small" />
-                                </Button>
-                            </Link>
+                                <ArrowBackIcon fontSize="small" />
+                            </Button>
+                            {/* </Link> */}
                             <Typography variant="h3">Resource Creation</Typography>
                         </Box>
                         {/* request button for admin */}
-                        {isEditing && <EditRequestButton resourceType="Resource" />}
-                        {
-                            isEditing && (
+                        {user.role === 'admin' && <EditRequestButton resourceType="Resource" />}
+                        {/* {
+                            user.role !== 'admin' && (isEditing && (
                                 <Button
                                     onClick={handleResourceDelete}
                                     variant="outlined"
@@ -263,7 +275,8 @@ const ResourcesCreation = () => {
                                     Delete
                                 </Button>
                             )
-                        }
+                            )
+                        } */}
                         {/* continue button */}
                         {/* <Link to='/teacher/create-course/add-course-lessons'> */}
                         {
@@ -510,8 +523,8 @@ const ResourcesCreation = () => {
                         )
                     }
 
-                </Paper>
-            </Box>
+                </Paper >
+            </Box >
             {/* showing alert for what happened after submitting the request */}
             <Alert
                 openSnackbar={openSnackbar}

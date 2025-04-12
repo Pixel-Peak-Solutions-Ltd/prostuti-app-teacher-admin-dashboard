@@ -1,5 +1,5 @@
 import { Box, Button, Card, IconButton, Paper, SnackbarCloseReason, Typography, styled } from "@mui/material";
-import { Link, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import Grid from '@mui/material/Grid2';
@@ -21,6 +21,9 @@ import LinearWithValueLabel from "../../../../../shared/components/ProgessBar";
 import Alert from "../../../../../shared/components/Alert";
 import { useCreateAssignmentMutation, useGetAssignmentByIdQuery, useUpdateAssignmentMutation } from "../../../../../redux/features/materials/materialsApi";
 import EditRequestButton from "../../../../../shared/components/EditRequestButton";
+import { TUser } from "../../../../../types/types";
+import { RootState } from "../../../../../redux/store";
+import { usePreviousPath } from "../../../../../lib/Providers/NavigationProvider";
 
 const StyledDatePicker = styled(DatePicker)({
     width: '100%',
@@ -42,7 +45,9 @@ const VisuallyHiddenInput = styled('input')({
     width: 1,
 });
 const AssignmentCreation = () => {
-
+    const { previousPath } = usePreviousPath();
+    const navigate = useNavigate();
+    const user = useAppSelector((state: RootState) => state.auth.user as TUser);
     // const canceledAssignment: any = [];
     const { assignmentId } = useParams();
     // checking if user coming form course preview page
@@ -228,35 +233,33 @@ const AssignmentCreation = () => {
                     <Box component="section" sx={{ display: 'flex', gap: '20px', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
                         {/* back button and title */}
                         <Box component="section" sx={{ display: 'flex', gap: '20px' }}>
-                            <Link to={isEditing ? "/teacher/assignment-list" : "/teacher/create-course/add-course-material"}>
-                                <Button variant='outlined' sx={{ width: '36px', height: '36px', minWidth: '36px', borderRadius: '8px', borderColor: "grey.700", color: "#3F3F46" }}>
-                                    <ArrowBackIcon fontSize='small' />
-                                </Button>
-                            </Link>
+                            {/* <Link to={isEditing ? "/teacher/assignment-list" : "/teacher/create-course/add-course-material"}> */}
+                            <Button variant='outlined' sx={{ width: '36px', height: '36px', minWidth: '36px', borderRadius: '8px', borderColor: "grey.700", color: "#3F3F46" }}
+                                onClick={() => navigate(previousPath || "/")}>
+                                <ArrowBackIcon fontSize='small' />
+                            </Button>
+                            {/* </Link> */}
                             <Typography variant='h3'>Assignment Creation</Typography>
                         </Box>
                         {/* continue button */}
-                        {isEditing && <EditRequestButton resourceType="Assignment" />}
-                        {
+                        {user.role === 'admin' && <EditRequestButton resourceType="Assignment" />}
+                        {user.role !== 'admin' && (
                             isExpired ? (
                                 <Link to='/teacher/assignment-submission-list'>
                                     <Button
-                                        // onClick={handleContinue}
                                         variant='contained'
                                         sx={{ borderRadius: '8px', width: 'auto', height: '48px' }}>
                                         View Submissions <ChevronRightIcon />
                                     </Button>
                                 </Link>
-                            ) :
-                                (
-                                    <Button
-                                        // onClick={handleContinue}
-                                        variant='contained'
-                                        sx={{ borderRadius: '8px', width: '140px', height: '48px' }}>
-                                        Continue <ChevronRightIcon />
-                                    </Button>
-                                )
-                        }
+                            ) : (
+                                <Button
+                                    variant='contained'
+                                    sx={{ borderRadius: '8px', width: '140px', height: '48px' }}>
+                                    Continue <ChevronRightIcon />
+                                </Button>
+                            )
+                        )}
 
                     </Box>
                     {/* form section starts here */}
