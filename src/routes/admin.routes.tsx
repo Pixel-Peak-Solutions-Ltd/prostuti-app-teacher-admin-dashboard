@@ -3,6 +3,8 @@ import AddCategory from "../features/admin/Pages/Category/AddCategory/AddCategor
 import Category from "../features/admin/Pages/Category/Category";
 import Coupon from "../features/admin/Pages/Coupon/Coupon";
 import CourseApproved from "../features/admin/Pages/CourseManagement/CourseApproved/CourseApproved";
+import CourseManagement from "../features/admin/Pages/CourseManagement/CourseManagement";
+import EditRequests from "../shared/components/EditRequest";
 import FlashCardManagement from "../features/admin/Pages/FlashCardManagement";
 import PaymentManagement from "../features/admin/Pages/PaymentManagement/PaymentManagement";
 import SinglePayment from "../features/admin/Pages/PaymentManagement/SinglePayment";
@@ -10,7 +12,6 @@ import PracticeTest from "../features/admin/Pages/PracticeTest";
 import ReportAndCompliance from "../features/admin/Pages/ReportAndCompliance/ReportAndCompliance";
 import RevenueManagement from "../features/admin/Pages/RevenueManagement";
 import TeacherManagement from "../features/admin/Pages/TeacherManagement/TeacherManagement/TeacherManagement";
-
 import TeacherProfile from "../features/admin/Pages/TeacherManagement/TeacherProfile/TeacherProfile";
 import CoursePreview from "../features/teacher/Pages/Course/CoursePreview";
 import MyCourse from "../features/teacher/Pages/Course/MyCourse";
@@ -151,5 +152,9 @@ export const adminRoutes = [
   {
     path: "report-compliance",
     element: <ReportAndCompliance />,
+  },
+  {
+    path: "edit-requests",
+    element: <EditRequests />,
   },
 ];
