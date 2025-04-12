@@ -9,10 +9,13 @@ import {
     TextField,
     IconButton,
     Typography,
-    Snackbar
+    Snackbar,
+    CircularProgress
 } from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { useParams } from 'react-router-dom';
+import { useRequestEditMutation } from '../../redux/features/notificationApi';
+import { IEditRequestPayload } from '../../types/notification.types';
 
 interface EditRequestModalProps {
     open: boolean;
@@ -21,6 +24,7 @@ interface EditRequestModalProps {
 }
 
 const EditRequestModal = ({ open, onClose, resourceType }: EditRequestModalProps) => {
+    const [requestTitle, setRequestTitle] = useState('');
     const [requestDescription, setRequestDescription] = useState('');
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [showSuccessMessage, setShowSuccessMessage] = useState(false);
@@ -31,6 +35,9 @@ const EditRequestModal = ({ open, onClose, resourceType }: EditRequestModalProps
         noticeId?: string;
         testId?: string;
     }>();
+
+    // Use the requestEdit mutation hook
+    const [requestEdit, { isLoading, isSuccess }] = useRequestEditMutation();
 
     // Determine which ID to use based on the resource type
     const getResourceId = () => {
@@ -50,41 +57,40 @@ const EditRequestModal = ({ open, onClose, resourceType }: EditRequestModalProps
         }
     };
 
-    // const resourceId = getResourceId();
+    const currentResourceId = getResourceId();
 
     const handleSubmit = async () => {
-        if (!requestDescription.trim()) return;
+        if (!requestDescription.trim() || !currentResourceId) return;
 
-        setIsSubmitting(true);
+        // Map resource types to the expected API format
+        const apiResourceType = resourceType === 'RecordedClass' ? 'RecodedClass' : resourceType;
+
+        // Create payload according to the API requirements
+        const payload: IEditRequestPayload = {
+            resourceType: apiResourceType as any, // Type casting to match the expected types
+            resourceId: currentResourceId,
+            title: requestTitle.trim() || `Edit request for ${resourceType.toLowerCase()}`, // Use a default title if not provided
+            message: requestDescription
+        };
 
         try {
-            // This would be replaced with your actual API call
-            // For example:
-            // await sendEditRequest({
-            //   resourceType,
-            //   resourceId,
-            //   message: requestDescription
-            // });
+            // Call the API using the requestEdit mutation
+            await requestEdit(payload).unwrap();
 
-            console.log('Sending edit request:', {
-                resourceType,
-                resourceId,
-                message: requestDescription
-            });
-
-            // Simulate API call
-            await new Promise(resolve => setTimeout(resolve, 1000));
-
+            // Show success message
             setShowSuccessMessage(true);
+
+            // Reset form
+            setRequestTitle('');
             setRequestDescription('');
+
+            // Close modal after a delay
             setTimeout(() => {
                 onClose();
                 setShowSuccessMessage(false);
             }, 1500);
         } catch (error) {
             console.error('Error sending edit request:', error);
-        } finally {
-            setIsSubmitting(false);
         }
     };
 
@@ -107,7 +113,7 @@ const EditRequestModal = ({ open, onClose, resourceType }: EditRequestModalProps
                             <ArrowBackIcon />
                         </IconButton>
                         <Typography variant="h6">
-                            Request to edit {resourceType.toLowerCase()} {resourceId}
+                            Request to edit {resourceType.toLowerCase()} {currentResourceId}
                         </Typography>
                     </Box>
                 </DialogTitle>
@@ -115,11 +121,25 @@ const EditRequestModal = ({ open, onClose, resourceType }: EditRequestModalProps
                 <DialogContent sx={{ p: 2, pt: 0 }}>
                     <Box mb={1}>
                         <Typography variant="subtitle2" color="textSecondary" gutterBottom>
-                            Request Description
+                            Request Title
                         </Typography>
                     </Box>
                     <TextField
                         autoFocus
+                        fullWidth
+                        value={requestTitle}
+                        onChange={(e) => setRequestTitle(e.target.value)}
+                        placeholder="Enter a title for your request..."
+                        variant="outlined"
+                        sx={{ mb: 2 }}
+                    />
+
+                    <Box mb={1}>
+                        <Typography variant="subtitle2" color="textSecondary" gutterBottom>
+                            Request Description
+                        </Typography>
+                    </Box>
+                    <TextField
                         multiline
                         rows={6}
                         fullWidth
@@ -141,9 +161,10 @@ const EditRequestModal = ({ open, onClose, resourceType }: EditRequestModalProps
                         onClick={handleSubmit}
                         variant="contained"
                         color="primary"
-                        disabled={isSubmitting || !requestDescription.trim()}
+                        disabled={isLoading || !requestDescription.trim() || !currentResourceId}
+                        startIcon={isLoading ? <CircularProgress size={20} /> : null}
                     >
-                        Send Request
+                        {isSuccess ? "Sent!" : isLoading ? "Sending..." : "Send Request"}
                     </Button>
                 </DialogActions>
             </Dialog>
