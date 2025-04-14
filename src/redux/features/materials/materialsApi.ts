@@ -158,6 +158,19 @@ const materialApi = baseApi.injectEndpoints({
                 };
             }
         }),
+
+        // New endpoint for submitting written test marks
+        submitWrittenTestMarks: builder.mutation({
+            query: (markData) => {
+                return {
+                    url: '/test-history/preview-written-test',
+                    method: 'PATCH',
+                    body: markData
+                };
+            },
+            invalidatesTags: ['Test']
+        }),
+
         // notice operations
         getNoticesOfACourse: builder.query({
             query: ({ courseId }) => {
@@ -229,5 +242,6 @@ export const {
     useGetSingleTestQuery,
     useUpdateTestMutation,
     useGetTestHistoryQuery,
-    useGetSubmittedAssignmentListQuery
+    useGetSubmittedAssignmentListQuery,
+    useSubmitWrittenTestMarksMutation // Added new hook export
 } = materialApi;

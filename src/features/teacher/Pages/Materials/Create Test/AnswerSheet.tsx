@@ -1,4 +1,4 @@
-import { Box, Button, Card, Paper, Typography, styled, IconButton } from "@mui/material";
+import { Box, Button, Card, Paper, Typography, styled, IconButton, Alert, Snackbar } from "@mui/material";
 import { CustomLabel, CustomTextField, useAppSelector, Link, Grid, ArrowBackIcon, Divider, LocalizationProvider, DatePicker, useParams } from '../Create Test';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
@@ -7,6 +7,8 @@ import dayjs from "dayjs";
 import PDF from '../../../../../assets/images/PDF.png';
 import FileDownloadOutlinedIcon from '@mui/icons-material/FileDownloadOutlined';
 import { downloadFile } from "../../../../../utils/FileDownload";
+import { ReactHTMLElement, useState, useEffect } from "react";
+import { useSubmitWrittenTestMarksMutation } from "../../../../../redux/features/materials/materialsApi";
 
 const StyledDatePicker = styled(DatePicker)({
     width: '100%',
@@ -16,11 +18,69 @@ const StyledDatePicker = styled(DatePicker)({
         fontSize: '0.875rem',
     }
 });
+
 const AnswerSheet = () => {
+    const test_id = useAppSelector(state => state.test_id.id.test_id);
+    const [marking, setMarking] = useState<Record<string, string | number>>({});
     const { testHistoryId } = useParams();
     const testHistoryData = useAppSelector(state => state.test_id.testHistoryData.history);
-    console.log(testHistoryData.answers);
-    console.log(testHistoryData);
+    const [submitWrittenTestMarks, { isLoading, isSuccess, isError }] = useSubmitWrittenTestMarksMutation();
+    const [showAlert, setShowAlert] = useState(false);
+    const [alertMessage, setAlertMessage] = useState({ type: 'success', message: '' });
+
+    // Initialize marking state with default values when data loads
+    useEffect(() => {
+        if (testHistoryData?.answers?.length > 0) {
+            const initialMarks: Record<string, string | number> = {};
+            testHistoryData.answers.forEach((answer, index) => {
+                initialMarks[`mark_${index}`] = answer.mark || "";
+            });
+            setMarking(initialMarks);
+        }
+    }, [testHistoryData]);
+
+    // Handle result of submission attempt
+    useEffect(() => {
+        if (isSuccess) {
+            setAlertMessage({
+                type: 'success',
+                message: 'Marking successfully submitted!'
+            });
+            setShowAlert(true);
+        } else if (isError) {
+            setAlertMessage({
+                type: 'error',
+                message: 'Failed to submit marking. Please try again.'
+            });
+            setShowAlert(true);
+        }
+    }, [isSuccess, isError]);
+
+    const handleMarking = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const { name, value } = e.target;
+        setMarking((prev) => ({ ...prev, [name]: value }));
+    };
+
+    const handleMarkSubmit = (e: React.MouseEvent<HTMLButtonElement>) => {
+        // Format data for submission
+        const formattedAnswers = testHistoryData.answers.map((answer, index) => {
+            return {
+                question_id: answer.question_id._id, // Extract the question ID
+                selectedOption: answer.selectedOption,
+                mark: Number(marking[`mark_${index}`]) || 0 // Convert to number or default to 0
+            };
+        });
+
+        // Prepare payload for API call
+        const payload = {
+            test_history_id: testHistoryId,
+            test_id: testHistoryData.test_id._id,
+            answers: formattedAnswers
+        };
+
+        // Submit to API
+        submitWrittenTestMarks(payload);
+    };
 
     // Function to determine styling based on whether an option is correct or incorrectly selected
     const getOptionStyle = (option, correctOption, selectedOption) => {
@@ -44,9 +104,25 @@ const AnswerSheet = () => {
         // Default style for other options
         return {};
     };
+
     return (
         <>
             <Box sx={{ width: '100%', height: 'auto' }}>
+                {/* Show alert for success/failure */}
+                <Snackbar
+                    open={showAlert}
+                    autoHideDuration={6000}
+                    onClose={() => setShowAlert(false)}
+                    anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+                >
+                    <Alert
+                        severity={alertMessage.type as 'success' | 'error'}
+                        onClose={() => setShowAlert(false)}
+                    >
+                        {alertMessage.message}
+                    </Alert>
+                </Snackbar>
+
                 <Paper variant="outlined" sx={{ width: '100%', height: 'auto', borderRadius: '10px', p: 3 }}>
                     {/* top title and button section */}
                     <Box component="section" sx={{ display: 'flex', gap: '20px', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
@@ -63,14 +139,11 @@ const AnswerSheet = () => {
                         <Box sx={{ display: 'flex', gap: '20px' }}>
                             <>
                                 <Button
-                                    variant='outlined'
-                                    sx={{ borderRadius: '8px', width: '140px', height: '48px' }}>
-                                    <ChevronLeftIcon />Previous
-                                </Button>
-                                <Button
+                                    onClick={handleMarkSubmit}
                                     variant='contained'
-                                    sx={{ borderRadius: '8px', width: '140px', height: '48px' }}>
-                                    Next<ChevronRightIcon />
+                                    disabled={isLoading}
+                                    sx={{ borderRadius: '8px', width: 'auto', height: '48px' }}>
+                                    {isLoading ? 'Submitting...' : 'Confirm Marking'}<ChevronRightIcon />
                                 </Button>
                             </>
                         </Box>
@@ -96,7 +169,6 @@ const AnswerSheet = () => {
                                         disabled={true}
                                         name="type"
                                         value={testHistoryData?.student_id.user_id}
-                                    // handleInput={handleTestDetailsInput}
                                     />
                                 </Grid>
                                 {/* 2nd row --> , , total question, test date */}
@@ -105,8 +177,7 @@ const AnswerSheet = () => {
                                     <CustomLabel fieldName="Test Name" />
                                     <CustomTextField
                                         name="name"
-                                        // value={testDetails?.name}
-                                        // handleInput={handleTestDetailsInput}
+                                        value={testHistoryData?.test_id?.name}
                                         placeholder="Enter the test name"
                                     />
                                 </Grid>
@@ -115,17 +186,15 @@ const AnswerSheet = () => {
                                     <CustomLabel fieldName="Test Date" />
                                     <LocalizationProvider dateAdapter={AdapterDayjs}>
                                         <StyledDatePicker
-                                            // onChange={handleDateChange}
                                             value={testHistoryData.test_id.publishDate ? dayjs(testHistoryData.test_id.publishDate) : null}
                                         />
                                     </LocalizationProvider>
                                 </Grid>
                                 {/* Submission time */}
-                                <Grid size={2.4}>
+                                <Grid size={2.4} sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
                                     <CustomLabel fieldName="Submission Date" />
                                     <LocalizationProvider dateAdapter={AdapterDayjs}>
                                         <StyledDatePicker
-                                            // onChange={handleDateChange}
                                             value={testHistoryData.updatedAt ? dayjs(testHistoryData.updatedAt) : null}
                                         />
                                     </LocalizationProvider>
@@ -211,15 +280,14 @@ const AnswerSheet = () => {
                                                     />
                                                 </Grid>
                                                 <Grid size={2}>
-                                                    <CustomLabel fieldName={`Question No ${questionIndex + 1}`} />
+                                                    <CustomLabel fieldName={`Give Marks`} />
                                                     <CustomTextField
-                                                        disabled={true}
-                                                        name={`question${questionIndex}`}
-                                                        type="text"
-                                                        value={answer.question_id.title}
-                                                    // onClick={() => console.log(answer.question_id.title)}
+                                                        disabled={answer.question_id.type !== 'Written'}
+                                                        name={`mark_${questionIndex}`}
+                                                        type="number"
+                                                        value={marking[`mark_${questionIndex}`] || ""}
+                                                        handleInput={handleMarking}
                                                     />
-                                                    {/* <Button size="small" variant="outlined">Give Marks</Button> */}
                                                 </Grid>
                                                 {/* for mcq test */}
                                                 {answer.question_id.options &&
@@ -239,8 +307,25 @@ const AnswerSheet = () => {
                                                         </Grid>
                                                     )))
                                                 }
-                                                {/* submitted answers */}
-                                                <Grid size={12} sx={{ zIndex: 3 }}>
+                                                {/* Display written answer */}
+                                                {answer.question_id.type === 'Written' && (
+                                                    <Grid size={12} sx={{ mt: 1 }}>
+                                                        <CustomLabel fieldName="Student's Answer" />
+                                                        <Paper
+                                                            variant="outlined"
+                                                            sx={{
+                                                                p: 2,
+                                                                borderRadius: '8px',
+                                                                backgroundColor: '#f5f5f5',
+                                                                minHeight: '100px'
+                                                            }}
+                                                        >
+                                                            <Typography>{answer.selectedOption || "No answer provided"}</Typography>
+                                                        </Paper>
+                                                    </Grid>
+                                                )}
+                                                {/* submitted attachments */}
+                                                <Grid size={12} sx={{ zIndex: 3, mt: 2 }}>
                                                     {
                                                         answer.question_id?.image?.originalName ? (
                                                             <Card variant="outlined"
@@ -262,29 +347,20 @@ const AnswerSheet = () => {
                                                                     <FileDownloadOutlinedIcon />
                                                                 </IconButton>
                                                             </Card>
-                                                        ) : (
-                                                            <Typography variant="subtitle1" color="grey.500">
-                                                                Not answered
-                                                            </Typography>
-                                                        )
+                                                        ) : null
                                                     }
-
                                                 </Grid>
-                                                {/* for written test */}
                                                 {/* Add divider between questions */}
                                                 <Grid size={12} sx={{ mt: 2, mb: 2 }}>
                                                     <Divider />
                                                 </Grid>
-
-                                            </>);
+                                            </>
+                                        );
                                     })
                                 }
                             </Grid>
                         </Box>
-                        {/* </Paper> */}
-                        {/* view test questions */}
                     </Paper>
-
                 </Paper>
             </Box>
         </>
