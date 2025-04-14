@@ -10,8 +10,11 @@ import { Link } from "react-router-dom";
 import { useGetCoursePreviewQuery } from "../../../../redux/features/course/courseApi";
 import { useAppSelector } from "../../../../redux/hooks";
 import Loader from "../../../../shared/components/Loader";
+import { RootState } from "../../../../redux/store";
+import { TUser } from "../../../../types/types";
 
 const Routine = () => {
+    const user = useAppSelector((state: RootState) => state.auth.user as TUser);
     const courseId = useAppSelector((state) => state.courseAndLessonId.id.course_id);
     const { data: courseData, isLoading } = useGetCoursePreviewQuery({ courseId });
 
@@ -277,7 +280,7 @@ const Routine = () => {
                 {/* Header with back button and title */}
                 <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-                        <Link to={`/teacher/course-preview/${courseId}`}>
+                        <Link to={user.role === 'teacher' ? `/teacher/course-preview/${courseId}` : `/admin/course-preview/${courseId}`}>
                             <Button variant='outlined' sx={{
                                 width: '36px',
                                 height: '36px',
@@ -289,32 +292,7 @@ const Routine = () => {
                                 <ArrowBackIcon fontSize='small' />
                             </Button>
                         </Link>
-                        <Typography variant='h5' sx={{ fontWeight: 600 }}>Course Schedule</Typography>
-                    </Box>
-
-                    <Box sx={{ display: 'flex', gap: 2 }}>
-                        <Button
-                            variant="outlined"
-                            startIcon={<AutoFixHighIcon />}
-                            sx={{
-                                borderRadius: '8px',
-                                borderColor: "#D1D5DB",
-                                color: "#4B5563"
-                            }}
-                        >
-                            Auto Generate
-                        </Button>
-                        <Button
-                            variant="contained"
-                            endIcon={<ArrowForwardIcon />}
-                            sx={{
-                                borderRadius: '8px',
-                                bgcolor: "#2563EB",
-                                "&:hover": { bgcolor: "#1D4ED8" }
-                            }}
-                        >
-                            Continue
-                        </Button>
+                        <Typography variant='h4' sx={{ fontWeight: 600 }}>Course Schedule</Typography>
                     </Box>
                 </Box>
 
@@ -325,11 +303,13 @@ const Routine = () => {
                         {/* Month navigation */}
                         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
                             <Button
+                                variant="outlined"
                                 onClick={handlePreviousMonth}
                                 sx={{
                                     minWidth: '40px',
                                     height: '40px',
                                     p: 0,
+                                    backgroundColor: 'transparent',
                                     borderRadius: '8px',
                                     border: '1px solid #D1D5DB',
                                     color: "#4B5563"
@@ -339,11 +319,13 @@ const Routine = () => {
                             </Button>
                             <Typography variant="h6" sx={{ fontWeight: 600 }}>{getMonthYear()}</Typography>
                             <Button
+                                variant="outlined"
                                 onClick={handleNextMonth}
                                 sx={{
                                     minWidth: '40px',
                                     height: '40px',
                                     p: 0,
+                                    backgroundColor: 'transparent',
                                     borderRadius: '8px',
                                     border: '1px solid #D1D5DB',
                                     color: "#4B5563"

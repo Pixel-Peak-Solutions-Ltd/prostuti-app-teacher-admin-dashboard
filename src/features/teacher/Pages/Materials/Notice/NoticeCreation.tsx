@@ -16,6 +16,7 @@ import {
     useUpdateNoticeMutation
 } from "../../../../../redux/features/materials/materialsApi";
 import DeleteOutlinedIcon from "@mui/icons-material/DeleteOutlined";
+import EditRequestButton from "../../../../../shared/components/EditRequestButton";
 
 const NoticeCreation = () => {
     const navigate = useNavigate();
@@ -162,7 +163,8 @@ const NoticeCreation = () => {
                             </Link>
                             <Typography variant="h3">Notice</Typography>
                         </Box>
-
+                        {/* edit request button for admin */}
+                        {isEditing && <EditRequestButton resourceType="Notice" />}
                         {
                             isEditing && (
                                 <Button
@@ -176,7 +178,7 @@ const NoticeCreation = () => {
                         }
                         {/* continue button */}
                         {/* <Link to='/teacher/create-course/add-course-lessons'> */}
-                        {
+                        {/* {
                             !isEditing && (
                                 <Button
                                     // onClick={handleContinue}
@@ -185,7 +187,7 @@ const NoticeCreation = () => {
                                     Continue <ChevronRightIcon />
                                 </Button>
                             )
-                        }
+                        } */}
 
                         {/* </Link> */}
                     </Box>

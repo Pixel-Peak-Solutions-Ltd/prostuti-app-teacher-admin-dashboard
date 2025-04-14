@@ -22,7 +22,9 @@ import RevenueManagementIcon from '../../../assets/Dashboard-SVGs/revenueManagem
 import ReportComplianceIcon from '../../../assets/Dashboard-SVGs/reportCompliance.svg?react';
 import { useAppDispatch } from '../../../redux/hooks';
 import { logout } from '../../../redux/features/auth/authSlice';
-import Coupon from '../../../features/admin/Pages/Coupon/Coupon';
+import NotificationIcon from '../NotificationIcon';
+import NotificationDrawer from '../NotificationDrawer';
+import AdminDashboard from '../../../features/admin/Pages/AdminDashboard/AdminDashboard';
 
 const drawerWidth = 265;
 const adminDashboardMenus = [
@@ -87,8 +89,27 @@ export const AdminLayout = () => {
       <CssBaseline />
       <AppBar
         position="fixed"
-        sx={{ width: `calc(100% - ${drawerWidth}px)`, ml: `${drawerWidth}px` }}
-      ></AppBar>
+        elevation={0}
+        sx={{
+          width: `calc(100% - ${drawerWidth}px)`,
+          ml: `${drawerWidth}px`,
+          backgroundColor: 'transparent',
+          backdropFilter: 'blur(5px)',
+          borderBottom: '1px solid rgba(230, 230, 230, 0.5)'
+        }}
+      >
+        <Toolbar
+          variant="dense"
+          sx={{
+            justifyContent: 'flex-end',
+            minHeight: '48px',
+            padding: '0 16px'
+          }}
+        >
+          {/* Add notification icon to toolbar */}
+          <NotificationIcon />
+        </Toolbar>
+      </AppBar>
       {/* sidebar starts */}
       <Drawer
         sx={{
@@ -179,9 +200,12 @@ export const AdminLayout = () => {
       >
         <Toolbar sx={{ zIndex: -3 }} />
         {/* sidebar menu main content will show here */}
-        {location.pathname === '/admin' ? <Welcome /> : <Outlet />}
+        {location.pathname === '/admin' ? <AdminDashboard /> : <Outlet />}
       </Box>
       {/* main content ends */}
+
+      {/* Notification drawer */}
+      <NotificationDrawer />
     </Box>
   );
 };

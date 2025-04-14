@@ -21,6 +21,10 @@ import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import LinearWithValueLabel from "../../../../../shared/components/ProgessBar";
 import MP4 from '../../../../../assets/images/MP4-icon.png';
 import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
+import EditRequestButton from "../../../../../shared/components/EditRequestButton";
+import { TUser } from "../../../../../types/types";
+import { RootState } from "../../../../../redux/store";
+import { usePreviousPath } from "../../../../../lib/Providers/NavigationProvider";
 
 const StyledDatePicker = styled(DatePicker)({
     width: '100%',
@@ -42,7 +46,11 @@ const VisuallyHiddenInput = styled('input')({
     width: 1,
 });
 const RecordClass = () => {
+    // to know the previous path
+    const { previousPath } = usePreviousPath();
     const navigate = useNavigate();
+    const user = useAppSelector((state: RootState) => state.auth.user as TUser);
+    const isAdmin = user.role === 'admin' ? true : false;
     // record class id while updating
     const { recordId } = useParams();
     // checking if user coming form course preview page
@@ -244,14 +252,18 @@ const RecordClass = () => {
                     <Box component="section" sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
                         {/* back button and title */}
                         <Box component="section" sx={{ display: 'flex', gap: '20px' }}>
-                            <Link to={isEditing ? "/teacher/record-class-list" : "/teacher/create-course/add-course-material"}>
-                                <Button variant='outlined' sx={{ width: '36px', height: '36px', minWidth: '36px', borderRadius: '8px', borderColor: "grey.700", color: "#3F3F46" }}>
-                                    <ArrowBackIcon fontSize='small' />
-                                </Button>
-                            </Link>
+                            {/* <Link to={isEditing ? "/teacher/record-class-list" : "/teacher/create-course/add-course-material"}> */}
+                            <Button variant='outlined' sx={{ width: '36px', height: '36px', minWidth: '36px', borderRadius: '8px', borderColor: "grey.700", color: "#3F3F46" }}
+                                onClick={() => navigate(previousPath || "/")}
+                            >
+                                <ArrowBackIcon fontSize='small' />
+                            </Button>
+                            {/* </Link> */}
                             <Typography variant='h3'>{isEditing ? `Update Record Class` : `Record Class Creation`}</Typography>
                         </Box>
-                        {
+                        {/* action buttons */}
+                        {user.role === 'admin' && <EditRequestButton resourceType="RecordedClass" />}
+                        {/* {
                             isEditing && (
                                 <Button
                                     onClick={handleRecordClassDelete}
@@ -261,10 +273,10 @@ const RecordClass = () => {
                                     Delete
                                 </Button>
                             )
-                        }
+                        } */}
                         {/* continue button */}
                         {/* <Link to='/teacher/create-course/create-lessons'> */}
-                        {
+                        {/* {
                             !isEditing && (
                                 <Button
                                     // onClick={handleContinue}
@@ -273,7 +285,7 @@ const RecordClass = () => {
                                     Continue <ChevronRightIcon />
                                 </Button>
                             )
-                        }
+                        } */}
                         {/* </Link> */}
                     </Box>
                     {/* form section starts here */}
@@ -304,6 +316,7 @@ const RecordClass = () => {
                                                         value={recordDetails?.lessonName}
                                                         // placeholder={}
                                                         required
+                                                        disabled={isAdmin}
                                                     />
                                                 </Grid>
                                             )}
@@ -317,6 +330,7 @@ const RecordClass = () => {
                                                     value={recordDetails?.recodeClassName || ''}
                                                     placeholder={isEditing ? recodeClassName : "Enter Record Class Name"}
                                                     required={isEditing ? false : true}
+                                                    disabled={isAdmin}
                                                 />
                                             </Grid>
                                             {/* date picker */}
@@ -326,7 +340,9 @@ const RecordClass = () => {
                                                     {/* <DatePicker sx={{ width: '100%', height: '40px', borderRadius: "10px" }} /> */}
                                                     <StyledDatePicker
                                                         value={recordDetails?.classDate ? dayjs(recordDetails.classDate) : null}
-                                                        onChange={handleDateChange} />
+                                                        onChange={handleDateChange}
+                                                        disabled={isAdmin}
+                                                    />
                                                 </LocalizationProvider>
                                             </Grid>
                                             {/* 3rd row */}
@@ -338,6 +354,7 @@ const RecordClass = () => {
                                                     handleInput={handleRecordDetailsInput}
                                                     value={recordDetails?.classDetails || ''}
                                                     required={isEditing ? false : true}
+                                                    disabled={isAdmin}
                                                 />
                                             </Grid>
                                             {/* 3rd row --> update row */}
@@ -410,6 +427,7 @@ const RecordClass = () => {
 
                                                                                 <IconButton
                                                                                     onClick={() => handleDeleteFile(index)}
+                                                                                    disabled={isAdmin}
                                                                                 >
                                                                                     <DeleteForeverIcon />
                                                                                 </IconButton>
@@ -440,6 +458,7 @@ const RecordClass = () => {
                                                     <Box>
                                                         {/* new image upload button */}
                                                         <Button component="label"
+                                                            disabled={isAdmin}
                                                             size="small"
                                                             variant="text"
                                                             tabIndex={-1}
@@ -478,6 +497,7 @@ const RecordClass = () => {
                                         {/* upload button */}
                                         <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: "20px", mt: 3 }}>
                                             <Button
+                                                disabled={isAdmin}
                                                 type='submit'
                                                 variant='contained'
                                                 size='small'

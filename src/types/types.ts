@@ -27,6 +27,10 @@ export interface TLoginError {
     status: number;
     data: TErrorData;
 }
+export interface TNetworkError {
+    error: string;
+    status: string;
+}
 
 export interface ICategory {
     subject: string;

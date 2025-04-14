@@ -8,9 +8,11 @@ import Loader from '../../../../../shared/components/Loader';
 import Grid from '@mui/material/Grid2';
 import test_icon from '../../../../../assets/images/test-icon.png';
 import { saveTestStore } from '../../../../../redux/features/course/courseSlice';
+import { RootState } from '../../../../../redux/store';
+import { TUser } from '../../../../../types/types';
 
 const TestList = () => {
-
+    const user = useAppSelector((state: RootState) => state.auth.user as TUser);
     const courseId = useAppSelector((state) => state.courseAndLessonId.id.course_id);
     const { data: courseData, isLoading } = useGetCoursePreviewQuery({ courseId });
     // setting the data to local redux store
@@ -21,6 +23,8 @@ const TestList = () => {
     }
 
     const lessons = courseData?.data.lessons;
+    const adminPath = `/admin/course-preview/${courseId}`;
+    const teacherPath = `/teacher/course-preview/${courseId}`;
 
     return (
         <>
@@ -30,7 +34,7 @@ const TestList = () => {
                     sx={{ display: 'flex', gap: '20px', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
                     {/* back button and title */}
                     <Box component="section" sx={{ display: 'flex', gap: '20px' }}>
-                        <Link to={`/teacher/course-preview/${courseId}`}>
+                        <Link to={user.role === 'admin' ? adminPath : teacherPath}>
                             <Button variant="outlined" sx={{
                                 width: '36px',
                                 height: '36px',
@@ -68,7 +72,7 @@ const TestList = () => {
                                                 lesson?.tests.length > 0 && (
                                                     <Box>
                                                         {lesson?.tests.map((test, index) => (
-                                                            <Link to={`/teacher/test-update/${test?._id}`}
+                                                            <Link to={user.role === 'admin' ? `/admin/test-update/${test?._id}` : `/teacher/test-update/${test?._id}`}
                                                                 style={{ textDecoration: "none" }}>
                                                                 <Card variant="outlined"
                                                                     sx={{

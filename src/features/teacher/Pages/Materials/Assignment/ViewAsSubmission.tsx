@@ -11,6 +11,7 @@ import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import dayjs from "dayjs";
 import PDF from '../../../../../assets/images/PDF.png';
 import FileDownloadOutlinedIcon from '@mui/icons-material/FileDownloadOutlined';
+import { downloadFile } from "../../../../../utils/FileDownload";
 
 const StyledDatePicker = styled(DatePicker)({
     width: '100%',
@@ -26,51 +27,6 @@ const ViewAsSubmission = () => {
     // console.log('selected assignment data: ' + assignmentData.history);
     const { assignmentHistoryId } = useParams();
     const fileName = assignmentData?.uploadFileResource?.originalName;
-    // download pdf
-    const downloadAssignment = () => {
-        // Checking if uploadFileResource exists and has a valid URL
-        if (assignmentData?.uploadFileResource?.path) {
-            // Fetching the file
-            fetch(assignmentData.uploadFileResource.path)
-                .then(response => {
-                    // Checking if the response is ok
-                    if (!response.ok) {
-                        throw new Error('Network response was not ok');
-                    }
-                    // Getting the blob of the file
-                    return response.blob();
-                })
-                .then(blob => {
-                    // Creating a temporary link element to trigger download
-                    const link = document.createElement('a');
-
-                    // Creating a URL for the blob
-                    const url = window.URL.createObjectURL(blob);
-
-                    // Setting link attributes
-                    link.href = url;
-                    link.download = fileName || 'downloaded-file.pdf';
-
-                    // Appending to body, click, and remove
-                    document.body.appendChild(link);
-                    link.click();
-
-                    // finally cleaning up the temporary link element
-                    document.body.removeChild(link);
-                    window.URL.revokeObjectURL(url);
-                })
-                .catch(error => {
-                    console.error('Download failed:', error);
-                    // Optionally showing an error message to the user
-                    // You might want to use a toast or snackbar to show this
-                    alert('Failed to download the file. Please try again.');
-                });
-        } else {
-            // Handle case where file URL is not available
-            alert('No file available for download.');
-        }
-    };
-
     return (
         <>
             <Box sx={{ width: '100%', height: 'auto' }}>
@@ -185,7 +141,7 @@ const ViewAsSubmission = () => {
                                             </Typography>
                                         </Box>
                                         <IconButton
-                                            onClick={downloadAssignment}
+                                            onClick={() => downloadFile(assignmentData?.uploadFileResource?.path, fileName)}
                                         >
                                             <FileDownloadOutlinedIcon />
                                         </IconButton>
