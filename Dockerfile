@@ -15,8 +15,11 @@ WORKDIR /app
 # Copy package files first for better caching
 COPY package*.json ./
 
-# Install packages
-RUN npm ci || npm install
+# Install packages with platform handling
+RUN npm config set platform=linux --global && \
+    npm config set architecture=x64 --global && \
+    npm ci --no-optional --omit=dev --ignore-scripts || \
+    npm install --no-optional --omit=dev --ignore-scripts
 
 # Copy local code to the container image.
 COPY . ./
