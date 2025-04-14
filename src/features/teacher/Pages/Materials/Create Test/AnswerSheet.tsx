@@ -1,10 +1,12 @@
-import { Box, Button, Paper, Typography, styled } from "@mui/material";
+import { Box, Button, Card, Paper, Typography, styled, IconButton } from "@mui/material";
 import { CustomLabel, CustomTextField, useAppSelector, Link, Grid, ArrowBackIcon, Divider, LocalizationProvider, DatePicker, useParams } from '../Create Test';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import dayjs from "dayjs";
-
+import PDF from '../../../../../assets/images/PDF.png';
+import FileDownloadOutlinedIcon from '@mui/icons-material/FileDownloadOutlined';
+import { downloadFile } from "../../../../../utils/FileDownload";
 
 const StyledDatePicker = styled(DatePicker)({
     width: '100%',
@@ -199,7 +201,7 @@ const AnswerSheet = () => {
                                     testHistoryData.answers.map((answer, questionIndex) => {
                                         return (
                                             <>
-                                                <Grid size={12}>
+                                                <Grid size={10}>
                                                     <CustomLabel fieldName={`Question No ${questionIndex + 1}`} />
                                                     <CustomTextField
                                                         disabled={true}
@@ -208,8 +210,20 @@ const AnswerSheet = () => {
                                                         value={answer.question_id.title}
                                                     />
                                                 </Grid>
-                                                {
-                                                    answer.question_id.options.map((option, optionIndex) => (
+                                                <Grid size={2}>
+                                                    <CustomLabel fieldName={`Question No ${questionIndex + 1}`} />
+                                                    <CustomTextField
+                                                        disabled={true}
+                                                        name={`question${questionIndex}`}
+                                                        type="text"
+                                                        value={answer.question_id.title}
+                                                    // onClick={() => console.log(answer.question_id.title)}
+                                                    />
+                                                    {/* <Button size="small" variant="outlined">Give Marks</Button> */}
+                                                </Grid>
+                                                {/* for mcq test */}
+                                                {answer.question_id.options &&
+                                                    (answer.question_id?.options.map((option, optionIndex) => (
                                                         <Grid size={3} key={optionIndex}>
                                                             <CustomTextField
                                                                 disabled={true}
@@ -223,8 +237,40 @@ const AnswerSheet = () => {
                                                                 )}
                                                             />
                                                         </Grid>
-                                                    ))
+                                                    )))
                                                 }
+                                                {/* submitted answers */}
+                                                <Grid size={12} sx={{ zIndex: 3 }}>
+                                                    {
+                                                        answer.question_id?.image?.originalName ? (
+                                                            <Card variant="outlined"
+                                                                sx={{ display: "flex", alignItems: "center", justifyContent: 'space-between', gap: 2, mt: 0.8, px: 1.5, py: 0.8, borderRadius: 2 }}>
+                                                                <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
+                                                                    <img src={PDF}
+                                                                        style={{
+                                                                            width: '40px',
+                                                                            height: '40px'
+                                                                        }}
+                                                                    />
+                                                                    <Typography variant="subtitle1" color="grey.500">
+                                                                        {answer.question_id?.image?.originalName}
+                                                                    </Typography>
+                                                                </Box>
+                                                                <IconButton
+                                                                    onClick={() => downloadFile(answer.question_id?.image?.path, answer.question_id?.image?.originalName)}
+                                                                >
+                                                                    <FileDownloadOutlinedIcon />
+                                                                </IconButton>
+                                                            </Card>
+                                                        ) : (
+                                                            <Typography variant="subtitle1" color="grey.500">
+                                                                Not answered
+                                                            </Typography>
+                                                        )
+                                                    }
+
+                                                </Grid>
+                                                {/* for written test */}
                                                 {/* Add divider between questions */}
                                                 <Grid size={12} sx={{ mt: 2, mb: 2 }}>
                                                     <Divider />
