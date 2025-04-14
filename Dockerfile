@@ -1,6 +1,6 @@
 # Use the Node alpine official image
 # https://hub.docker.com/_/node
-FROM node:lts-alpine AS build
+FROM node:20.9.0-alpine
 
 # Set config
 ENV NPM_CONFIG_UPDATE_NOTIFIER=false
