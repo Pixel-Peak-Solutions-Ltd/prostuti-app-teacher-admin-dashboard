@@ -19,7 +19,7 @@ const StyledDatePicker = styled(DatePicker)({
 });
 
 const AnswerSheet = () => {
-    const test_id = useAppSelector(state => state.test_id.id.test_id);
+    // const test_id = useAppSelector(state => state.test_id.id.test_id);
     const [marking, setMarking] = useState<Record<string, string | number>>({});
     const { testHistoryId } = useParams();
     const testHistoryData = useAppSelector(state => state.test_id.testHistoryData.history);

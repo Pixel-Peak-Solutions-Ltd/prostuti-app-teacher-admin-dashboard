@@ -1,5 +1,5 @@
 import { Box, Button, Card, Divider, IconButton, Paper, styled, Typography } from "@mui/material";
-import { Link, useParams } from "react-router-dom";
+import { Link } from "react-router-dom";
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
@@ -25,7 +25,7 @@ const ViewAsSubmission = () => {
     const assignmentData = useAppSelector(state => state.test_id?.assignmentHistory?.history);
     console.log('selected assignment data', assignmentData);
     // console.log('selected assignment data: ' + assignmentData.history);
-    const { assignmentHistoryId } = useParams();
+    // const { assignmentHistoryId } = useParams();
     const fileName = assignmentData?.uploadFileResource?.originalName;
     return (
         <>

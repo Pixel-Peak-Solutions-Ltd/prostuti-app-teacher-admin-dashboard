@@ -4,8 +4,6 @@ import Grid from '@mui/material/Grid2';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
-import AutoFixHighIcon from '@mui/icons-material/AutoFixHigh';
-import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import { Link } from "react-router-dom";
 import { useGetCoursePreviewQuery } from "../../../../redux/features/course/courseApi";
 import { useAppSelector } from "../../../../redux/hooks";
@@ -38,7 +36,7 @@ const Routine = () => {
         const firstDayOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
 
         // Get the last day of the current month
-        const lastDayOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0);
+        // const lastDayOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0);
 
         // Get the first day of the first week (might be from previous month)
         const startDate = new Date(firstDayOfMonth);
@@ -181,7 +179,12 @@ const Routine = () => {
     };
 
     const formatDate = (date) => {
-        const options = { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' };
+        const options: Intl.DateTimeFormatOptions = {
+            weekday: 'long',
+            month: 'long',
+            day: 'numeric',
+            year: 'numeric'
+        };
         return date.toLocaleDateString('en-US', options);
     };
 
@@ -194,7 +197,10 @@ const Routine = () => {
 
     // Get the current month and year as a string
     const getMonthYear = () => {
-        const options = { month: 'long', year: 'numeric' };
+        const options: Intl.DateTimeFormatOptions = {
+            month: 'long',
+            year: 'numeric'
+        };
         return currentDate.toLocaleDateString('en-US', options);
     };
 

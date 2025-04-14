@@ -2,6 +2,7 @@ import { Box } from "@mui/material";
 import { Link } from "react-router-dom";
 import { useAppSelector } from "../Materials/Create Test";
 import { TUser } from "../../../../types/types";
+import { RootState } from "../../../../redux/store";
 
 const CourseCard = ({ course }: any) => {
     const user = useAppSelector((state: RootState) => state.auth.user as TUser);

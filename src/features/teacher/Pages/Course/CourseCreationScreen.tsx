@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import emptybox from '../../../../assets/images/empty_box.png';
 import { useAppSelector } from "../Materials/Create Test";
 import { TUser } from "../../../../types/types";
+import { RootState } from "../../../../redux/store";
 
 const CourseCreationScreen = () => {
     const user = useAppSelector((state: RootState) => state.auth.user as TUser);
