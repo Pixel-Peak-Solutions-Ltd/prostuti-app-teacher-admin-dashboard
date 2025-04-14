@@ -1,6 +1,6 @@
+# First stage: Build the React app
 # Use the Node alpine official image
-# https://hub.docker.com/_/node
-FROM node:20.9.0-alpine
+FROM node:20.9.0-alpine AS build
 
 # Set config
 ENV NPM_CONFIG_UPDATE_NOTIFIER=false
@@ -21,8 +21,8 @@ COPY . ./
 # Build the app.
 RUN npm run build
 
-# Use the Caddy image
-FROM caddy
+# Second stage: Serve with Caddy
+FROM caddy:2.7.5-alpine
 
 # Create and change to the app directory.
 WORKDIR /app
@@ -30,10 +30,10 @@ WORKDIR /app
 # Copy Caddyfile to the container image.
 COPY Caddyfile ./
 
-# Copy local code to the container image.
+# Format the Caddyfile
 RUN caddy fmt Caddyfile --overwrite
 
-# Copy files to the container image.
+# Copy build files from the first stage
 COPY --from=build /app/dist ./dist
 
 # Use Caddy to run/serve the app
