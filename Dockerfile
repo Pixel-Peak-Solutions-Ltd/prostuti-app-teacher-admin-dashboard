@@ -1,31 +1,27 @@
 # First stage: Build the React app
-# Use a full Node image (not Alpine) to avoid dependency issues
-FROM node:20-slim AS build
+FROM node:20 AS build
 
 # Set config
 ENV NPM_CONFIG_UPDATE_NOTIFIER=false
 ENV NPM_CONFIG_FUND=false
-ENV NODE_ENV=production
-
-# Install build dependencies
-RUN apt-get update && apt-get install -y \
-    python3 \
-    build-essential \
-    git \
-    && rm -rf /var/lib/apt/lists/*
 
 # Create and change to the app directory
 WORKDIR /app
 
-# Copy only the necessary files for npm install
-COPY package.json ./
+# Copy package.json and package-lock.json
+COPY package*.json ./
 
-# Install production dependencies only, with fallbacks
-RUN npm install --only=production --force || \
-    npm install --production=false --force
+# Remove the platform-specific dependency causing issues
+RUN npm pkg delete dependencies."@rollup/rollup-darwin-arm64"
+
+# Install all dependencies (including dev dependencies needed for build)
+RUN npm install
 
 # Copy local code to the container image
 COPY . ./
+
+# Make TypeScript available globally
+RUN npm install -g typescript
 
 # Build the app
 RUN npm run build
