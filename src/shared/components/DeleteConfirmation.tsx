@@ -10,7 +10,7 @@ type PropTypes = {
     handleDeleteClose: () => void;
     open: boolean;
     id: string;
-    type: string;
+    type?: string;
 };
 
 const CustomBackdrop = (props: any) => {
