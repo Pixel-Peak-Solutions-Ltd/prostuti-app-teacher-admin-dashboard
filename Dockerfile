@@ -1,39 +1,42 @@
 # First stage: Build the React app
-# Use the Node alpine official image
-FROM node:20.9.0-alpine AS build
+# Use a full Node image (not Alpine) to avoid dependency issues
+FROM node:20-slim AS build
 
 # Set config
 ENV NPM_CONFIG_UPDATE_NOTIFIER=false
 ENV NPM_CONFIG_FUND=false
+ENV NODE_ENV=production
 
 # Install build dependencies
-RUN apk add --no-cache python3 make g++ git
+RUN apt-get update && apt-get install -y \
+    python3 \
+    build-essential \
+    git \
+    && rm -rf /var/lib/apt/lists/*
 
-# Create and change to the app directory.
+# Create and change to the app directory
 WORKDIR /app
 
-# Copy package files first for better caching
-COPY package*.json ./
+# Copy only the necessary files for npm install
+COPY package.json ./
 
-# Install packages with platform handling
-RUN npm config set platform=linux --global && \
-    npm config set architecture=x64 --global && \
-    npm ci --no-optional --omit=dev --ignore-scripts || \
-    npm install --no-optional --omit=dev --ignore-scripts
+# Install production dependencies only, with fallbacks
+RUN npm install --only=production --force || \
+    npm install --production=false --force
 
-# Copy local code to the container image.
+# Copy local code to the container image
 COPY . ./
 
-# Build the app.
+# Build the app
 RUN npm run build
 
 # Second stage: Serve with Caddy
-FROM caddy:2.7.5-alpine
+FROM caddy:2.7.5
 
-# Create and change to the app directory.
+# Create and change to the app directory
 WORKDIR /app
 
-# Copy Caddyfile to the container image.
+# Copy Caddyfile to the container image
 COPY Caddyfile ./
 
 # Format the Caddyfile
