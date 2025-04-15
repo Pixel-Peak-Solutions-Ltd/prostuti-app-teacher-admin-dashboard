@@ -23,6 +23,7 @@ const AnswerSheet = () => {
     const [marking, setMarking] = useState<Record<string, string | number>>({});
     const { testHistoryId } = useParams();
     const testHistoryData = useAppSelector(state => state.test_id.testHistoryData.history);
+    console.log("testHistoryData", testHistoryData);
     const [submitWrittenTestMarks, { isLoading, isSuccess, isError }] = useSubmitWrittenTestMarksMutation();
     const [showAlert, setShowAlert] = useState(false);
     const [alertMessage, setAlertMessage] = useState({ type: 'success', message: '' });
@@ -227,7 +228,7 @@ const AnswerSheet = () => {
                                         disabled={true}
                                         name="correctAnswer"
                                         type="text"
-                                        value={testHistoryData.rightScore}
+                                        value={String(testHistoryData.rightScore)}
                                     />
                                 </Grid>
                                 {/* incorrect count */}
@@ -237,7 +238,7 @@ const AnswerSheet = () => {
                                         disabled={true}
                                         name="correctAnswer"
                                         type="text"
-                                        value={testHistoryData.wrongScore}
+                                        value={String(testHistoryData.wrongScore)}
                                     />
                                 </Grid>
                                 {/* skip */}
@@ -247,7 +248,7 @@ const AnswerSheet = () => {
                                         disabled={true}
                                         name="totalScore"
                                         type="text"
-                                        value={testHistoryData.totalScore}
+                                        value={String(testHistoryData.totalScore)}
                                     />
                                 </Grid>
                                 {/* total score */}
@@ -257,7 +258,7 @@ const AnswerSheet = () => {
                                         disabled={true}
                                         name="finalScore"
                                         type="text"
-                                        value={testHistoryData.score}
+                                        value={String(testHistoryData.score)}
                                     />
                                 </Grid>
                                 {/* divider after each question */}
@@ -328,18 +329,21 @@ const AnswerSheet = () => {
                                                     {
                                                         answer.question_id?.image?.originalName ? (
                                                             <Card variant="outlined"
-                                                                sx={{ display: "flex", alignItems: "center", justifyContent: 'space-between', gap: 2, mt: 0.8, px: 1.5, py: 0.8, borderRadius: 2 }}>
+                                                                sx={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: 'space-evenly', gap: 2, mt: 0.8, px: 1.5, py: 2, borderRadius: 2 }}>
                                                                 <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
-                                                                    <img src={PDF}
+                                                                    <img src={answer.question_id?.image?.path}
                                                                         style={{
-                                                                            width: '40px',
-                                                                            height: '40px'
+                                                                            borderRadius: "8px",
+                                                                            objectFit: 'cover',
+                                                                            width: '100%',
+                                                                            height: '340px'
                                                                         }}
                                                                     />
-                                                                    <Typography variant="subtitle1" color="grey.500">
-                                                                        {answer.question_id?.image?.originalName}
-                                                                    </Typography>
+
                                                                 </Box>
+                                                                <Typography variant="h6" color="grey.500">
+                                                                    {answer.question_id?.image?.originalName}
+                                                                </Typography>
                                                                 <IconButton
                                                                     onClick={() => downloadFile(answer.question_id?.image?.path, answer.question_id?.image?.originalName)}
                                                                 >
