@@ -3,7 +3,6 @@ import { CustomLabel, CustomTextField, useAppSelector, Link, Grid, ArrowBackIcon
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import dayjs from "dayjs";
-import PDF from '../../../../../assets/images/PDF.png';
 import FileDownloadOutlinedIcon from '@mui/icons-material/FileDownloadOutlined';
 import { downloadFile } from "../../../../../utils/FileDownload";
 import { useState, useEffect } from "react";
