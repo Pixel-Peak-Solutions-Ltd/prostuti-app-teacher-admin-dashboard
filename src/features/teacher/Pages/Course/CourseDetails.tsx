@@ -285,9 +285,6 @@ const CourseDetails = forwardRef<{ submitForm: () => void; }, CourseDetailsProps
         setCourseDetails({
             name: "",
             details: "",
-            isPending: true,
-            isPublished: false,
-            teacher_id: "",
         });
         navigate('/teacher/create-course/create-lessons');
         setActiveSteps?.(prevStep => prevStep + 1);

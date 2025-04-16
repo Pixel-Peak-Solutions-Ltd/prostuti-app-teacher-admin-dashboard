@@ -1,4 +1,4 @@
-import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import {
     useApproveCourseStatusMutation,
     useDeleteCourseMutation,
@@ -107,6 +107,9 @@ const CoursePreview = ({ course_id: propCourseId, hideBackButton = false }: Cour
         setPriceType(e.target.value);
     };
 
+    const navigateToLesson = (e: React.MouseEvent) => {
+        navigate('/teacher/create-lessons');
+    };
     // Handle price change
     const handlePriceChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setPrice(e.target.value);
@@ -296,7 +299,16 @@ const CoursePreview = ({ course_id: propCourseId, hideBackButton = false }: Cour
                 <Box>
                     <Typography variant="h6" sx={{ fontWeight: "600", fontSize: "20px", mt: 3 }}>Course Modules</Typography>
                     <Paper variant="outlined" sx={{ mt: 3, p: 3.5, borderRadius: 2 }}>
-                        <Typography variant="h6" sx={{ fontWeight: "600" }}>Lessons</Typography>
+                        <Grid sx={{ display: 'flex', justifyContent: 'space-between', alignContent: 'center' }}>
+                            <Typography variant="h6" sx={{ fontWeight: "600" }}>Lessons</Typography>
+                            <Button
+                                onClick={navigateToLesson}
+                                variant='outlined'
+                                size="small"
+                                sx={{ width: 'auto', height: '36px', minWidth: '36px', borderRadius: '8px', borderColor: "grey.700" }}>
+                                Add New Lesson
+                            </Button>
+                        </Grid>
                         <Grid container spacing={2} sx={{ mt: 3, }}>
                             {lessons && lessons.map((lesson) => (
                                 <Grid size={12} key={lesson._id || lesson.number}>
