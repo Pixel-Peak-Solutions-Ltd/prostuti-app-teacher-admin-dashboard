@@ -1,7 +1,6 @@
 import { Box, Button, Card, IconButton, Paper, SnackbarCloseReason, Typography, styled } from "@mui/material";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import Grid from '@mui/material/Grid2';
 import CustomAutoComplete from "../../../../../shared/components/CustomAutoComplete";
 import CustomLabel from "../../../../../shared/components/CustomLabel";
@@ -25,7 +24,6 @@ import {
     useUpdateResourceMutation
 } from "../../../../../redux/features/materials/materialsApi";
 import Alert from "../../../../../shared/components/Alert";
-import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
 import EditRequestButton from "../../../../../shared/components/EditRequestButton";
 import { TUser } from "../../../../../types/types";
 import { RootState } from "../../../../../redux/store";
@@ -103,7 +101,7 @@ const ResourcesCreation = () => {
         return (<Loader />);
     }
 
-    const { name, uploadFileResources = [] } = resourceData?.data || {};
+    const { uploadFileResources = [] } = resourceData?.data || {};
 
     const filteredUploadFileResources = uploadFileResources.filter(
         (resource) => !cancelledResource.includes(resource)
@@ -280,17 +278,6 @@ const ResourcesCreation = () => {
                         } */}
                         {/* continue button */}
                         {/* <Link to='/teacher/create-course/add-course-lessons'> */}
-                        {
-                            !isEditing && (
-                                <Button
-                                    // onClick={handleContinue}
-                                    variant="contained"
-                                    sx={{ borderRadius: '8px', width: '140px', height: '48px' }}>
-                                    Continue <ChevronRightIcon />
-                                </Button>
-                            )
-                        }
-
                         {/* </Link> */}
                     </Box>
                     {/* form section starts here */}

@@ -86,6 +86,10 @@ export const teacherRoutes = [
         path: 'course-preview/:courseId',
         element: <CoursePreview />
     },
+    {
+        path: 'create-lessons',
+        element: <CreateLessons />
+    },
 
     // course update routes
     {
