@@ -33,7 +33,7 @@ const CoursePreviewInCreateFlow = () => {
     // Pass the courseId parameter and hide the back button
     return (
         <div key={course_id}>
-            <CoursePreview courseId={course_id} hideBackButton={true} />
+            <CoursePreview course_id={course_id} hideBackButton={true} />
         </div>
     );
 };

@@ -24,6 +24,9 @@ const CreateLessons = () => {
     const [lessonData, setLessonData] = useState<Record<string, string>>({});
     // Track if lessons have been saved
     const [lessonsSaved, setLessonsSaved] = useState(false);
+    // error state
+    const [errors, setErrors] = useState<{ [key: string]: string[]; }>({});
+
     // Snackbar state
     const [snackbar, setSnackbar] = useState({
         open: false,
@@ -55,7 +58,11 @@ const CreateLessons = () => {
     const handleLessonInput = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
         setLessonData((prevState) => ({ ...prevState, [name]: value }));
-        // Reset lessonsSaved flag when user makes changes
+        // Clearing field-specific error when user types
+        if (errors[name]) {
+            setErrors((prev) => ({ ...prev, [name]: [] }));
+        }
+        // Resetting lessonsSaved flag when user makes changes
         if (lessonsSaved) {
             setLessonsSaved(false);
         }
@@ -116,13 +123,39 @@ const CreateLessons = () => {
                 severity: 'success'
             });
         } catch (err) {
-            setError(err);
-            setSnackbar({
-                open: true,
-                message: 'Failed to save lessons',
-                severity: 'error'
-            });
             console.log('error captured in lesson submit', err);
+            // Resetting previous errors
+            setError({});
+            const errorMap: { [key: string]: string[]; } = {};
+            const errorMsgs: string[] = [];
+            const errorSources = err?.data?.errorSources;
+            if (errorSources && Array.isArray(errorSources)) {
+                errorSources.forEach((source: { path: string, message: string; }) => {
+                    // Assign same error to all dynamic fields that start with the same base key
+                    Object.keys(lessonData).forEach((key) => {
+                        if (key.startsWith(source.path)) {
+                            if (!errorMap[key]) errorMap[key] = [];
+                            errorMap[key].push(source.message);
+                        }
+                    });
+                    errorMsgs.push(source.message);
+                });
+
+                setErrors(errorMap);
+
+                setSnackbar({
+                    open: true,
+                    message: errorMsgs.join(', '),
+                    severity: 'error'
+                });
+            } else {
+                // fallback
+                setSnackbar({
+                    open: true,
+                    message: 'Failed to save lessons',
+                    severity: 'error'
+                });
+            }
         }
     };
 
@@ -180,27 +213,31 @@ const CreateLessons = () => {
                     {/* once isCreateLessons is true */}
                     {isCreateLessons && (
                         <>
-                            <Box sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', gap: 3, alignItems: 'center', py: 1, borderRadius: 4, mb: 2 }}>
+                            {/* <Box sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', gap: 3, alignItems: 'center', py: 1, borderRadius: 4, mb: 2 }}>
                                 <Typography variant="h6">{`Lesson number must be in the format "Lesson 1", "Lesson 2", etc.`}</Typography>
-                            </Box>
+                            </Box> */}
                             <form onSubmit={handleSubmit}>
                                 {Array.from(Array(noOfLessonForms)).map((item, index) => (
                                     <Grid container spacing={4} key={index}>
                                         <Grid size={3}>
-                                            <CustomLabel fieldName={`Lesson Number`} />
+                                            <CustomLabel fieldName={`Lesson Number*`} />
                                             <CustomTextField
                                                 name={`number_${index + 1}`}
                                                 handleInput={handleLessonInput}
                                                 value={lessonData[`number_${index + 1}`] || ''}
+                                                error={Array.isArray(errors[`name_${index + 1}`]) && errors[`name_${index + 1}`].length > 0}
+                                                helperText={errors[`number_${index + 1}`]?.join(' ')}
                                                 required
                                             />
                                         </Grid>
                                         <Grid size={8}>
-                                            <CustomLabel fieldName={`Lesson Name`} />
+                                            <CustomLabel fieldName={`Lesson Name*`} />
                                             <CustomTextField
                                                 name={`name_${index + 1}`}
                                                 handleInput={handleLessonInput}
                                                 value={lessonData[`name_${index + 1}`] || ''}
+                                                error={Array.isArray(errors[`name_${index + 1}`]) && errors[`name_${index + 1}`].length > 0}
+                                                helperText={errors[`name_${index + 1}`]?.join(' ')}
                                                 required
                                             />
                                         </Grid>

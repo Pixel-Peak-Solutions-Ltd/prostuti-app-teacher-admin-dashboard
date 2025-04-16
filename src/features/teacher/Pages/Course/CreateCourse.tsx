@@ -139,6 +139,9 @@ const CreateCourse = () => {
         return '/teacher/my-course';
     };
 
+    const handleGotoCourse = () => {
+        navigate('/teacher/my-course');
+    };
     // Handle snackbar close
     const handleSnackbarClose = () => {
         setSnackbarOpen(false);
@@ -180,9 +183,10 @@ const CreateCourse = () => {
                     {/* publish button for preview */}
                     {activeSteps === 3 && (
                         <Button
+                            onClick={handleGotoCourse}
                             variant='contained'
-                            sx={{ borderRadius: '8px', width: '140px', height: '48px' }}>
-                            Publish <ChevronRightIcon />
+                            sx={{ borderRadius: '8px', width: 'auto', height: '48px' }}>
+                            Go to courses <ChevronRightIcon />
                         </Button>
                     )}
                 </Box>

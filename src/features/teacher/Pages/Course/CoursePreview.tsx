@@ -1,4 +1,4 @@
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
 import {
     useApproveCourseStatusMutation,
     useDeleteCourseMutation,
@@ -24,19 +24,29 @@ import SuccessDialog from "../../../../shared/components/SuccessDialog";
 
 // Add props to accept courseId directly and control back button visibility
 interface CoursePreviewProps {
-    courseId?: string;
+    course_id?: string;
     hideBackButton?: boolean;
 }
 
-const CoursePreview = ({ courseId: propCourseId, hideBackButton = false }: CoursePreviewProps) => {
+const CoursePreview = ({ course_id: propCourseId, hideBackButton = false }: CoursePreviewProps) => {
+    // Get course_id from Redux store to verify it exists for later steps
+    const course_id = useAppSelector(state => state.courseAndLessonId.id.course_id);
     const [successDialogOpen, setSuccessDialogOpen] = useState(false);
     const [formErrors, setFormErrors] = useState({ priceType: false, price: false });
     const navigate = useNavigate();
+    const location = useLocation();
+    const { hash, pathname, search } = location;
 
     // Get courseId from props or from URL params as fallback
-    const { courseId: paramCourseId } = useParams();
-    const courseId = propCourseId || paramCourseId;
+    // const { course_id: paramCourseId } = useParams();
+    // const courseId = propCourseId || paramCourseId;
 
+    const courseId = course_id;
+
+    // console.log('course id from wrapper', propCourseId);
+    // console.log('course id from param', paramCourseId);
+    console.log('current route', pathname);
+    const isFromCreateCourse = pathname === '/teacher/create-course/course-preview' ? true : false;
     const [fullText, setFullText] = useState<boolean>(false);
     const [priceType, setPriceType] = useState<string>("");
     const [price, setPrice] = useState<string>("");
@@ -152,7 +162,7 @@ const CoursePreview = ({ courseId: propCourseId, hideBackButton = false }: Cours
                 <Box component="section" sx={{ display: 'flex', gap: '20px', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
                     {/* back button and title - conditionally rendered */}
                     <Box component="section" sx={{ display: 'flex', gap: '20px' }}>
-                        {!hideBackButton && (
+                        {!isFromCreateCourse && (
                             <Link to={isAdmin ? `/admin/course-management` : `/teacher/my-course`}>
                                 <Button variant='outlined' sx={{ width: '36px', height: '36px', minWidth: '36px', borderRadius: '8px', borderColor: "grey.700", color: "#3F3F46" }}>
                                     <ArrowBackIcon fontSize='small' />

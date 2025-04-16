@@ -49,9 +49,9 @@ const CourseDetails = forwardRef<{ submitForm: () => void; }, CourseDetailsProps
     const [courseDetails, setCourseDetails] = useState({
         name: "",
         details: "",
-        isPending: true,
-        isPublished: false,
-        teacher_id: "",
+        // isPending: true,
+        // isPublished: false,
+        // teacher_id: "",
     });
 
     // category params state
@@ -311,6 +311,7 @@ const CourseDetails = forwardRef<{ submitForm: () => void; }, CourseDetailsProps
                                     value={courseDetails.name}
                                     error={!!errors.name?.length}
                                     helperText={errors.name?.join(' ')}
+                                    required
                                 />
                             </Grid>
                             {/* course category field */}
