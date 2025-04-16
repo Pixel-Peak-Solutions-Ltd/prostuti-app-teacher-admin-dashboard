@@ -1,4 +1,4 @@
-import { Box, Button, Card, Paper, styled, SnackbarCloseReason } from "@mui/material";
+import { Box, Button, Card, Paper, styled, Snackbar, Typography } from "@mui/material";
 import Grid from '@mui/material/Grid2';
 import CustomLabel from "../../../../shared/components/CustomLabel";
 import CustomTextField from "../../../../shared/components/CustomTextField";
@@ -10,9 +10,10 @@ import { useGetAllCategoryTypesQuery } from "../../../../redux/features/category
 import Loader from "../../../../shared/components/Loader";
 import { saveCourseIdToStore } from "../../../../redux/features/course/courseSlice";
 import { useGetCategoryForCourseQuery, useSaveCourseMutation } from "../../../../redux/features/course/courseApi";
-import Alert from "../../../../shared/components/Alert";
+// import Alert from "../../../../shared/components/Alert";
 import { useNavigate } from "react-router-dom";
 import { getUniqueStrings } from "../../../../utils/typeSafeUniqueArrays";
+import Alert from '@mui/material/Alert';
 // import { CourseState } from "../../../../types/types";
 
 type CourseDetailsProps = {
@@ -31,11 +32,15 @@ const VisuallyHiddenInput = styled('input')({
     width: 1,
 });
 const CourseDetails = forwardRef<{ submitForm: () => void; }, CourseDetailsProps>(({ setActiveSteps }, ref) => {
-    const [openSnackbar, setOpenSnackbar] = useState(false);
     // below state stores the selected image url
     const [tempCover, setTempCover] = useState('');
     // below state handles the selected image file and ready it to upload
     const [coverImg, setCoverUmg] = useState<File | null>(null);
+    const [errors, setErrors] = useState<{ [key: string]: string[]; }>({});
+    const [openErrorSnackbar, setOpenErrorSnackbar] = useState(false);
+    const [errorMessages, setErrorMessages] = useState<string[]>([]);
+
+
     // react router hook
     const navigate = useNavigate();
     //for error handling
@@ -105,16 +110,6 @@ const CourseDetails = forwardRef<{ submitForm: () => void; }, CourseDetailsProps
     const universityTypes = getUniqueStrings(categoryData?.data || [], 'universityType');
 
     const categoryId = categoryData?.data[0]?._id;
-    //~ close snackbar automatically
-    const handleCloseSnackbar = (
-        event: React.SyntheticEvent | Event,
-        reason?: SnackbarCloseReason
-    ) => {
-        if (reason === 'clickaway') {
-            return;
-        }
-        setOpenSnackbar(false);
-    };
 
     //^handling the cover image change
     const handleCoverChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -123,6 +118,11 @@ const CourseDetails = forwardRef<{ submitForm: () => void; }, CourseDetailsProps
             setTempCover(URL.createObjectURL(file));
             // Store the file separately for the form submission
             setCoverUmg(file);
+            // Clear validation error if exists
+            if (errors.coverImage) {
+                setErrors((prev) => ({ ...prev, coverImage: [] }));
+            }
+
         }
     };
 
@@ -130,58 +130,167 @@ const CourseDetails = forwardRef<{ submitForm: () => void; }, CourseDetailsProps
     const handleInput = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
         setCourseDetails((prevState) => ({ ...prevState, [name]: value }));
+        // Clear validation error if exists
+        if (errors[name]) {
+            setErrors((prev) => ({ ...prev, [name]: [] }));
+        }
     };
 
     const handleCategory = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
         setCategoryParams((prevState) => ({ ...prevState, [name]: value }));
+        // Clear validation error if exists
+        if (errors[e.target.name]) {
+            setErrors((prev) => ({ ...prev, [e.target.name]: [] }));
+        }
+
     };
 
+    // const handleSubmit = async (e?: React.FormEvent) => {
+    //     console.log('handleSubmit clicked');
+    //     e?.preventDefault();
+    //     // creating a formData variable
+    //     const courseData = new FormData();
+    //     // appending cover image to the courseData object
+    //     if (coverImg) courseData.append('coverImage', coverImg);
+    //     // ensure the teacher ID is added to courseDetails
+    //     const updatedCourseDetails = {
+    //         ...courseDetails,
+    //         // teacher_id: userId,
+    //         category_id: categoryId
+    //     };
+    //     // appending course details data to the courseDetails object
+    //     courseData.append('courseData', JSON.stringify(updatedCourseDetails));
+
+    //     // sending the course details to backend through redux toolkit
+    //     try {
+    //         const courseResponse = await saveCourse(courseData);
+    //         const course_id = courseResponse?.data.data?._id;
+    //         dispatch(saveCourseIdToStore({ course_id: course_id }));
+    //         // restoring previous category params
+    //         setCategoryParams({
+    //             category: '',
+    //             division: '',
+    //             subject: '',
+    //             chapter: '',
+    //             universityName: '',
+    //             universityType: '',
+    //         });
+    //         setCourseDetails({
+    //             name: "",
+    //             details: "",
+    //             isPending: true,
+    //             isPublished: false,
+    //             teacher_id: "",
+    //         });
+    //         //navigate user to the add lesson page once all the data has been saved
+    //         navigate('/teacher/create-course/create-lessons');
+    //         // checking whether setActiveSteps is available
+    //         setActiveSteps?.(prevStep => prevStep + 1);
+    //     } catch (err) {
+    //         console.log(err);
+    //         // Resetting previous errors
+    //         setErrors({});
+    //         // If it matches the error structure
+    //         if (err?.data?.errorSources) {
+    //             const errorMap: { [key: string]: string[]; } = {};
+    //             err.data.errorSources.forEach((source: { path: string, message: string; }) => {
+    //                 if (!errorMap[source.path]) {
+    //                     errorMap[source.path] = [];
+    //                 }
+    //                 errorMap[source.path].push(source.message);
+    //             });
+    //             setErrors(errorMap);
+    //         }
+    //     }
+    // };
+
     const handleSubmit = async (e?: React.FormEvent) => {
-        console.log('handleSubmit clicked');
         e?.preventDefault();
-        // creating a formData variable
+
+        // error handling start
+        const validationErrors: { [key: string]: string[]; } = {};
+        const snackbarMessages: string[] = [];
+
+        // Validate category
+        if (!categoryParams.category) {
+            validationErrors.category = ['Course category is required'];
+            snackbarMessages.push('Course category is required');
+        }
+
+        // Validate cover image
+        if (!coverImg) {
+            validationErrors.coverImage = ['Cover image is required'];
+            snackbarMessages.push('Cover image is required');
+        }
+
+        // If validation errors exist, stop submission
+        if (Object.keys(validationErrors).length > 0) {
+            setErrors(validationErrors);
+            setErrorMessages(snackbarMessages);
+            setOpenErrorSnackbar(true);
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            return;
+        }
+
+        // error handling end
         const courseData = new FormData();
-        // appending cover image to the courseData object
         if (coverImg) courseData.append('coverImage', coverImg);
-        // ensure the teacher ID is added to courseDetails
+
         const updatedCourseDetails = {
             ...courseDetails,
-            // teacher_id: userId,
             category_id: categoryId
         };
-        // appending course details data to the courseDetails object
         courseData.append('courseData', JSON.stringify(updatedCourseDetails));
 
-        // sending the course details to backend through redux toolkit
-        try {
-            const courseResponse = await saveCourse(courseData);
-            const course_id = courseResponse?.data.data?._id;
-            dispatch(saveCourseIdToStore({ course_id: course_id }));
-            // restoring previous category params
-            setCategoryParams({
-                category: '',
-                division: '',
-                subject: '',
-                chapter: '',
-                universityName: '',
-                universityType: '',
-            });
-            setCourseDetails({
-                name: "",
-                details: "",
-                isPending: true,
-                isPublished: false,
-                teacher_id: "",
-            });
-            //navigate user to the add lesson page once all the data has been saved
-            navigate('/teacher/create-course/create-lessons');
-            // checking whether setActiveSteps is available
-            setActiveSteps?.(prevStep => prevStep + 1);
-        } catch (err) {
-            console.log(err);
-            // setError(err);
+        // Reset previous errors
+        setErrors({});
+
+        const result = await saveCourse(courseData);
+
+        if ('error' in result) {
+            const errorSources =
+                'data' in result.error && typeof result.error.data === 'object' && result.error.data !== null
+                    ? (result.error.data as { errorSources?: { path: string; message: string; }[]; }).errorSources
+                    : undefined;
+            if (errorSources && Array.isArray(errorSources)) {
+                const errorMap: { [key: string]: string[]; } = {};
+                const allMessages: string[] = [];
+                errorSources.forEach((source: { path: string, message: string; }) => {
+                    if (!errorMap[source.path]) {
+                        errorMap[source.path] = [];
+                    }
+                    errorMap[source.path].push(source.message);
+                    allMessages.push(source.message); // collect for Snackbar
+                });
+                setErrors(errorMap);
+                setErrorMessages(allMessages);
+                setOpenErrorSnackbar(true);
+                // scroll to the top
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+            return;
         }
+
+        const course_id = result?.data?.data?._id;
+        dispatch(saveCourseIdToStore({ course_id }));
+        setCategoryParams({
+            category: '',
+            division: '',
+            subject: '',
+            chapter: '',
+            universityName: '',
+            universityType: '',
+        });
+        setCourseDetails({
+            name: "",
+            details: "",
+            isPending: true,
+            isPublished: false,
+            teacher_id: "",
+        });
+        navigate('/teacher/create-course/create-lessons');
+        setActiveSteps?.(prevStep => prevStep + 1);
     };
 
     console.log('All Category Params:', categoryQueryParams);
@@ -195,27 +304,33 @@ const CourseDetails = forwardRef<{ submitForm: () => void; }, CourseDetailsProps
                         <Grid container spacing={2}>
                             {/* course name field */}
                             <Grid size={6}>
-                                <CustomLabel fieldName="Course Name" />
+                                <CustomLabel fieldName="Course Name*" />
                                 <CustomTextField
-                                    name="name" handleInput={handleInput}
+                                    name="name"
+                                    handleInput={handleInput}
                                     value={courseDetails.name}
+                                    error={!!errors.name?.length}
+                                    helperText={errors.name?.join(' ')}
                                 />
                             </Grid>
                             {/* course category field */}
                             <Grid size={6}>
-                                <CustomLabel fieldName="Course Category" />
+                                <CustomLabel fieldName="Course Category*" />
                                 <CustomAutoComplete
                                     name='category'
                                     options={categoryTypes?.data || []}
                                     value={categoryParams.category}
-                                    handleInput={handleCategory} />
+                                    handleInput={handleCategory}
+                                    error={!!errors.category}
+                                    helperText={errors.category?.join(' ')}
+                                />
                             </Grid>
                             {/* 2nd row filter columns */}
                             {
                                 (categoryParams.category === 'Academic') && (
                                     <>
                                         <Grid size={4}>
-                                            <CustomLabel fieldName="Division" />
+                                            <CustomLabel fieldName="Division*" />
                                             <CustomAutoComplete
                                                 options={divisions || []}
                                                 name={`division`}
@@ -225,7 +340,7 @@ const CourseDetails = forwardRef<{ submitForm: () => void; }, CourseDetailsProps
                                             />
                                         </Grid>
                                         <Grid size={4}>
-                                            <CustomLabel fieldName="Subject" />
+                                            <CustomLabel fieldName="Subject*" />
                                             <CustomAutoComplete
                                                 options={subjects || []}
                                                 name={`subject`}
@@ -234,7 +349,7 @@ const CourseDetails = forwardRef<{ submitForm: () => void; }, CourseDetailsProps
                                                 required={true} />
                                         </Grid>
                                         <Grid size={4}>
-                                            <CustomLabel fieldName="Chapter" />
+                                            <CustomLabel fieldName="Chapter*" />
                                             <CustomAutoComplete
                                                 options={chapters || []}
                                                 name={`chapter`}
@@ -250,7 +365,7 @@ const CourseDetails = forwardRef<{ submitForm: () => void; }, CourseDetailsProps
                                 (categoryParams.category === 'Admission') && (
                                     <>
                                         <Grid size={4}>
-                                            <CustomLabel fieldName="University Type" />
+                                            <CustomLabel fieldName="University Type*" />
                                             <CustomAutoComplete
                                                 options={universityTypes || []}
                                                 name={`universityType`}
@@ -260,7 +375,7 @@ const CourseDetails = forwardRef<{ submitForm: () => void; }, CourseDetailsProps
                                             />
                                         </Grid>
                                         <Grid size={4}>
-                                            <CustomLabel fieldName="University Name" />
+                                            <CustomLabel fieldName="University Name*" />
                                             <CustomAutoComplete
                                                 options={universityNames || []}
                                                 name={`universityName`}
@@ -270,7 +385,7 @@ const CourseDetails = forwardRef<{ submitForm: () => void; }, CourseDetailsProps
                                             />
                                         </Grid>
                                         <Grid size={4}>
-                                            <CustomLabel fieldName="Subject" />
+                                            <CustomLabel fieldName="Subject*" />
                                             <CustomAutoComplete
                                                 options={subjects || []}
                                                 name={`subject`}
@@ -286,7 +401,7 @@ const CourseDetails = forwardRef<{ submitForm: () => void; }, CourseDetailsProps
                                 (categoryParams.category === 'Job') && (
                                     <>
                                         <Grid size={12}>
-                                            <CustomLabel fieldName="Subject" />
+                                            <CustomLabel fieldName="Subject*" />
                                             <CustomAutoComplete
                                                 options={subjects || []}
                                                 name={`subject`}
@@ -299,7 +414,7 @@ const CourseDetails = forwardRef<{ submitForm: () => void; }, CourseDetailsProps
                             }
                             {/* cover image upload button */}
                             <Grid size={12}>
-                                <CustomLabel fieldName="Upload Cover Image" />
+                                <CustomLabel fieldName="Upload Cover Image*" />
                                 <Card variant="outlined"
                                     sx={{ position: 'relative', height: '240px', mt: 0.8, px: 1.5, py: 0.8, borderRadius: 2 }}
                                 >
@@ -325,16 +440,25 @@ const CourseDetails = forwardRef<{ submitForm: () => void; }, CourseDetailsProps
                                         </Button>
                                     </Box>
                                 </Card>
+                                {/* for showing error message */}
+                                {errors.coverImage && (
+                                    <Typography variant="body2" color="error" sx={{ mt: 1 }}>
+                                        {errors.coverImage.join(' ')}
+                                    </Typography>
+                                )}
+
                             </Grid>
                             {/* course details */}
                             <Grid size={12}>
-                                <CustomLabel fieldName="Course Details" />
+                                <CustomLabel fieldName="Course Details*" />
                                 <CustomTextField
                                     name="details"
                                     multiline={true}
                                     rows={6}
                                     handleInput={handleInput}
                                     value={courseDetails.details}
+                                    error={!!errors.details?.length}
+                                    helperText={errors.details?.join(' ')}
                                 />
                             </Grid>
                         </Grid>
@@ -345,12 +469,22 @@ const CourseDetails = forwardRef<{ submitForm: () => void; }, CourseDetailsProps
                 </Paper>
             </Box>
             {/* showing alert for what happened after submitting the request */}
-            <Alert
-                openSnackbar={openSnackbar}
-                autoHideDuration={5000}
-                handleCloseSnackbar={handleCloseSnackbar}
-                isSuccess={isSuccess}
-            />
+            <Snackbar
+                open={openErrorSnackbar}
+                autoHideDuration={6000}
+                onClose={() => setOpenErrorSnackbar(false)}
+                anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+            >
+                <Alert
+                    severity="error"
+                    onClose={() => setOpenErrorSnackbar(false)}
+                    sx={{ width: '100%' }}
+                >
+                    {errorMessages.map((msg, i) => (
+                        <div key={i}>{msg}</div>
+                    ))}
+                </Alert>
+            </Snackbar>
         </>
     );
 });
