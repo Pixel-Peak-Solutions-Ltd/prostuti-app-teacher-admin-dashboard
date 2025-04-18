@@ -278,7 +278,7 @@ const CoursePreview = ({ course_id: propCourseId, hideBackButton = false }: Cour
                                 <Link to={`/${isAdmin ? 'admin' : 'teacher'}/${item.name.split(' ').join('-').toLowerCase()}-list`}
                                     style={{ textDecoration: 'none', color: '#3F3F46' }}>
                                     <Box>
-                                        <Paper variant="outlined" sx={{ width: '305px', height: '169px', display: 'flex', flexDirection: 'column', justifyContent: 'center', gap: 3, alignItems: 'center', py: 1, borderRadius: 4 }}>
+                                        <Paper variant="outlined" sx={{ minWidth: '340px', height: '170px', display: 'flex', flexDirection: 'column', justifyContent: 'center', gap: 3, alignItems: 'center', py: 1, borderRadius: 4 }}>
                                             <img src={item.logo} style={{ width: '80px', height: '80px' }} />
                                             <Typography variant="h5" sx={{
                                                 '&:hover': {

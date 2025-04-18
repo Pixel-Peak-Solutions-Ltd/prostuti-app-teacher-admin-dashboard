@@ -1,5 +1,5 @@
 import { Box, Button, Card, Paper, Typography } from '@mui/material';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import ArrowOutwardIcon from '@mui/icons-material/ArrowOutward';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { useAppDispatch, useAppSelector } from '../../../../../redux/hooks';
@@ -17,7 +17,7 @@ const TestList = () => {
     const { data: courseData, isLoading } = useGetCoursePreviewQuery({ courseId });
     // setting the data to local redux store
     const dispatch = useAppDispatch();
-
+    const navigate = useNavigate();
     if (isLoading) {
         <Loader />;
     }
@@ -48,8 +48,19 @@ const TestList = () => {
                         </Link>
                         <Typography variant="h3">Tests</Typography>
                     </Box>
-                    {/* continue button */}
-                    {/* </Link> */}
+                    {/* new material add option for teacher */}
+                    {
+                        user.role === 'teacher' && (
+                            <Box>
+                                <Button variant="contained"
+                                    onClick={() => navigate('/teacher/test-creation')}
+                                    sx={{ borderRadius: '8px' }}
+                                >
+                                    + Add New Test
+                                </Button>
+                            </Box>
+                        )
+                    }
                 </Box>
                 {/* loading state */}
                 {isLoading && (<Loader />)}
