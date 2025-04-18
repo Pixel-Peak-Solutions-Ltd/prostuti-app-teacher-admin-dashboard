@@ -4,7 +4,7 @@ import Loader from "../../../../../shared/components/Loader";
 import Grid from '@mui/material/Grid2';
 import ArrowOutwardIcon from '@mui/icons-material/ArrowOutward';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useGetNoticesOfACourseQuery } from "../../../../../redux/features/materials/materialsApi";
 import EventNoteIcon from '@mui/icons-material/EventNote';
 import { grey } from "@mui/material/colors";
@@ -14,6 +14,7 @@ const NoticeList = () => {
     const user = useAppSelector((state) => state.auth.user as TUser);
     const courseId = useAppSelector((state) => state.courseAndLessonId.id.course_id);
     const { data: noticeData, isLoading } = useGetNoticesOfACourseQuery({ courseId });
+    const navigate = useNavigate();
 
     if (isLoading) {
         <Loader />;
@@ -43,7 +44,19 @@ const NoticeList = () => {
                         </Link>
                         <Typography variant="h3">Notices</Typography>
                     </Box>
-                    {/* continue button */}
+                    {/* new material add option for teacher */}
+                    {
+                        user.role === 'teacher' && (
+                            <Box>
+                                <Button variant="contained"
+                                    onClick={() => navigate('/teacher/notice')}
+                                    sx={{ borderRadius: '8px' }}
+                                >
+                                    + Add New Notice
+                                </Button>
+                            </Box>
+                        )
+                    }
                     {/* </Link> */}
                 </Box>
                 {/* main list starts */}

@@ -5,9 +5,8 @@ import Loader from "../../../../../shared/components/Loader";
 import Grid from '@mui/material/Grid2';
 import ArrowOutwardIcon from '@mui/icons-material/ArrowOutward';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-import DriveFileRenameOutlineOutlinedIcon from '@mui/icons-material/DriveFileRenameOutlineOutlined';
 import assignment_icon from '../../../../../assets/images/assignment-icon.png';
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { saveAssignmentIdToStore } from "../../../../../redux/features/course/courseSlice";
 import { TUser } from "../../../../../types/types";
 import { RootState } from "../../../../../redux/store";
@@ -15,6 +14,7 @@ import { RootState } from "../../../../../redux/store";
 const AssignmentList = () => {
     const user = useAppSelector((state: RootState) => state.auth.user as TUser);
     const courseId = useAppSelector((state) => state.courseAndLessonId.id.course_id);
+    const navigate = useNavigate();
     const dispatch = useAppDispatch();
     const { data: courseData, isLoading } = useGetCoursePreviewQuery({ courseId });
 
@@ -39,15 +39,20 @@ const AssignmentList = () => {
                         </Link>
                         <Typography variant='h3'>Assignments</Typography>
                     </Box>
-                    {/* continue button */}
                     {/* <Link to='/teacher/create-course/add-course-lessons'> */}
-                    <Button
-                        // onClick={handleContinue}
-                        variant='contained'
-                        sx={{ borderRadius: '8px', width: '140px', height: '48px', gap: 1 }}>
-                        <DriveFileRenameOutlineOutlinedIcon fontSize='small' />
-                        Edit
-                    </Button>
+                    {/* new material add option for teacher */}
+                    {
+                        user.role === 'teacher' && (
+                            <Box>
+                                <Button variant="contained"
+                                    onClick={() => navigate('/teacher/assignment')}
+                                    sx={{ borderRadius: '8px' }}
+                                >
+                                    + Add New Assignment
+                                </Button>
+                            </Box>
+                        )
+                    }
                     {/* </Link> */}
                 </Box>
                 {/* main list starts */}

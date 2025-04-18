@@ -1,5 +1,7 @@
 import { Box, Button, Paper, SnackbarCloseReason, Typography, styled } from "@mui/material";
-import { DatabaseQuestionViewer, CustomLabel, CustomTextField, TestQuestionForm, Loader, testQuestionFormation, questionIdArrayFormation, useCreateTestMutation, resetStoredQuestions, Alert, useAppDispatch, useAppSelector, useGetLessonsByCourseIdQuery, CustomAutoComplete, Link, Grid, ArrowBackIcon, ChevronRightIcon, QuestionType, testTime, CloudUploadIcon, Divider, AdapterDayjs, LocalizationProvider, DatePicker, Dayjs, useState } from '../Create Test';
+import { DatabaseQuestionViewer, CustomLabel, CustomTextField, TestQuestionForm, Loader, testQuestionFormation, questionIdArrayFormation, useCreateTestMutation, resetStoredQuestions, Alert, useAppDispatch, useAppSelector, useGetLessonsByCourseIdQuery, CustomAutoComplete, Grid, ArrowBackIcon, QuestionType, testTime, CloudUploadIcon, Divider, AdapterDayjs, LocalizationProvider, DatePicker, Dayjs, useState } from '../Create Test';
+import { useNavigate } from "react-router-dom";
+import { usePreviousPath } from "../../../../../lib/Providers/NavigationProvider";
 
 const StyledDatePicker = styled(DatePicker)({
     width: '100%',
@@ -16,6 +18,9 @@ const TestCreation = () => {
     const [question, setQuestion] = useState<Record<string, string>>({});
     const [imageFile, setImageFile] = useState<Record<string, File | null>>({});
     const [openSnackbar, setOpenSnackbar] = useState(false);
+    // tracking previous path
+    const { previousPath } = usePreviousPath();
+    const navigate = useNavigate();
     // fetching courseId from the local redux store
     const courseId = useAppSelector((state) => state.courseAndLessonId.id.course_id);
     const questionsSelectedFromDatabase = useAppSelector((state) => state.pickedQuestions.questions);
@@ -128,11 +133,13 @@ const TestCreation = () => {
                     <Box component="section" sx={{ display: 'flex', gap: '20px', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
                         {/* back button and title */}
                         <Box component="section" sx={{ display: 'flex', gap: '20px' }}>
-                            <Link to='/teacher/create-course/add-course-material'>
-                                <Button variant='outlined' sx={{ width: '36px', height: '36px', minWidth: '36px', borderRadius: '8px', borderColor: "grey.700", color: "#3F3F46" }}>
-                                    <ArrowBackIcon fontSize='small' />
-                                </Button>
-                            </Link>
+                            {/* <Link to='/teacher/create-course/add-course-material'> */}
+                            <Button variant='outlined'
+                                onClick={() => navigate(previousPath || '/teacher/create-course/add-course-material')}
+                                sx={{ width: '36px', height: '36px', minWidth: '36px', borderRadius: '8px', borderColor: "grey.700", color: "#3F3F46" }}>
+                                <ArrowBackIcon fontSize='small' />
+                            </Button>
+                            {/* </Link> */}
                             <Typography variant='h3'>Test Creation</Typography>
                         </Box>
                         {/* continue button */}

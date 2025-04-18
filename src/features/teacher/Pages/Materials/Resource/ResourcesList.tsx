@@ -6,7 +6,7 @@ import resource_icon from '../../../../../assets/images/resource-icon.png';
 import Grid from '@mui/material/Grid2';
 import ArrowOutwardIcon from '@mui/icons-material/ArrowOutward';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { RootState } from "../../../../../redux/store";
 import { TUser } from "../../../../../types/types";
 
@@ -15,6 +15,7 @@ const ResourcesList = () => {
     const user = useAppSelector((state: RootState) => state.auth.user as TUser);
     const courseId = useAppSelector((state) => state.courseAndLessonId.id.course_id);
     const { data: courseData, isLoading } = useGetCoursePreviewQuery({ courseId });
+    const navigate = useNavigate();
     if (isLoading) {
         <Loader />;
     }
@@ -36,6 +37,20 @@ const ResourcesList = () => {
                         </Link>
                         <Typography variant='h3'>Resources</Typography>
                     </Box>
+                    {/* new material add option for teacher */}
+                    {
+                        user.role === 'teacher' && (
+                            <Box>
+                                <Button variant="contained"
+                                    onClick={() => navigate('/teacher/resources')}
+                                    sx={{ borderRadius: '8px' }}
+                                >
+                                    + Add New Resource
+                                </Button>
+                            </Box>
+                        )
+                    }
+
                     {/* continue button */}
                     {/* </Link> */}
                 </Box>

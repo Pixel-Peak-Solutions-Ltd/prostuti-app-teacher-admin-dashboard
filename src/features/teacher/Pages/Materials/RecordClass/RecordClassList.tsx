@@ -1,6 +1,6 @@
 import { Box, Button, Card, Paper, Typography } from "@mui/material";
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import video_icon from '../../../../../assets/images/video-icon.png';
 import { useAppSelector } from "../../../../../redux/hooks";
 import { useGetCoursePreviewQuery } from "../../../../../redux/features/course/courseApi";
@@ -14,7 +14,7 @@ const RecordClassList = () => {
     const user = useAppSelector((state: RootState) => state.auth.user as TUser);
     const courseId = useAppSelector((state) => state.courseAndLessonId.id.course_id);
     const { data: courseData, isLoading } = useGetCoursePreviewQuery({ courseId });
-
+    const navigate = useNavigate();
     if (isLoading) {
         <Loader />;
     }
@@ -40,6 +40,20 @@ const RecordClassList = () => {
                         </Link>
                         <Typography variant='h3'>Record Class</Typography>
                     </Box>
+                    {/* new material add option for teacher */}
+                    {
+                        user.role === 'teacher' && (
+                            <Box>
+                                <Button variant="contained"
+                                    onClick={() => navigate('/teacher/record-class')}
+                                    sx={{ borderRadius: '8px' }}
+                                >
+                                    + Add New Record Class
+                                </Button>
+                            </Box>
+                        )
+                    }
+
                 </Box>
                 {/* main list starts */}
                 {isLoading && (<Loader />)}
