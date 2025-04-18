@@ -236,7 +236,7 @@ const AssignmentCreation = () => {
                         <Box component="section" sx={{ display: 'flex', gap: '20px' }}>
                             {/* <Link to={isEditing ? "/teacher/assignment-list" : "/teacher/create-course/add-course-material"}> */}
                             <Button variant='outlined' sx={{ width: '36px', height: '36px', minWidth: '36px', borderRadius: '8px', borderColor: "grey.700", color: "#3F3F46" }}
-                                onClick={() => navigate(previousPath || "/")}>
+                                onClick={() => navigate(previousPath || "/teacher/create-course/add-course-material")}>
                                 <ArrowBackIcon fontSize='small' />
                             </Button>
                             {/* </Link> */}
@@ -262,7 +262,6 @@ const AssignmentCreation = () => {
                                 // </Button>
                             )
                         )}
-
                     </Box>
                     {/* form section starts here */}
                     {
