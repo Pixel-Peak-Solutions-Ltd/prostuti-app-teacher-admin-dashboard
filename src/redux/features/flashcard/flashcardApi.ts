@@ -36,7 +36,7 @@ const flashcardApi = baseApi.injectEndpoints({
                     body: data,
                 };
             },
-            invalidatesTags: ['ChildFlashcards']
+            invalidatesTags: ['Flashcards', 'ChildFlashcards']
         }),
         deleteChildFlashcards: builder.mutation({
             query: (flashcardId) => {
@@ -45,7 +45,7 @@ const flashcardApi = baseApi.injectEndpoints({
                     method: 'DELETE',
                 };
             },
-            invalidatesTags: ['ChildFlashcards']
+            invalidatesTags: ['Flashcards', 'ChildFlashcards']
         }),
         approveFlashCard: builder.mutation({
             query: (flashcardId) => {
@@ -55,7 +55,7 @@ const flashcardApi = baseApi.injectEndpoints({
                     method: 'PATCH',
                 };
             },
-            invalidatesTags: ['Flashcards']
+            invalidatesTags: ['Flashcards', 'ChildFlashcards']
         })
     })
 });
