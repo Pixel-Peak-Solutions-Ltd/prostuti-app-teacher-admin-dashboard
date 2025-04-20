@@ -11,6 +11,13 @@ export type TUser = {
     role: string;
 };
 
+export type TUserData = {
+    userId: string;
+    exp: number;
+    iat: number;
+    role: string;
+};
+
 // error handling types
 export interface TErrorData {
     errorSources: [

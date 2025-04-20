@@ -10,6 +10,7 @@ import CustomTextField from "../../../../../shared/components/CustomTextField";
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
 import dayjs, { Dayjs } from "dayjs";
 import { useEffect, useState } from "react";
 import Loader from "../../../../../shared/components/Loader";
@@ -29,7 +30,7 @@ import { TUser } from "../../../../../types/types";
 import { RootState } from "../../../../../redux/store";
 import { usePreviousPath } from "../../../../../lib/Providers/NavigationProvider";
 
-const StyledDatePicker = styled(DatePicker)({
+const StyledDatePicker = styled(DateTimePicker)({
     width: '100%',
     '& .MuiInputBase-root': {
         height: '40px',
