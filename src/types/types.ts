@@ -5,11 +5,13 @@ export type TUserInfo = {
 };
 
 export type TUser = {
-    registeredId: string;
+    userId: string;
     exp: number;
     iat: number;
     role: string;
 };
+
+
 
 // error handling types
 export interface TErrorData {

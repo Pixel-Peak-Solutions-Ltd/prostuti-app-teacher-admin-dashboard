@@ -1,9 +1,10 @@
 import { Box, Button, Paper, SnackbarCloseReason, Typography, styled } from "@mui/material";
-import { DatabaseQuestionViewer, CustomLabel, CustomTextField, TestQuestionForm, Loader, testQuestionFormation, questionIdArrayFormation, useCreateTestMutation, resetStoredQuestions, Alert, useAppDispatch, useAppSelector, useGetLessonsByCourseIdQuery, CustomAutoComplete, Grid, ArrowBackIcon, QuestionType, testTime, CloudUploadIcon, Divider, AdapterDayjs, LocalizationProvider, DatePicker, Dayjs, useState } from '../Create Test';
+import { DatabaseQuestionViewer, CustomLabel, CustomTextField, TestQuestionForm, Loader, testQuestionFormation, questionIdArrayFormation, useCreateTestMutation, resetStoredQuestions, Alert, useAppDispatch, useAppSelector, useGetLessonsByCourseIdQuery, CustomAutoComplete, Grid, ArrowBackIcon, QuestionType, testTime, CloudUploadIcon, Divider, AdapterDayjs, LocalizationProvider, Dayjs, useState } from '../Create Test';
+import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
 import { useNavigate } from "react-router-dom";
 import { usePreviousPath } from "../../../../../lib/Providers/NavigationProvider";
 
-const StyledDatePicker = styled(DatePicker)({
+const StyledDatePicker = styled(DateTimePicker)({
     width: '100%',
     '& .MuiInputBase-root': {
         height: '40px',

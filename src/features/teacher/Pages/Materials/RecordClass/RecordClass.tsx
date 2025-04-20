@@ -1,7 +1,6 @@
 import { Box, Button, Paper, SnackbarCloseReason, styled, Typography, IconButton, Card } from "@mui/material";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import Grid from '@mui/material/Grid2';
 import CustomAutoComplete from "../../../../../shared/components/CustomAutoComplete";
 import CustomLabel from "../../../../../shared/components/CustomLabel";
@@ -10,23 +9,22 @@ import { useEffect, useState } from "react";
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
 import dayjs, { Dayjs } from "dayjs";
 import { useGetLessonsByCourseIdQuery } from "../../../../../redux/features/course/courseApi";
 import { useAppSelector } from "../../../../../redux/hooks";
 import Loader from "../../../../../shared/components/Loader";
 import Alert from "../../../../../shared/components/Alert";
-import { useCreateRecordClassMutation, useDeleteRecordClassMutation, useGetRecordClassByIdQuery, useUpdateRecordClassMutation } from "../../../../../redux/features/materials/materialsApi";
+import { useCreateRecordClassMutation, useGetRecordClassByIdQuery, useUpdateRecordClassMutation } from "../../../../../redux/features/materials/materialsApi";
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import LinearWithValueLabel from "../../../../../shared/components/ProgessBar";
 import MP4 from '../../../../../assets/images/MP4-icon.png';
-import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
 import EditRequestButton from "../../../../../shared/components/EditRequestButton";
 import { TUser } from "../../../../../types/types";
 import { RootState } from "../../../../../redux/store";
 import { usePreviousPath } from "../../../../../lib/Providers/NavigationProvider";
 
-const StyledDatePicker = styled(DatePicker)({
+const StyledDatePicker = styled(DateTimePicker)({
     width: '100%',
     '& .MuiInputBase-root': {
         height: '40px',
@@ -74,7 +72,7 @@ const RecordClass = () => {
     // making api call to update the record class
     const [updateRecordClass, { isSuccess: updateSuccess, isLoading: recordClassUpdateLoader }] = useUpdateRecordClassMutation();
     // delete record class
-    const [deleteRecordClass, { isSuccess: deleteSuccess, isLoading: recordDeleteLoader }] = useDeleteRecordClassMutation();
+    // const [deleteRecordClass, { isSuccess: deleteSuccess, isLoading: recordDeleteLoader }] = useDeleteRecordClassMutation();
 
     // api call to get existing record class data for update operation
     const { data: recordData, isLoading: recordClassFetching } = useGetRecordClassByIdQuery({ recordId }, { skip: !recordId });
@@ -92,7 +90,7 @@ const RecordClass = () => {
 
     // handling data loading
 
-    if (courseLoading || recordClassFetching || recordClassUpdateLoader || recordDeleteLoader) {
+    if (courseLoading || recordClassFetching || recordClassUpdateLoader) {
         return (<Loader />);
     }
 
@@ -214,13 +212,13 @@ const RecordClass = () => {
     };
 
     //*handling recordClass delete
-    const handleRecordClassDelete = async () => {
-        try {
-            await deleteRecordClass({ recordId });
-        } catch (error) {
-            console.log(error);
-        }
-    };
+    // const handleRecordClassDelete = async () => {
+    //     try {
+    //         await deleteRecordClass({ recordId });
+    //     } catch (error) {
+    //         console.log(error);
+    //     }
+    // };
     //~ handling the custom snackbar to help user know whether request is successful
     //~ close snackbar automatically
     const handleCloseSnackbar = (
@@ -240,9 +238,9 @@ const RecordClass = () => {
 
     // take use to course preview once record class list
 
-    if (deleteSuccess) {
-        navigate(`/teacher/record-class-list`);
-    }
+    // if (deleteSuccess) {
+    //     navigate(`/teacher/record-class-list`);
+    // }
 
     return (
         <>
