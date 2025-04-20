@@ -59,6 +59,7 @@ export const baseApi = createApi({
     "Questions",
     "Categories",
     "Courses",
+    "Lessons",
     "Record",
     "Assignment",
     "Resource",

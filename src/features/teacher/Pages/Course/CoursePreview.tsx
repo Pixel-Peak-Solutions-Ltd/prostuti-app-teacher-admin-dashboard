@@ -108,7 +108,7 @@ const CoursePreview = ({ course_id: propCourseId, hideBackButton = false }: Cour
     };
 
     const navigateToLesson = (e: React.MouseEvent) => {
-        navigate('/teacher/create-lessons');
+        navigate('/teacher/edit-lessons');
     };
     // Handle price change
     const handlePriceChange = (e: React.ChangeEvent<HTMLInputElement>) => {
