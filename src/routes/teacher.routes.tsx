@@ -31,6 +31,7 @@ import AssignmentSubmissionList from "../features/teacher/Pages/Materials/Assign
 import ViewAsSubmission from "../features/teacher/Pages/Materials/Assignment/ViewAsSubmission";
 import ChildFlashCards from "../features/teacher/Pages/Flashcard/ChildFlashCards";
 import Routine from "../features/teacher/Pages/Materials/Routine";
+import EditLesson from "../features/teacher/Pages/Course/EditLesson";
 
 export const teacherRoutes = [
     {
@@ -87,8 +88,8 @@ export const teacherRoutes = [
         element: <CoursePreview />
     },
     {
-        path: 'create-lessons',
-        element: <CreateLessons />
+        path: 'edit-lessons',
+        element: <EditLesson />
     },
 
     // course update routes

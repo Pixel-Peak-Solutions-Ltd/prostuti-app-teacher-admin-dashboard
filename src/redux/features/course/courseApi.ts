@@ -27,7 +27,8 @@ const courseApi = baseApi.injectEndpoints({
                     method: 'POST',
                     body: lessonData
                 };
-            }
+            },
+            invalidatesTags: ['Lessons']
         }),
         getCourseByTeacher: builder.query({
             query: () => ({
@@ -49,7 +50,8 @@ const courseApi = baseApi.injectEndpoints({
                     url: `/lesson/course/${courseId}`,
                     method: 'GET',
                 };
-            }
+            },
+            providesTags: ['Lessons']
         }),
         getCourseById: builder.query({
             query: ({ courseId }) => ({
