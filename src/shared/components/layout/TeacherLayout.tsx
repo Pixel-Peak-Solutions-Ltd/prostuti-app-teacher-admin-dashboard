@@ -30,7 +30,7 @@ import { resetStoredQuestions } from '../../../redux/features/question/questionS
 import { saveCourseIdToStore, saveLessonIdToStore, saveTestStore, saveAssignmentIdToStore } from '../../../redux/features/course/courseSlice';
 import { PURGE } from 'redux-persist';
 import { baseApi } from '../../../redux/api/baseApi';
-import { TUser } from '../../../types/types';
+import { TUserData } from '../../../types/types';
 
 const drawerWidth = 256;
 const teacherDashboardMenus = [
@@ -68,7 +68,7 @@ const teacherDashboardMenus = [
 
 export const TeacherLayout = () => {
     // Track the current user ID for detecting changes
-    const userId = useAppSelector((state: RootState) => (state.auth.user as TUser).userId);
+    const userId = useAppSelector((state: RootState) => (state.auth.user as TUserData).userId);
 
     // Add a transition loading state
     const [isTransitioning, setIsTransitioning] = useState(false);
