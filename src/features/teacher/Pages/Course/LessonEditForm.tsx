@@ -105,7 +105,6 @@ const LessonEditForm = ({ lessonDataFromDB, refetchLessons }: { lessonDataFromDB
     const handleSnackbarClose = () => {
         setSnackbar(prev => ({ ...prev, open: false }));
     };
-    console.log(`received data from edit lesson`, lessonDataFromDB);
     return (
         <>
             {
