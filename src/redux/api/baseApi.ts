@@ -76,7 +76,8 @@ export const baseApi = createApi({
     "ChildFlashcards",
     "Chat",
     "Notifications",
-    "EditRequests"
+    "EditRequests",
+    "Leaderboard",
   ],
   endpoints: () => ({}),
 });
