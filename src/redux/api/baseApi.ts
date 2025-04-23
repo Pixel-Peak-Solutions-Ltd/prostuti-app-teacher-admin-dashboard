@@ -9,8 +9,10 @@ import { logout, setUser } from "../features/auth/authSlice";
 // Local url -> http://localhost:5000/
 // Production url -> https://prostuti-app-backend-production.up.railway.app
 // Development url -> https://resilient-heart-dev.up.railway.app
+
+const baseUrl = import.meta.env.VITE_BASE_URL;
 const baseQuery = fetchBaseQuery({
-  baseUrl: "https://resilient-heart-dev.up.railway.app/api/v1",
+  baseUrl:  `${baseUrl}/api/v1`,
   credentials: "include",
   prepareHeaders: (headers, { getState }) => {
     const token = (getState() as RootState).auth.token;
@@ -30,7 +32,7 @@ const baseQueryWithRefreshToken: typeof baseQuery = async (
 
   if (result.error && (result.error as FetchBaseQueryError).status === 401) {
     const res = await fetch(
-      "https://resilient-heart-dev.up.railway.app/api/v1/auth/refresh-token",
+        `${baseUrl}/api/v1/auth/refresh-token`,
       {
         method: "POST",
         credentials: "include",
