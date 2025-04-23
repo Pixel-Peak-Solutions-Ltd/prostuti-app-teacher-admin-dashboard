@@ -29,10 +29,13 @@ const baseQueryWithRefreshToken: typeof baseQuery = async (
   const result = await baseQuery(args, api, extraOptions);
 
   if (result.error && (result.error as FetchBaseQueryError).status === 401) {
-    const res = await fetch("https://resilient-heart-dev.up.railway.app/api/v1/auth/refresh-token", {
-      method: "POST",
-      credentials: "include",
-    });
+    const res = await fetch(
+      "https://resilient-heart-dev.up.railway.app/api/v1/auth/refresh-token",
+      {
+        method: "POST",
+        credentials: "include",
+      }
+    );
 
     const data = await res.json();
 
@@ -76,7 +79,8 @@ export const baseApi = createApi({
     "ChildFlashcards",
     "Chat",
     "Notifications",
-    "EditRequests"
+    "EditRequests",
+    "Leaderboard",
   ],
   endpoints: () => ({}),
 });
