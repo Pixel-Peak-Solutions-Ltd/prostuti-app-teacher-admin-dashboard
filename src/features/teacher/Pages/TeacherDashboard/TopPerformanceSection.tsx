@@ -111,7 +111,11 @@ const TopPerformanceSection = () => {
           >
             {courses.map((course) => (
               <MenuItem key={course._id} value={course._id}>
-                <Typography variant="body2">{course.name}</Typography>
+                <Typography variant="body2">
+                  {course.name.length > 60
+                    ? course.name.slice(0, 60) + "..."
+                    : course.name}
+                </Typography>
               </MenuItem>
             ))}
           </Select>

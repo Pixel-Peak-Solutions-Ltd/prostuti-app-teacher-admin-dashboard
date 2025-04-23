@@ -35,7 +35,7 @@ const courseApi = baseApi.injectEndpoints({
         const queryParams = new URLSearchParams();
 
         if (filters.limit) queryParams.set("limit", filters.limit);
-        if (filters.isPublished)
+        if (filters.isPublished !== undefined)
           queryParams.set("isPublished", filters.isPublished);
 
         return {
