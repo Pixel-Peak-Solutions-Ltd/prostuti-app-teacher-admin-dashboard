@@ -14,7 +14,8 @@ export const CourseCard: React.FC<CourseCardProps> = ({ course }) => {
   return (
     <Link
       to={`/admin/course-approved/${course.id}`}
-      style={{ textDecoration: "none" }}>
+      style={{ textDecoration: "none" }}
+    >
       <Card>
         <CardMedia
           component="img"
@@ -27,7 +28,8 @@ export const CourseCard: React.FC<CourseCardProps> = ({ course }) => {
             sx={{ fontSize: "16px" }}
             gutterBottom
             variant="h6"
-            component="div">
+            component="div"
+          >
             {course.title}
           </Typography>
         </CardContent>

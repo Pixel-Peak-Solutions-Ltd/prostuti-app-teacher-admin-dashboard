@@ -14,7 +14,7 @@ const TeacherDashboard = () => {
   const user = useAppSelector((state: RootState) => state.auth.user as TUser);
   const { data: teacherCourses, isLoading: teacherLoader } =
     useGetCourseByTeacherQuery(
-      {},
+      { limit: 3 },
       { skip: user.role === "admin" } // Skip this query if user is admin
     );
 
@@ -22,6 +22,8 @@ const TeacherDashboard = () => {
   if (teacherLoader) {
     return <Loader />;
   }
+
+  const courses = teacherCourses?.data || [];
 
   return (
     <Box
@@ -41,25 +43,22 @@ const TeacherDashboard = () => {
           p: 3,
         }}
       >
-        {teacherCourses.data.length > 0 ? (
-          <>
-            <Container maxWidth="xl">
-              <MyCoursesSection />
-
-              <Grid container spacing={4}>
-                <Grid item xs={12} lg={8}>
-                  <TopPerformanceSection />
-                </Grid>
-
-                <Grid item xs={12} lg={4}>
-                  <UpcomingSection />
-                </Grid>
+        {courses.length > 0 ? (
+          <Container maxWidth="xl">
+            <MyCoursesSection courses={courses} />
+            <Grid container spacing={4}>
+              <Grid item xs={12} lg={8}>
+                <TopPerformanceSection />
               </Grid>
-            </Container>
-          </>
+              <Grid item xs={12} lg={4}>
+                <UpcomingSection />
+              </Grid>
+            </Grid>
+          </Container>
         ) : (
-          // <Courses courses={courses} />
-          <CourseCreationScreen />
+          <Container sx={{ marginBottom: "20px" }}>
+            <CourseCreationScreen />
+          </Container>
         )}
 
         <Container maxWidth="xl">

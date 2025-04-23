@@ -1,119 +1,144 @@
 import { baseApi } from "../../api/baseApi";
 
 interface ICategoryQueryParams {
-    type?: string;
-    division?: string;
-    subject?: string;
-    chapter?: string;
-    universityName?: string;
-    universityType?: string;
+  type?: string;
+  division?: string;
+  subject?: string;
+  chapter?: string;
+  universityName?: string;
+  universityType?: string;
 }
 const courseApi = baseApi.injectEndpoints({
-    endpoints: (builder) => ({
-        saveCourse: builder.mutation({
-            query: (courseData) => {
-                return {
-                    url: '/course',
-                    method: 'POST',
-                    body: courseData
-                };
-            },
-            invalidatesTags: ['Courses']
-        }),
-        saveLesson: builder.mutation({
-            query: (lessonData) => {
-                return {
-                    url: '/lesson',
-                    method: 'POST',
-                    body: lessonData
-                };
-            },
-            invalidatesTags: ['Lessons']
-        }),
-        getCourseByTeacher: builder.query({
-            query: () => ({
-                url: '/course/course-by-me',
-                method: 'GET',
-            }),
-            providesTags: ['Courses']
-        }),
-        getCourseForAdminEnd: builder.query({
-            query: () => ({
-                url: '/course/all-course-admin',
-                method: 'GET',
-            }),
-            providesTags: ['Courses']
-        }),
-        getLessonsByCourseId: builder.query({
-            query: ({ courseId }) => {
-                return {
-                    url: `/lesson/course/${courseId}`,
-                    method: 'GET',
-                };
-            },
-            providesTags: ['Lessons']
-        }),
-        getCourseById: builder.query({
-            query: ({ courseId }) => ({
-                url: `/course/${courseId}`,
-                method: 'GET',
-            }),
-            providesTags: ['Courses']
-        }),
-        getCoursePreview: builder.query({
-            query: ({ courseId }) => ({
-                url: `/course/preview/${courseId}`,
-                method: 'GET',
-            }),
-            providesTags: ['Courses']
-        }),
-        getCategoryForCourse: builder.query({
-            query: (questionObj: Record<string, string>) => {
-                // filters: type: questionObj.category_0, division,subject, chapter
-                // console.log('coming from the questionAPI', questionObj);
-                const queryParams: ICategoryQueryParams = {
-                    ...(questionObj.category && { type: questionObj.category }),
-                    ...(questionObj.division && { division: questionObj.division }),
-                    ...(questionObj.subject && { subject: questionObj.subject }),
-                    ...(questionObj.chapter && { chapter: questionObj.chapter }),
-                    ...(questionObj.universityName && { universityName: questionObj.universityName }),
-                    ...(questionObj.universityType && { universityType: questionObj.universityType }),
-                };
+  endpoints: (builder) => ({
+    saveCourse: builder.mutation({
+      query: (courseData) => {
+        return {
+          url: "/course",
+          method: "POST",
+          body: courseData,
+        };
+      },
+      invalidatesTags: ["Courses"],
+    }),
+    saveLesson: builder.mutation({
+      query: (lessonData) => {
+        return {
+          url: "/lesson",
+          method: "POST",
+          body: lessonData,
+        };
+      },
+      invalidatesTags: ["Lessons"],
+    }),
+    getCourseByTeacher: builder.query({
+      query: (filters) => {
+        const queryParams = new URLSearchParams();
 
-                let URL = '/category';
-                // console.log('from questionAPI', queryParams);
+        if (filters.limit) queryParams.set("limit", filters.limit);
+        if (filters.isPublished)
+          queryParams.set("isPublished", filters.isPublished);
 
-                if (queryParams.type) {
-                    URL = Object.entries(queryParams).reduce((acc, [key, value], index) => {
-                        const prefix = index === 0 ? '?' : '&';
-                        return `${acc}${prefix}${key}=${value}`;
-                    }, URL);
-                }
-                return {
-                    url: URL,
-                    method: 'GET'
-                };
-            }
-        }),
-        approveCourseStatus: builder.mutation({
-            query: ({ courseId, data }) => ({
-                url: `/course/approve/${courseId}`,
-                method: "POST",
-                body: data,
-            }),
-            invalidatesTags: ['Courses']
-        }),
-        deleteCourse: builder.mutation({
-            query: ({ courseId }) => {
-                return {
-                    url: `/course/${courseId}`,
-                    method: 'DELETE'
-                };
+        return {
+          url: `/course/course-by-me?${queryParams.toString()}`,
+          method: "GET",
+        };
+      },
+      providesTags: ["Courses"],
+    }),
+    getCourseForAdminEnd: builder.query({
+      query: () => ({
+        url: "/course/all-course-admin",
+        method: "GET",
+      }),
+      providesTags: ["Courses"],
+    }),
+    getLessonsByCourseId: builder.query({
+      query: ({ courseId }) => {
+        return {
+          url: `/lesson/course/${courseId}`,
+          method: "GET",
+        };
+      },
+      providesTags: ["Lessons"],
+    }),
+    getCourseById: builder.query({
+      query: ({ courseId }) => ({
+        url: `/course/${courseId}`,
+        method: "GET",
+      }),
+      providesTags: ["Courses"],
+    }),
+    getCoursePreview: builder.query({
+      query: ({ courseId }) => ({
+        url: `/course/preview/${courseId}`,
+        method: "GET",
+      }),
+      providesTags: ["Courses"],
+    }),
+    getCategoryForCourse: builder.query({
+      query: (questionObj: Record<string, string>) => {
+        // filters: type: questionObj.category_0, division,subject, chapter
+        // console.log('coming from the questionAPI', questionObj);
+        const queryParams: ICategoryQueryParams = {
+          ...(questionObj.category && { type: questionObj.category }),
+          ...(questionObj.division && { division: questionObj.division }),
+          ...(questionObj.subject && { subject: questionObj.subject }),
+          ...(questionObj.chapter && { chapter: questionObj.chapter }),
+          ...(questionObj.universityName && {
+            universityName: questionObj.universityName,
+          }),
+          ...(questionObj.universityType && {
+            universityType: questionObj.universityType,
+          }),
+        };
+
+        let URL = "/category";
+        // console.log('from questionAPI', queryParams);
+
+        if (queryParams.type) {
+          URL = Object.entries(queryParams).reduce(
+            (acc, [key, value], index) => {
+              const prefix = index === 0 ? "?" : "&";
+              return `${acc}${prefix}${key}=${value}`;
             },
-            invalidatesTags: ['Courses']
-        })
-    })
+            URL
+          );
+        }
+        return {
+          url: URL,
+          method: "GET",
+        };
+      },
+    }),
+    approveCourseStatus: builder.mutation({
+      query: ({ courseId, data }) => ({
+        url: `/course/approve/${courseId}`,
+        method: "POST",
+        body: data,
+      }),
+      invalidatesTags: ["Courses"],
+    }),
+    deleteCourse: builder.mutation({
+      query: ({ courseId }) => {
+        return {
+          url: `/course/${courseId}`,
+          method: "DELETE",
+        };
+      },
+      invalidatesTags: ["Courses"],
+    }),
+  }),
 });
 
-
-export const { useSaveCourseMutation, useSaveLessonMutation, useGetLessonsByCourseIdQuery, useGetCourseByIdQuery, useGetCategoryForCourseQuery, useGetCourseByTeacherQuery, useGetCoursePreviewQuery, useDeleteCourseMutation, useGetCourseForAdminEndQuery, useApproveCourseStatusMutation } = courseApi;
+export const {
+  useSaveCourseMutation,
+  useSaveLessonMutation,
+  useGetLessonsByCourseIdQuery,
+  useGetCourseByIdQuery,
+  useGetCategoryForCourseQuery,
+  useGetCourseByTeacherQuery,
+  useGetCoursePreviewQuery,
+  useDeleteCourseMutation,
+  useGetCourseForAdminEndQuery,
+  useApproveCourseStatusMutation,
+} = courseApi;

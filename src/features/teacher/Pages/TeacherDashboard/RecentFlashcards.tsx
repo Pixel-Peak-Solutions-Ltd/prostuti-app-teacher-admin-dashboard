@@ -1,16 +1,21 @@
 import { Box, Typography, Grid } from "@mui/material";
 import FlashcardIcon from "./../../../../assets/icons/flashcard.svg?react";
+import { Link } from "react-router-dom";
+import { useGetRecentFlashcardsQuery } from "../../../../redux/features/flashcard/flashcardApi";
+import Loader from "../../../../shared/components/Loader";
 
-export default function FlashcardsPage() {
-  const demoFlashcards = [
-    { id: 1, title: "World War II" },
-    { id: 2, title: "World War II" },
-    { id: 3, title: "World War II" },
-    { id: 4, title: "World War II" },
-  ];
+const RecentFlashcards = () => {
+  const { data: flashCards, isLoading: flashCardsLoader } =
+    useGetRecentFlashcardsQuery({ visibility: "EVERYONE", limit: 4 });
+
+  if (flashCardsLoader) {
+    return <Loader />;
+  }
+
+  const flashcardData = flashCards.data.data || [];
 
   return (
-    <Box sx={{ flexGrow: 1, marginTop: 4 }}>
+    <Box sx={{ flexGrow: 1 }}>
       <Box sx={{ p: 3, border: "1px solid #e0e0e0", borderRadius: "8px" }}>
         <Box
           sx={{
@@ -23,40 +28,49 @@ export default function FlashcardsPage() {
           <Typography variant="h5" component="h2" fontWeight="bold">
             Recent Flashcards
           </Typography>
-          <Typography
-            variant="body2"
-            color="primary"
-            sx={{ cursor: "pointer" }}
-          >
-            View all
-          </Typography>
+          <Link to="/teacher/flashcard" style={{ textDecoration: "none" }}>
+            <Typography
+              variant="body2"
+              color="primary"
+              sx={{ cursor: "pointer" }}
+            >
+              View all
+            </Typography>
+          </Link>
         </Box>
 
         <Grid container spacing={2}>
-          {demoFlashcards.map((flashcard) => (
-            <Grid key={flashcard.id} item xs={6} sm={4} md={3}>
-              <Box sx={{ cursor: "pointer" }}>
-                <Box
-                  sx={{
-                    border: "1px solid #e0e0e0",
-                    borderRadius: "8px",
-                    p: 5,
-                    display: "flex",
-                    justifyContent: "center",
-                    alignItems: "center",
-                    mb: 1,
-                  }}
-                >
-                  <FlashcardIcon style={{ color: "#9e9e9e", fontSize: 40 }} />
+          {flashcardData.map((flashcard) => (
+            <Grid key={flashcard._id} item xs={6} sm={4} md={3}>
+              <Link
+                to={`/teacher/flashcard/${flashcard._id}`}
+                style={{ textDecoration: "none" }}
+              >
+                <Box sx={{ cursor: "pointer" }}>
+                  <Box
+                    sx={{
+                      border: "1px solid #e0e0e0",
+                      borderRadius: "8px",
+                      p: 5,
+                      display: "flex",
+                      justifyContent: "center",
+                      alignItems: "center",
+                      mb: 1,
+                    }}
+                  >
+                    <FlashcardIcon style={{ color: "#9e9e9e", fontSize: 40 }} />
+                  </Box>
+                  <Typography variant="body1" color="text.primary">
+                    {flashcard.title}
+                  </Typography>
                 </Box>
-                <Typography variant="body1" color="text.primary">
-                  {flashcard.title}
-                </Typography>
-              </Box>
+              </Link>
             </Grid>
           ))}
         </Grid>
       </Box>
     </Box>
   );
-}
+};
+
+export default RecentFlashcards;
