@@ -7,7 +7,7 @@ import AddQuestion from "../features/teacher/Pages/Question Database/AddQuestion
 import AdmissionQuestion from "../features/teacher/Pages/Question Database/AdmissionQuestion";
 import JobQuestion from "../features/teacher/Pages/Question Database/JobQuestion";
 import QuestionDatabase from "../features/teacher/Pages/QuestionDatabase";
-import TeacherDashboard from "../features/teacher/Pages/TeacherDashboard";
+import TeacherDashboard from "../features/teacher/Pages/TeacherDashboard/TeacherDashboard";
 import CreateCourse from "../features/teacher/Pages/Course/CreateCourse";
 import CourseDetails from "../features/teacher/Pages/Course/CourseDetails";
 import CreateLessons from "../features/teacher/Pages/Course/CreateLessons";
@@ -34,183 +34,181 @@ import Routine from "../features/teacher/Pages/Materials/Routine";
 import EditLesson from "../features/teacher/Pages/Course/EditLesson";
 
 export const teacherRoutes = [
-    {
-        path: 'dashboard',
-        element: <TeacherDashboard />
-    },
-    {
-        path: 'my-course',
-        element: <MyCourse />,
-    },
-    {
-        path: 'messages',
-        element: <Messages />
-    },
-    {
-        path: 'profile',
-        element: <Profile />
-    },
-    {
-        path: 'question-database',
-        element: <QuestionDatabase />,
-    },
-    // flashcard paths
-    {
-        path: 'flashcard',
-        element: <FlashCard />
-    },
-    {
-        path: 'flashcard/:flashcardId',
-        element: <ChildFlashCards />
-    },
+  {
+    path: "dashboard",
+    element: <TeacherDashboard />,
+  },
+  {
+    path: "my-course",
+    element: <MyCourse />,
+  },
+  {
+    path: "messages",
+    element: <Messages />,
+  },
+  {
+    path: "profile",
+    element: <Profile />,
+  },
+  {
+    path: "question-database",
+    element: <QuestionDatabase />,
+  },
+  // flashcard paths
+  {
+    path: "flashcard",
+    element: <FlashCard />,
+  },
+  {
+    path: "flashcard/:flashcardId",
+    element: <ChildFlashCards />,
+  },
 
-    // question database paths
-    {
-        path: 'academic-question',
-        element: <AcademicQuestion />
-    },
-    {
-        path: 'admission-question',
-        element: <AdmissionQuestion />
-    },
-    {
-        path: 'job-question',
-        element: <JobQuestion />
-    },
-    {
-        path: 'add-question',
-        element: <AddQuestion />
-    },
+  // question database paths
+  {
+    path: "academic-question",
+    element: <AcademicQuestion />,
+  },
+  {
+    path: "admission-question",
+    element: <AdmissionQuestion />,
+  },
+  {
+    path: "job-question",
+    element: <JobQuestion />,
+  },
+  {
+    path: "add-question",
+    element: <AddQuestion />,
+  },
 
-    // course preview route
-    {
-        path: 'course-preview/:courseId',
-        element: <CoursePreview />
-    },
-    {
-        path: 'edit-lessons',
-        element: <EditLesson />
-    },
+  // course preview route
+  {
+    path: "course-preview/:courseId",
+    element: <CoursePreview />,
+  },
+  {
+    path: "edit-lessons",
+    element: <EditLesson />,
+  },
 
-    // course update routes
-    {
-        path: 'record-update/:recordId',
-        element: <RecordClass />
-    },
-    {
-        path: 'assignment-update/:assignmentId',
-        element: <AssignmentCreation />
-    },
-    {
-        path: 'resource-update/:resourceId',
-        element: <ResourcesCreation />
-    },
-    {
-        path: 'test-update/:testId',
-        element: <TestUpdate />
-    },
-    {
-        path: 'notice-update/:noticeId',
-        element: <NoticeCreation />
-    },
-    {
-        path: 'routine',
-        element: <Routine />
-    },
+  // course update routes
+  {
+    path: "record-update/:recordId",
+    element: <RecordClass />,
+  },
+  {
+    path: "assignment-update/:assignmentId",
+    element: <AssignmentCreation />,
+  },
+  {
+    path: "resource-update/:resourceId",
+    element: <ResourcesCreation />,
+  },
+  {
+    path: "test-update/:testId",
+    element: <TestUpdate />,
+  },
+  {
+    path: "notice-update/:noticeId",
+    element: <NoticeCreation />,
+  },
+  {
+    path: "routine",
+    element: <Routine />,
+  },
 
-    // course material lists route
-    {
-        path: 'record-class-list',
-        element: <RecordClassList />
-    },
-    {
-        path: 'resources-list',
-        element: <ResourcesList />
-    },
-    // test routes
-    {
-        path: 'test-list',
-        element: <TestList />
-    },
-    {
-        path: 'test-history',
-        element: <TestHistory />
-    },
-    {
-        path: 'answer-sheet/:testHistoryId',
-        element: <AnswerSheet />
-    },
-    // assignment routes
-    {
-        path: 'assignment-list',
-        element: <AssignmentList />
-    },
-    {
-        path: 'assignment-submission-list',
-        element: <AssignmentSubmissionList />
-    },
-    {
-        path: 'assignment-submission-list/:assignmentHistoryId',
-        element: <ViewAsSubmission />
-    },
-    {
-        path: 'routine-list',
-        element: <Routine />
-    },
-    {
-        path: 'notice-list',
-        element: <NoticeList />
-    },
+  // course material lists route
+  {
+    path: "record-class-list",
+    element: <RecordClassList />,
+  },
+  {
+    path: "resources-list",
+    element: <ResourcesList />,
+  },
+  // test routes
+  {
+    path: "test-list",
+    element: <TestList />,
+  },
+  {
+    path: "test-history",
+    element: <TestHistory />,
+  },
+  {
+    path: "answer-sheet/:testHistoryId",
+    element: <AnswerSheet />,
+  },
+  // assignment routes
+  {
+    path: "assignment-list",
+    element: <AssignmentList />,
+  },
+  {
+    path: "assignment-submission-list",
+    element: <AssignmentSubmissionList />,
+  },
+  {
+    path: "assignment-submission-list/:assignmentHistoryId",
+    element: <ViewAsSubmission />,
+  },
+  {
+    path: "routine-list",
+    element: <Routine />,
+  },
+  {
+    path: "notice-list",
+    element: <NoticeList />,
+  },
 
-    // course paths
-    {
-        path: 'create-course',
-        element: <CreateCourse />,
-        children: [
-            {
-                path: 'create-course',
-                element: <CourseDetails />
-            },
-            {
-                path: 'create-lessons',
-                element: <CreateLessons />
-            },
-            {
-                path: 'add-course-material',
-                element: <AddCourseMaterial />
-            },
-            {
-                path: 'course-preview',
-                element: <CoursePreview />
-            },
-        ]
-    },
+  // course paths
+  {
+    path: "create-course",
+    element: <CreateCourse />,
+    children: [
+      {
+        path: "create-course",
+        element: <CourseDetails />,
+      },
+      {
+        path: "create-lessons",
+        element: <CreateLessons />,
+      },
+      {
+        path: "add-course-material",
+        element: <AddCourseMaterial />,
+      },
+      {
+        path: "course-preview",
+        element: <CoursePreview />,
+      },
+    ],
+  },
 
-    // course material routes
-    {
-        path: 'record-class',
-        element: <RecordClass />
-    },
-    {
-        path: 'assignment',
-        element: <AssignmentCreation />
-    },
-    {
-        path: 'test-creation',
-        element: <TestCreation />
-    },
-    {
-        path: 'resources',
-        element: <ResourcesCreation />
-    },
-    {
-        path: 'routine',
-        element: <RoutineCreation />
-    },
-    {
-        path: 'notice',
-        element: <NoticeCreation />
-    },
-
-
+  // course material routes
+  {
+    path: "record-class",
+    element: <RecordClass />,
+  },
+  {
+    path: "assignment",
+    element: <AssignmentCreation />,
+  },
+  {
+    path: "test-creation",
+    element: <TestCreation />,
+  },
+  {
+    path: "resources",
+    element: <ResourcesCreation />,
+  },
+  {
+    path: "routine",
+    element: <RoutineCreation />,
+  },
+  {
+    path: "notice",
+    element: <NoticeCreation />,
+  },
 ];
