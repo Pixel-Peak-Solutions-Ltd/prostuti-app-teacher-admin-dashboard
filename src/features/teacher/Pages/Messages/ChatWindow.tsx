@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { Box, Typography, TextField, IconButton, Avatar, Divider, Paper, Badge } from '@mui/material';
+import { Box, Typography, TextField, IconButton, Avatar, Divider, Paper } from '@mui/material';
 import SendIcon from '@mui/icons-material/Send';
 import { useGetChatHistoryQuery, useMarkMessagesAsReadMutation } from '../../../../redux/features/chat/chatApi';
 import { useAppSelector, useAppDispatch } from '../../../../redux/hooks';
@@ -23,7 +23,7 @@ const ChatWindow = ({ conversationId }: ChatWindowProps) => {
 
     const dispatch = useAppDispatch();
     const socketService = useSocket();
-    const { user } = useAppSelector(state => state.auth) as { user: TUser };
+    const { user } = useAppSelector(state => state.auth) as { user: TUser; };
     const messages = useAppSelector(state => state.chat.messages[conversationId] || []);
     const conversations = useAppSelector(state => state.chat.conversations);
     const typingStatus = useAppSelector(state => state.chat.typingUsers[conversationId] || false);
@@ -31,7 +31,7 @@ const ChatWindow = ({ conversationId }: ChatWindowProps) => {
     // Find the current conversation
     const currentConversation = conversations.find(conv => conv.conversation_id === conversationId);
     const recipientId = typeof currentConversation?.student_id === 'object'
-        ? currentConversation?.student_id._id
+        ? (currentConversation?.student_id as { _id: string; })?._id
         : currentConversation?.student_id;
 
     // Query for chat history
@@ -195,7 +195,7 @@ const ChatWindow = ({ conversationId }: ChatWindowProps) => {
 
     // Group messages by date
     const groupMessagesByDate = () => {
-        const groups: { [key: string]: IChatMessage[] } = {};
+        const groups: { [key: string]: IChatMessage[]; } = {};
 
         messages.forEach(msg => {
             try {

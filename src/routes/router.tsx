@@ -4,6 +4,7 @@ import { adminRoutes } from './admin.routes';
 import { teacherRoutes } from './teacher.routes';
 import Login from '../shared/components/Login';
 import ProtectedRoute from '../shared/components/layout/ProtectedRoute';
+import { NavigationProvider } from '../lib/Providers/NavigationProvider';
 
 
 const router = createBrowserRouter([
@@ -15,7 +16,9 @@ const router = createBrowserRouter([
         path: '/teacher',
         element: (
             <ProtectedRoute allowedRoles={['teacher']}>
-                <App />
+                <NavigationProvider>
+                    <App />
+                </NavigationProvider>
             </ProtectedRoute>
         ),
         children: teacherRoutes
@@ -24,7 +27,9 @@ const router = createBrowserRouter([
         path: '/admin',
         element: (
             <ProtectedRoute allowedRoles={['admin']}>
-                <App />
+                <NavigationProvider>
+                    <App />
+                </NavigationProvider>
             </ProtectedRoute>
         ),
         children: adminRoutes

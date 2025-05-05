@@ -11,6 +11,13 @@ export type TUser = {
     role: string;
 };
 
+export type TUserData = {
+    userId: string;
+    exp: number;
+    iat: number;
+    role: string;
+};
+
 // error handling types
 export interface TErrorData {
     errorSources: [
@@ -26,6 +33,10 @@ export interface TErrorData {
 export interface TLoginError {
     status: number;
     data: TErrorData;
+}
+export interface TNetworkError {
+    error: string;
+    status: string;
 }
 
 export interface ICategory {

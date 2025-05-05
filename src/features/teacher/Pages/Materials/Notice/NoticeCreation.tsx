@@ -1,9 +1,8 @@
 import { Box, Button, Paper, Typography, SnackbarCloseReason } from "@mui/material";
 import Alert from "../../../../../shared/components/Alert";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import React, { useEffect, useState } from "react";
-import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import Grid from '@mui/material/Grid2';
 import CustomLabel from "../../../../../shared/components/CustomLabel";
 import { useAppSelector } from "../../../../../redux/hooks";
@@ -16,6 +15,8 @@ import {
     useUpdateNoticeMutation
 } from "../../../../../redux/features/materials/materialsApi";
 import DeleteOutlinedIcon from "@mui/icons-material/DeleteOutlined";
+import EditRequestButton from "../../../../../shared/components/EditRequestButton";
+import { usePreviousPath } from "../../../../../lib/Providers/NavigationProvider";
 
 const NoticeCreation = () => {
     const navigate = useNavigate();
@@ -26,6 +27,9 @@ const NoticeCreation = () => {
     });
     const [successMessage, setSuccessMessage] = useState<string>('');
     const [errorMessage, setErrorMessage] = useState<string>('');
+
+    // tracking previous path
+    const { previousPath } = usePreviousPath();
     // checking if user coming form course preview page
     const { noticeId } = useParams();
     // checking whether there is a noticeId present. This means user is in editing mode
@@ -148,21 +152,24 @@ const NoticeCreation = () => {
                     }}>
                         {/* back button and title */}
                         <Box component="section" sx={{ display: 'flex', gap: '20px' }}>
-                            <Link to={isEditing ? "/teacher/notice-list" : "/teacher/create-course/add-course-material"}>
-                                <Button variant="outlined" sx={{
-                                    width: '36px',
-                                    height: '36px',
-                                    minWidth: '36px',
-                                    borderRadius: '8px',
-                                    borderColor: "grey.700",
-                                    color: "#3F3F46"
-                                }}>
-                                    <ArrowBackIcon fontSize="small" />
-                                </Button>
-                            </Link>
+                            {/* <Link to={isEditing ? "/teacher/notice-list" : "/teacher/create-course/add-course-material"}> */}
+                            <Button variant="outlined" sx={{
+                                width: '36px',
+                                height: '36px',
+                                minWidth: '36px',
+                                borderRadius: '8px',
+                                borderColor: "grey.700",
+                                color: "#3F3F46"
+                            }}
+                                onClick={() => navigate(previousPath || '/teacher/notice-list')}
+                            >
+                                <ArrowBackIcon fontSize="small" />
+                            </Button>
+                            {/* </Link> */}
                             <Typography variant="h3">Notice</Typography>
                         </Box>
-
+                        {/* edit request button for admin */}
+                        {isEditing && <EditRequestButton resourceType="Notice" />}
                         {
                             isEditing && (
                                 <Button
@@ -176,7 +183,7 @@ const NoticeCreation = () => {
                         }
                         {/* continue button */}
                         {/* <Link to='/teacher/create-course/add-course-lessons'> */}
-                        {
+                        {/* {
                             !isEditing && (
                                 <Button
                                     // onClick={handleContinue}
@@ -185,7 +192,7 @@ const NoticeCreation = () => {
                                     Continue <ChevronRightIcon />
                                 </Button>
                             )
-                        }
+                        } */}
 
                         {/* </Link> */}
                     </Box>

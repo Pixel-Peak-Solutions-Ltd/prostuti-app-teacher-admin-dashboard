@@ -5,13 +5,16 @@ import Loader from "../../../../../shared/components/Loader";
 import Grid from '@mui/material/Grid2';
 import ArrowOutwardIcon from '@mui/icons-material/ArrowOutward';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-import DriveFileRenameOutlineOutlinedIcon from '@mui/icons-material/DriveFileRenameOutlineOutlined';
 import assignment_icon from '../../../../../assets/images/assignment-icon.png';
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { saveAssignmentIdToStore } from "../../../../../redux/features/course/courseSlice";
+import { TUser } from "../../../../../types/types";
+import { RootState } from "../../../../../redux/store";
 
 const AssignmentList = () => {
+    const user = useAppSelector((state: RootState) => state.auth.user as TUser);
     const courseId = useAppSelector((state) => state.courseAndLessonId.id.course_id);
+    const navigate = useNavigate();
     const dispatch = useAppDispatch();
     const { data: courseData, isLoading } = useGetCoursePreviewQuery({ courseId });
 
@@ -20,6 +23,8 @@ const AssignmentList = () => {
     }
 
     const lessons = courseData?.data.lessons;
+    const previousAdminPath = `/admin/course-preview/${courseId}`;
+    const previousTeacherPath = `/teacher/course-preview/${courseId}`;
     return (
         <>
             <Paper variant="outlined" sx={{ width: '100%', height: 'auto', borderRadius: '10px', p: 3 }}>
@@ -27,22 +32,27 @@ const AssignmentList = () => {
                 <Box component="section" sx={{ display: 'flex', gap: '20px', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
                     {/* back button and title */}
                     <Box component="section" sx={{ display: 'flex', gap: '20px' }}>
-                        <Link to={`/teacher/course-preview/${courseId}`}>
+                        <Link to={user.role === 'admin' ? previousAdminPath : previousTeacherPath}>
                             <Button variant='outlined' sx={{ width: '36px', height: '36px', minWidth: '36px', borderRadius: '8px', borderColor: "grey.700", color: "#3F3F46" }}>
                                 <ArrowBackIcon fontSize='small' />
                             </Button>
                         </Link>
                         <Typography variant='h3'>Assignments</Typography>
                     </Box>
-                    {/* continue button */}
                     {/* <Link to='/teacher/create-course/add-course-lessons'> */}
-                    <Button
-                        // onClick={handleContinue}
-                        variant='contained'
-                        sx={{ borderRadius: '8px', width: '140px', height: '48px', gap: 1 }}>
-                        <DriveFileRenameOutlineOutlinedIcon fontSize='small' />
-                        Edit
-                    </Button>
+                    {/* new material add option for teacher */}
+                    {
+                        user.role === 'teacher' && (
+                            <Box>
+                                <Button variant="contained"
+                                    onClick={() => navigate('/teacher/assignment')}
+                                    sx={{ borderRadius: '8px' }}
+                                >
+                                    + Add New Assignment
+                                </Button>
+                            </Box>
+                        )
+                    }
                     {/* </Link> */}
                 </Box>
                 {/* main list starts */}
@@ -60,7 +70,7 @@ const AssignmentList = () => {
                                                 lesson?.assignments.length > 0 && (
                                                     <Box>
                                                         {lesson?.assignments.map((assignment, index) => (
-                                                            <Link to={`/teacher/assignment-update/${assignment?._id}`} style={{ textDecoration: "none" }}>
+                                                            <Link to={user.role === 'admin' ? `/admin/assignment-update/${assignment?._id}` : `/teacher/assignment-update/${assignment?._id}`} style={{ textDecoration: "none" }}>
                                                                 <Card variant="outlined"
                                                                     sx={{ display: "flex", alignItems: "center", gap: 2, my: 1, px: 1.5, py: 0.8, borderRadius: 2 }}
                                                                     // saving assignment id to store

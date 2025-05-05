@@ -6,6 +6,7 @@ import storage from 'redux-persist/lib/storage';
 import courseReducer from "./features/course/courseSlice";
 import questionReducer from './features/question/questionSlice';
 import chatReducer from './features/chat/chatSlice';
+import notificationReducer from '../redux/features/notificationSlice.ts';
 
 const persistConfig = {
     key: 'auth',
@@ -42,7 +43,8 @@ export const store = configureStore({
         courseAndLessonId: persistedCourseCreateReducer,
         pickedQuestions: persistedQuestionReducer,
         test_id: persistedTestIdReducer,
-        chat: chatReducer
+        chat: chatReducer,
+        notification: notificationReducer
     },
     middleware: (getDefaultMiddleware) =>
         getDefaultMiddleware({

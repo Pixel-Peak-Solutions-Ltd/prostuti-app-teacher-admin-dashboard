@@ -1,22 +1,27 @@
 import { Box, Button, Card, Paper, Typography } from "@mui/material";
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import video_icon from '../../../../../assets/images/video-icon.png';
 import { useAppSelector } from "../../../../../redux/hooks";
 import { useGetCoursePreviewQuery } from "../../../../../redux/features/course/courseApi";
 import Loader from "../../../../../shared/components/Loader";
 import Grid from '@mui/material/Grid2';
 import ArrowOutwardIcon from '@mui/icons-material/ArrowOutward';
+import { RootState } from "../../../../../redux/store";
+import { TUser } from "../../../../../types/types";
 
 const RecordClassList = () => {
+    const user = useAppSelector((state: RootState) => state.auth.user as TUser);
     const courseId = useAppSelector((state) => state.courseAndLessonId.id.course_id);
     const { data: courseData, isLoading } = useGetCoursePreviewQuery({ courseId });
-
+    const navigate = useNavigate();
     if (isLoading) {
         <Loader />;
     }
 
     const lessons = courseData?.data.lessons;
+    const adminPath = `/admin/course-preview/${courseId}`;
+    const teacherPath = `/teacher/course-preview/${courseId}`;
 
     console.log(courseId);
     console.log(lessons);
@@ -28,13 +33,27 @@ const RecordClassList = () => {
                 <Box component="section" sx={{ display: 'flex', gap: '20px', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
                     {/* back button and title */}
                     <Box component="section" sx={{ display: 'flex', gap: '20px' }}>
-                        <Link to={`/teacher/course-preview/${courseId}`}>
+                        <Link to={user.role === 'admin' ? adminPath : teacherPath}>
                             <Button variant='outlined' sx={{ width: '36px', height: '36px', minWidth: '36px', borderRadius: '8px', borderColor: "grey.700", color: "#3F3F46" }}>
                                 <ArrowBackIcon fontSize='small' />
                             </Button>
                         </Link>
                         <Typography variant='h3'>Record Class</Typography>
                     </Box>
+                    {/* new material add option for teacher */}
+                    {
+                        user.role === 'teacher' && (
+                            <Box>
+                                <Button variant="contained"
+                                    onClick={() => navigate('/teacher/record-class')}
+                                    sx={{ borderRadius: '8px' }}
+                                >
+                                    + Add New Record Class
+                                </Button>
+                            </Box>
+                        )
+                    }
+
                 </Box>
                 {/* main list starts */}
                 {isLoading && (<Loader />)}
@@ -51,7 +70,7 @@ const RecordClassList = () => {
                                                 lesson?.recodedClasses.length > 0 && (
                                                     <Box>
                                                         {lesson?.recodedClasses.map((recordClass, index) => (
-                                                            <Link to={`/teacher/record-update/${recordClass?._id}`} style={{ textDecoration: "none" }}>
+                                                            <Link to={user.role === 'admin' ? `/admin/record-update/${recordClass?._id}` : `/teacher/record-update/${recordClass?._id}`} style={{ textDecoration: "none" }}>
                                                                 <Card variant="outlined"
                                                                     sx={{ display: "flex", alignItems: "center", gap: 2, my: 1, px: 1.5, py: 0.8, borderRadius: 2 }}>
                                                                     <Box sx={{ width: "3%" }}>

@@ -1,5 +1,5 @@
 import { Box, Button, Card, IconButton, Paper, SnackbarCloseReason, Typography, styled } from "@mui/material";
-import { Link, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import Grid from '@mui/material/Grid2';
@@ -10,7 +10,7 @@ import { useGetLessonsByCourseIdQuery } from "../../../../../redux/features/cour
 import CustomTextField from "../../../../../shared/components/CustomTextField";
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
 import dayjs, { Dayjs } from "dayjs";
 import { useEffect, useState } from "react";
 import Loader from "../../../../../shared/components/Loader";
@@ -20,8 +20,12 @@ import PDF from '../../../../../assets/images/PDF.png';
 import LinearWithValueLabel from "../../../../../shared/components/ProgessBar";
 import Alert from "../../../../../shared/components/Alert";
 import { useCreateAssignmentMutation, useGetAssignmentByIdQuery, useUpdateAssignmentMutation } from "../../../../../redux/features/materials/materialsApi";
+import EditRequestButton from "../../../../../shared/components/EditRequestButton";
+import { TUser } from "../../../../../types/types";
+import { RootState } from "../../../../../redux/store";
+import { usePreviousPath } from "../../../../../lib/Providers/NavigationProvider";
 
-const StyledDatePicker = styled(DatePicker)({
+const StyledDatePicker = styled(DateTimePicker)({
     width: '100%',
     '& .MuiInputBase-root': {
         height: '40px',
@@ -41,6 +45,10 @@ const VisuallyHiddenInput = styled('input')({
     width: 1,
 });
 const AssignmentCreation = () => {
+    const { previousPath } = usePreviousPath();
+    const navigate = useNavigate();
+    const user = useAppSelector((state: RootState) => state.auth.user as TUser);
+    const isAdmin = user.role === 'admin' ? true : false;
     // const canceledAssignment: any = [];
     const { assignmentId } = useParams();
     // checking if user coming form course preview page
@@ -226,35 +234,34 @@ const AssignmentCreation = () => {
                     <Box component="section" sx={{ display: 'flex', gap: '20px', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
                         {/* back button and title */}
                         <Box component="section" sx={{ display: 'flex', gap: '20px' }}>
-                            <Link to={isEditing ? "/teacher/assignment-list" : "/teacher/create-course/add-course-material"}>
-                                <Button variant='outlined' sx={{ width: '36px', height: '36px', minWidth: '36px', borderRadius: '8px', borderColor: "grey.700", color: "#3F3F46" }}>
-                                    <ArrowBackIcon fontSize='small' />
-                                </Button>
-                            </Link>
+                            {/* <Link to={isEditing ? "/teacher/assignment-list" : "/teacher/create-course/add-course-material"}> */}
+                            <Button variant='outlined' sx={{ width: '36px', height: '36px', minWidth: '36px', borderRadius: '8px', borderColor: "grey.700", color: "#3F3F46" }}
+                                onClick={() => navigate(previousPath || "/teacher/create-course/add-course-material")}>
+                                <ArrowBackIcon fontSize='small' />
+                            </Button>
+                            {/* </Link> */}
                             <Typography variant='h3'>Assignment Creation</Typography>
                         </Box>
                         {/* continue button */}
-                        {
+                        {user.role === 'admin' && <EditRequestButton resourceType="Assignment" />}
+                        {user.role !== 'admin' && (
                             isExpired ? (
                                 <Link to='/teacher/assignment-submission-list'>
                                     <Button
-                                        // onClick={handleContinue}
                                         variant='contained'
                                         sx={{ borderRadius: '8px', width: 'auto', height: '48px' }}>
                                         View Submissions <ChevronRightIcon />
                                     </Button>
                                 </Link>
-                            ) :
-                                (
-                                    <Button
-                                        // onClick={handleContinue}
-                                        variant='contained'
-                                        sx={{ borderRadius: '8px', width: '140px', height: '48px' }}>
-                                        Continue <ChevronRightIcon />
-                                    </Button>
-                                )
-                        }
-
+                            ) : (
+                                <></>
+                                // <Button
+                                //     variant='contained'
+                                //     sx={{ borderRadius: '8px', width: '140px', height: '48px' }}>
+                                //     Continue <ChevronRightIcon />
+                                // </Button>
+                            )
+                        )}
                     </Box>
                     {/* form section starts here */}
                     {
@@ -299,7 +306,7 @@ const AssignmentCreation = () => {
                                                     value={assignmentDetails?.assignmentNo || ''}
                                                     placeholder={isEditing ? assignmentNo : "Naming hint: Assignment 1"}
                                                     required={isEditing ? false : true}
-                                                    disabled={isExpired ? true : false}
+                                                    disabled={isAdmin || (isExpired ? true : false)}
                                                 />
                                             </Grid>
                                             <Grid size={4}>
@@ -310,7 +317,7 @@ const AssignmentCreation = () => {
                                                     value={assignmentDetails?.marks || ''}
                                                     placeholder="Enter Allocated Marks"
                                                     required={isEditing ? false : true}
-                                                    disabled={isExpired ? true : false}
+                                                    disabled={isAdmin || (isExpired ? true : false)}
                                                     type="number"
                                                 />
                                             </Grid>
@@ -321,7 +328,7 @@ const AssignmentCreation = () => {
                                                     <StyledDatePicker
                                                         value={assignmentDetails?.unlockDate ? dayjs(assignmentDetails.unlockDate) : null}
                                                         onChange={handleDateChange}
-                                                        disabled={isExpired ? true : false}
+                                                        disabled={isAdmin || (isExpired ? true : false)}
                                                     />
                                                 </LocalizationProvider>
                                             </Grid>
@@ -336,7 +343,7 @@ const AssignmentCreation = () => {
                                                     placeholder="Enter Assignment Details"
                                                     multiline
                                                     rows={6}
-                                                    disabled={isExpired ? true : false}
+                                                    disabled={isAdmin || (isExpired ? true : false)}
                                                 />
                                             </Grid>
                                             {/* file update row */}
@@ -427,7 +434,7 @@ const AssignmentCreation = () => {
                                                     <Box sx={{ zIndex: 3 }}>
                                                         {/* new image upload button */}
                                                         <Button component="label"
-                                                            disabled={isExpired ? true : false}
+                                                            disabled={isAdmin || (isExpired ? true : false)}
                                                             size="small"
                                                             variant="text"
                                                             tabIndex={-1}
@@ -471,7 +478,7 @@ const AssignmentCreation = () => {
                                                 variant='contained'
                                                 size='small'
                                                 startIcon={<CloudUploadIcon />}
-                                                disabled={isExpired ? true : false}
+                                                disabled={isAdmin || (isExpired ? true : false)}
                                                 sx={{ width: '170px', height: '40px', borderRadius: '8px', fontSize: '14px' }}>
                                                 {isEditing ? 'Update' : 'Upload Assignment'}
                                             </Button>

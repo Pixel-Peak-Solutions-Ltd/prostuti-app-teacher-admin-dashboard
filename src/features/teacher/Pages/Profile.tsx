@@ -66,6 +66,8 @@ const Profile = () => {
         return <Loader />;
     }
 
+    console.log("fetched profile data", fetchedProfileData.data);
+
     // extracting teacher data from backend
     const { teacherId, email, joinedDate, jobType, subject, name, phone, image } = fetchedProfileData.data;
 
