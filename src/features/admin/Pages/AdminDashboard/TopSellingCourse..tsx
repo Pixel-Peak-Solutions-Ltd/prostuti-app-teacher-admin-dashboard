@@ -1,5 +1,17 @@
-import React from 'react';
-import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Box, Typography } from '@mui/material';
+import React from "react";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Paper,
+  Box,
+  Typography,
+} from "@mui/material";
+import { useGetTopSellingCoursesQuery } from "../../../../redux/features/adminDashboard/adminDashboardApi";
+import Loader from "../../../../shared/components/Loader";
 
 // Define the type for the row data
 interface CourseRow {
@@ -9,36 +21,54 @@ interface CourseRow {
 }
 
 const TopSellingCourses: React.FC = () => {
-  // Define the rows with the CourseRow type
-  const rows: CourseRow[] = [
-    { id: 1, name: 'Apple iPhone 13', price: '$999.29' },
-    { id: 2, name: 'Apple iPhone 13', price: '$999.29' },
-    { id: 3, name: 'Apple iPhone 13', price: '$999.29' },
-    { id: 4, name: 'Apple iPhone 13', price: '$999.29' },
-    { id: 5, name: 'Apple iPhone 13', price: '$999.29' },
-    { id: 6, name: 'Apple iPhone 13', price: '$999.29' },
-    { id: 7, name: 'Apple iPhone 13', price: '$999.29' },
-    
-  ];
+  const { data, isLoading } = useGetTopSellingCoursesQuery({});
+
+  if (isLoading) {
+    return <Loader />;
+  }
+
+  // Convert price to "999.29 TK"
+  const rows: CourseRow[] =
+    data.data.length === 0
+      ? []
+      : data?.data.map((row) => ({
+          ...row,
+          price: row.price + " TK",
+        }));
 
   return (
-    <Box sx={{ p: 2, bgcolor: 'background.paper', borderRadius: 1, boxShadow: 1 }}>
+    <Box
+      sx={{ p: 2, bgcolor: "background.paper", borderRadius: 1, boxShadow: 1 }}
+    >
       <Typography variant="h5" gutterBottom sx={{ fontWeight: "600" }}>
         Top Selling Course
       </Typography>
-      <TableContainer component={Paper} sx={{ boxShadow: 'none' }}>
+      <TableContainer component={Paper} sx={{ boxShadow: "none" }}>
         <Table sx={{ minWidth: 200 }} aria-label="top selling courses table">
           <TableHead>
             <TableRow>
-              <TableCell sx={{ fontWeight: 'bold', borderBottom: 'none' }}>Course</TableCell>
-              <TableCell sx={{ fontWeight: 'bold', borderBottom: 'none', textAlign: 'right' }}>Price</TableCell>
+              <TableCell sx={{ fontWeight: "bold", borderBottom: "none" }}>
+                Course
+              </TableCell>
+              <TableCell
+                sx={{
+                  fontWeight: "bold",
+                  borderBottom: "none",
+                  textAlign: "right",
+                }}
+              >
+                Price
+              </TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
             {rows.map((row) => (
               <TableRow
                 key={row.id}
-                sx={{ '&:last-child td, &:last-child th': { border: 0 }, borderBottom: '1px solid #e7e7e7' }}
+                sx={{
+                  "&:last-child td, &:last-child th": { border: 0 },
+                  borderBottom: "1px solid #e7e7e7",
+                }}
               >
                 <TableCell component="th" scope="row">
                   {row.name}
