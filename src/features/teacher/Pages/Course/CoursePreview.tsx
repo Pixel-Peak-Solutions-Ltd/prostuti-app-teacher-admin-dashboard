@@ -282,19 +282,49 @@ const CoursePreview = ({ course_id: propCourseId, hideBackButton = false }: Cour
 
                 {/* material type list section */}
                 <Box>
-                    <Grid container sx={{ rowGap: 3 }}>
+                    <Grid container spacing={3}>
                         {materialsInPreview.map((item, index) => (
-                            <Grid size={3} key={index} sx={{ display: "flex", justifyContent: "center" }}>
+                            <Grid key={index} sx={{ xs: 12, sm: 6, md: 4, lg: 3, display: "flex", justifyContent: "center" }}>
                                 <Link to={`/${isAdmin ? 'admin' : 'teacher'}/${item.name.split(' ').join('-').toLowerCase()}-list`}
                                     style={{ textDecoration: 'none', color: '#3F3F46' }}>
                                     <Box>
-                                        <Paper variant="outlined" sx={{ minWidth: '340px', height: '170px', display: 'flex', flexDirection: 'column', justifyContent: 'center', gap: 3, alignItems: 'center', py: 1, borderRadius: 4 }}>
-                                            <img src={item.logo} style={{ width: '80px', height: '80px' }} />
-                                            <Typography variant="h5" sx={{
+                                        <Paper
+                                            variant="outlined"
+                                            sx={{
+                                                minWidth: { xs: '100%', sm: '340px' },
+                                                height: '170px',
+                                                display: 'flex',
+                                                flexDirection: 'column',
+                                                justifyContent: 'center',
+                                                gap: 3,
+                                                alignItems: 'center',
+                                                py: 1,
+                                                borderRadius: 4,
+                                                transition: 'transform 0.2s ease-in-out',
                                                 '&:hover': {
-                                                    color: '#2970FF',
+                                                    transform: 'scale(1.02)',
+                                                    boxShadow: '0 4px 8px rgba(0,0,0,0.1)'
                                                 }
-                                            }}>
+                                            }}
+                                        >
+                                            <img
+                                                src={item.logo}
+                                                style={{
+                                                    width: '80px',
+                                                    height: '80px',
+                                                    objectFit: 'contain'
+                                                }}
+                                            />
+                                            <Typography
+                                                variant="h5"
+                                                sx={{
+                                                    fontSize: { xs: '1.1rem', sm: '1.25rem' },
+                                                    textAlign: 'center',
+                                                    '&:hover': {
+                                                        color: '#2970FF',
+                                                    }
+                                                }}
+                                            >
                                                 {item.name}
                                             </Typography>
                                         </Paper>
