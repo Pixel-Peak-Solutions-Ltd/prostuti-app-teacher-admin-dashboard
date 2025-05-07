@@ -1,5 +1,5 @@
-import { Box, Button, Paper, SnackbarCloseReason, Typography, styled } from "@mui/material";
-import { DatabaseQuestionViewer, CustomLabel, CustomTextField, TestQuestionForm, Loader, testQuestionFormation, questionIdArrayFormation, useCreateTestMutation, resetStoredQuestions, Alert, useAppDispatch, useAppSelector, useGetLessonsByCourseIdQuery, CustomAutoComplete, Grid, ArrowBackIcon, QuestionType, testTime, CloudUploadIcon, Divider, AdapterDayjs, LocalizationProvider, Dayjs, useState } from '../Create Test';
+import { Box, Button, Paper, Typography, styled, Snackbar, Alert } from "@mui/material";
+import { DatabaseQuestionViewer, CustomLabel, CustomTextField, TestQuestionForm, Loader, testQuestionFormation, questionIdArrayFormation, useCreateTestMutation, resetStoredQuestions, useAppDispatch, useAppSelector, useGetLessonsByCourseIdQuery, CustomAutoComplete, Grid, ArrowBackIcon, QuestionType, testTime, CloudUploadIcon, Divider, AdapterDayjs, LocalizationProvider, Dayjs, useState } from '../Create Test';
 import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
 import { useNavigate } from "react-router-dom";
 import { usePreviousPath } from "../../../../../lib/Providers/NavigationProvider";
@@ -12,13 +12,20 @@ const StyledDatePicker = styled(DateTimePicker)({
         fontSize: '0.875rem',
     }
 });
+
 const TestCreation = () => {
     // local states
     const [testDetails, setTestDetails] = useState<Record<string, string>>({});
     const [numOfForms, setNumOfForms] = useState(1);
     const [question, setQuestion] = useState<Record<string, string>>({});
     const [imageFile, setImageFile] = useState<Record<string, File | null>>({});
-    const [openSnackbar, setOpenSnackbar] = useState(false);
+    const [errors, setErrors] = useState<{ [key: string]: string[]; }>({});
+    const [snackbar, setSnackbar] = useState({
+        open: false,
+        message: '',
+        severity: 'success' as 'success' | 'error'
+    });
+
     // tracking previous path
     const { previousPath } = usePreviousPath();
     const navigate = useNavigate();
@@ -29,7 +36,7 @@ const TestCreation = () => {
     const selectedDatabaseQuestionId = questionsSelectedFromDatabase.map((question) => question._id);
     // api calls via redux toolkit
     const { data: lessonData, isLoading: lessonLoading } = useGetLessonsByCourseIdQuery({ courseId });
-    const [createTest, { isLoading: testCreationLoader, isSuccess }] = useCreateTestMutation();
+    const [createTest, { isLoading: testCreationLoader }] = useCreateTestMutation();
 
     // loaders 
     if (testCreationLoader || lessonLoading) {
@@ -67,9 +74,69 @@ const TestCreation = () => {
         });
     };
 
+    // Validation function
+    const validateTestDetails = () => {
+        const newErrors: { [key: string]: string[]; } = {};
+        let isValid = true;
+
+        // Validate lesson name
+        if (!testDetails?.lessonName?.trim()) {
+            newErrors.lessonName = ['Lesson name is required'];
+            isValid = false;
+        }
+
+        // Validate test name
+        if (!testDetails?.name?.trim()) {
+            newErrors.name = ['Test name is required'];
+            isValid = false;
+        }
+
+        // Validate test type
+        if (!testDetails?.type?.trim()) {
+            newErrors.type = ['Test type is required'];
+            isValid = false;
+        }
+
+        // Validate test time
+        if (!testDetails?.time?.trim()) {
+            newErrors.time = ['Test time is required'];
+            isValid = false;
+        }
+
+        // Validate test date
+        if (!testDetails?.publishDate) {
+            newErrors.publishDate = ['Test date is required'];
+            isValid = false;
+        }
+
+        // Validate questions
+        if (Object.keys(question).length === 0 && questionsSelectedFromDatabase.length === 0) {
+            newErrors.questions = ['At least one question is required'];
+            isValid = false;
+        }
+
+        setErrors(newErrors);
+        return isValid;
+    };
+
+    // Handle snackbar close
+    const handleSnackbarClose = () => {
+        setSnackbar(prev => ({ ...prev, open: false }));
+    };
+
     //*handle submit function
     const handleTestSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+
+        if (!validateTestDetails()) {
+            setSnackbar({
+                open: true,
+                message: 'Please fill out all required fields',
+                severity: 'error'
+            });
+            return;
+        }
+
         const testData = new FormData();
         const questionList = testQuestionFormation(question, testDetails?.type);
         const questionsFromDatabase = questionIdArrayFormation(selectedDatabaseQuestionId);
@@ -88,11 +155,9 @@ const TestCreation = () => {
         };
 
         testData.append('data', JSON.stringify(submittableData));
-        // checking whether file object not empty
 
         if (Object.keys(imageFile).length !== 0) {
             for (const key in imageFile) {
-                // checking whether a key has null value in the object
                 if (imageFile[key] !== null) {
                     testData.append(`image${key}`, imageFile[key]);
                 }
@@ -100,8 +165,12 @@ const TestCreation = () => {
         }
 
         try {
-            await createTest(testData);
-            setOpenSnackbar(true);
+            await createTest(testData).unwrap();
+            setSnackbar({
+                open: true,
+                message: 'Test created successfully',
+                severity: 'success'
+            });
             setTestDetails({});
             setQuestion({});
             setImageFile({});
@@ -109,19 +178,31 @@ const TestCreation = () => {
             dispatch(resetStoredQuestions());
         } catch (err) {
             console.log(err);
-            return err;
-        }
-    };
+            const errorMap: { [key: string]: string[]; } = {};
+            const errorMsgs: string[] = [];
+            const errorSources = err?.data?.errorSources;
 
-    //! close snackbar automatically
-    const handleCloseSnackbar = (
-        event: React.SyntheticEvent | Event,
-        reason?: SnackbarCloseReason
-    ) => {
-        if (reason === 'clickaway') {
-            return;
+            if (errorSources && Array.isArray(errorSources)) {
+                errorSources.forEach((source: { path: string, message: string; }) => {
+                    if (!errorMap[source.path]) errorMap[source.path] = [];
+                    errorMap[source.path].push(source.message);
+                    errorMsgs.push(source.message);
+                });
+
+                setErrors(errorMap);
+                setSnackbar({
+                    open: true,
+                    message: errorMsgs.join(', '),
+                    severity: 'error'
+                });
+            } else {
+                setSnackbar({
+                    open: true,
+                    message: 'Failed to create test',
+                    severity: 'error'
+                });
+            }
         }
-        setOpenSnackbar(false);
     };
 
     console.log('selected image object for test questions:', imageFile);
@@ -166,7 +247,8 @@ const TestCreation = () => {
                                             options={lessonNames}
                                             value={testDetails?.lessonName}
                                             handleInput={handleTestDetailsInput}
-                                            required
+                                            error={Array.isArray(errors.lessonName) && errors.lessonName.length > 0}
+                                            helperText={errors.lessonName?.join(' ')}
                                         />
                                     </Grid>
                                     {/* 2nd row --> , , total question, test date */}
@@ -178,15 +260,20 @@ const TestCreation = () => {
                                             value={testDetails?.name}
                                             handleInput={handleTestDetailsInput}
                                             placeholder="Enter the test name"
+                                            error={Array.isArray(errors.name) && errors.name.length > 0}
+                                            helperText={errors.name?.join(' ')}
                                         />
                                     </Grid>
                                     {/* test type */}
                                     <Grid size={3}>
                                         <CustomLabel fieldName="Test Type" />
-                                        <CustomAutoComplete name="type"
+                                        <CustomAutoComplete
+                                            name="type"
                                             options={QuestionType}
                                             value={testDetails?.type}
                                             handleInput={handleTestDetailsInput}
+                                            error={Array.isArray(errors.type) && errors.type.length > 0}
+                                            helperText={errors.type?.join(' ')}
                                         />
                                     </Grid>
                                     {/* test time */}
@@ -196,13 +283,24 @@ const TestCreation = () => {
                                             name="time"
                                             options={testTime}
                                             value={testDetails?.time}
-                                            handleInput={handleTestDetailsInput} />
+                                            handleInput={handleTestDetailsInput}
+                                            error={Array.isArray(errors.time) && errors.time.length > 0}
+                                            helperText={errors.time?.join(' ')}
+                                        />
                                     </Grid>
                                     {/* Test date */}
                                     <Grid size={3} sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
                                         <CustomLabel fieldName="Test Date" />
                                         <LocalizationProvider dateAdapter={AdapterDayjs}>
-                                            <StyledDatePicker onChange={handleDateChange} />
+                                            <StyledDatePicker
+                                                onChange={handleDateChange}
+                                                slotProps={{
+                                                    textField: {
+                                                        error: Array.isArray(errors.publishDate) && errors.publishDate.length > 0,
+                                                        helperText: errors.publishDate?.join(' ')
+                                                    }
+                                                }}
+                                            />
                                         </LocalizationProvider>
                                     </Grid>
                                     <Grid size={12}>
@@ -273,13 +371,22 @@ const TestCreation = () => {
                     </Box>
                 </Paper>
             </Box>
-            {/* showing alert for what happened after submitting the request */}
-            <Alert
-                openSnackbar={openSnackbar}
-                autoHideDuration={5000}
-                handleCloseSnackbar={handleCloseSnackbar}
-                isSuccess={isSuccess}
-            />
+
+            {/* Success/Error Snackbar */}
+            <Snackbar
+                open={snackbar.open}
+                autoHideDuration={4000}
+                onClose={handleSnackbarClose}
+                anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+            >
+                <Alert
+                    onClose={handleSnackbarClose}
+                    severity={snackbar.severity}
+                    sx={{ width: '100%' }}
+                >
+                    {snackbar.message}
+                </Alert>
+            </Snackbar>
         </>
     );
 };

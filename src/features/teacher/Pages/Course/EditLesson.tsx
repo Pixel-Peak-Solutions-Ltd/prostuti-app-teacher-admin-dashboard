@@ -18,7 +18,7 @@ const EditLesson = () => {
     const course_id = useAppSelector(state => state.courseAndLessonId.id.course_id);
     const courseId = course_id;
     // getting all the lessons of the corresponding course
-    const { data: lessonDataFromDB, isLoading: lessonLoader } = useGetLessonsByCourseIdQuery({ courseId });
+    const { data: lessonDataFromDB, isLoading: lessonLoader, refetch } = useGetLessonsByCourseIdQuery({ courseId });
     // to create dynamic form this state helps to determine number of input fields
     const [noOfLessonForms, setNoOfLessonForms] = useState(1);
     // store all lesson data inside this state
@@ -187,7 +187,7 @@ const EditLesson = () => {
 
                     {!isLoading && (
                         <>
-                            <LessonEditForm lessonDataFromDB={lessonDataFromDB?.data} />
+                            <LessonEditForm lessonDataFromDB={lessonDataFromDB?.data} refetchLessons={refetch} />
                             <form onSubmit={handleSubmit}>
                                 {Array.from(Array(noOfLessonForms)).map((item, index) => (
                                     <Grid container spacing={4} key={index}>

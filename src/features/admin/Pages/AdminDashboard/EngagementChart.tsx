@@ -1,21 +1,22 @@
 import React, { useState } from "react";
 import Chart from "react-apexcharts";
 import { Box, Typography, Tabs, Tab } from "@mui/material";
-import { ApexOptions } from "apexcharts"; 
+import { ApexOptions } from "apexcharts";
+import { useGetCourseEngagementQuery } from "../../../../redux/features/adminDashboard/adminDashboardApi";
+import Loader from "../../../../shared/components/Loader";
 
 const EngagementChart: React.FC = () => {
-  const [tabValue, setTabValue] = useState(0); 
+  const [tabValue, setTabValue] = useState(0);
+  const { data, isLoading } = useGetCourseEngagementQuery({});
 
-  
   const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
     setTabValue(newValue);
   };
 
-  
   const chartOptions: ApexOptions = {
     chart: {
       type: "area",
-      height: "100%", 
+      height: "100%",
       toolbar: {
         show: false,
       },
@@ -49,7 +50,7 @@ const EngagementChart: React.FC = () => {
       max: 50,
       tickAmount: 5,
       labels: {
-        formatter: (value: number) => `${value}${tabValue === 0 ? "k" : ""}`, 
+        formatter: (value: number) => `${value}${tabValue === 0 ? "k" : ""}`,
         style: {
           colors: "#888",
         },
@@ -61,20 +62,20 @@ const EngagementChart: React.FC = () => {
     },
     tooltip: {
       y: {
-        formatter: (value: number) => `${value}${tabValue === 0 ? "k" : ""}`, 
+        formatter: (value: number) => `${value}${tabValue === 0 ? "k" : ""}`,
       },
     },
     colors: ["#007bff"],
   };
 
- 
+  if (isLoading) {
+    return <Loader />;
+  }
+
   const chartSeries: Array<{ name: string; data: number[] }> = [
     {
       name: "Engagement",
-      data:
-        tabValue === 0
-          ? [10, 10, 30, 25, 40, 20, 15]
-          : [5, 8, 12, 10, 15, 7, 9], 
+      data: tabValue === 0 ? data?.data || [] : [5, 8, 12, 10, 15, 7, 9],
     },
   ];
 
@@ -83,7 +84,7 @@ const EngagementChart: React.FC = () => {
       sx={{
         p: 2,
         bgcolor: "background.paper",
-        borderRadius: 0, 
+        borderRadius: 0,
         boxShadow: 1,
         height: "100%",
         display: "flex",
@@ -96,20 +97,20 @@ const EngagementChart: React.FC = () => {
       <Typography variant="body2" gutterBottom>
         Last 7 days
       </Typography>
-    <Tabs
+      <Tabs
         value={tabValue}
         onChange={handleTabChange}
         sx={{
-            mt: 6,
-            mb: 6,
-            "& .MuiTabs-indicator": {
-                backgroundColor: "#007bff", 
-            },
-            borderBottom: "1px solid gray", 
-            width:"fit-content"
+          mt: 6,
+          mb: 6,
+          "& .MuiTabs-indicator": {
+            backgroundColor: "#007bff",
+          },
+          borderBottom: "1px solid gray",
+          width: "fit-content",
         }}
-    >
-        <Tab
+      >
+        {/* <Tab
           label={
             <Box sx={{ textAlign: "center" }}>
               <Typography
@@ -125,8 +126,8 @@ const EngagementChart: React.FC = () => {
                 variant="body2"
                 sx={{
                   fontSize: "0.75rem",
-                  color:  "#888",
-                  mt:1
+                  color: "#888",
+                  mt: 1,
                 }}
               >
                 24K
@@ -135,13 +136,14 @@ const EngagementChart: React.FC = () => {
           }
           sx={{
             textTransform: "none",
-            padding: "4px 8px", 
-            minHeight: "auto", 
+            padding: "4px 8px",
+            minHeight: "auto",
           }}
-        />
+        /> */}
+
         <Tab
           label={
-            <Box sx={{ textAlign: "center" }} >
+            <Box sx={{ textAlign: "center" }}>
               <Typography
                 variant="body1"
                 sx={{
@@ -155,8 +157,8 @@ const EngagementChart: React.FC = () => {
                 variant="body2"
                 sx={{
                   fontSize: "0.75rem",
-                  color:  "#888",
-                  mt:1
+                  color: "#888",
+                  mt: 1,
                 }}
               >
                 1.5K
@@ -165,12 +167,12 @@ const EngagementChart: React.FC = () => {
           }
           sx={{
             textTransform: "none",
-            padding: "4px 8px", 
-            minHeight: "auto", 
+            padding: "4px 8px",
+            minHeight: "auto",
           }}
         />
       </Tabs>
-     
+
       <Box sx={{ flexGrow: 1, minHeight: 0 }}>
         <Chart
           options={chartOptions}

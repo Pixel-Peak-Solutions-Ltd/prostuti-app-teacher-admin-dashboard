@@ -4,6 +4,8 @@ import { format } from 'date-fns';
 import { Link } from 'react-router-dom';
 import IconButton from '@mui/material/IconButton';
 import ArrowOutwardOutlinedIcon from '@mui/icons-material/ArrowOutwardOutlined';
+import { useAppSelector } from "../../../../redux/hooks";
+import { TUser } from '../../../../types/types';
 
 interface Column {
     id: 'sl' | 'title' | 'total_cards' | 'created_by' | 'created_on' | 'explore';
@@ -33,6 +35,8 @@ interface TFlashCardData {
 }
 
 const PublishedFlashCards = ({ cards }: { cards: any; }) => {
+    const user = useAppSelector((state) => state.auth.user as TUser);
+    const isAdmin = user?.role === 'admin' ? true : false;
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(10);
     const handleChangePage = (event: unknown, newPage: number) => {
@@ -47,7 +51,7 @@ const PublishedFlashCards = ({ cards }: { cards: any; }) => {
     const rows = cards || [];
     const totalRows = rows.length;
 
-    console.log(cards);
+    console.log("flashcard lists:", cards);
 
     return (
         <>
@@ -80,7 +84,7 @@ const PublishedFlashCards = ({ cards }: { cards: any; }) => {
                                                 {format(new Date(row.createdAt), 'dd MMM yyyy, hh:mm a')}
                                             </TableCell>
                                             <TableCell align="right">
-                                                <Link to={`/teacher/flashcard/${row._id}`}>
+                                                <Link to={!isAdmin ? `/teacher/flashcard/${row._id}` : `/admin/flashcard-management/${row._id}`} state={{ flashcardId: row._id }}>
                                                     <IconButton color="primary" aria-label="add an alarm">
                                                         <ArrowOutwardOutlinedIcon />
                                                     </IconButton>
