@@ -127,18 +127,26 @@ const courseApi = baseApi.injectEndpoints({
       },
       invalidatesTags: ["Courses"],
     }),
+    deleteLessonFromDB: builder.mutation({
+      query: ({ lessonId }) => {
+        console.log('recieved lesson id in redux', lessonId);
+        return {
+          url: `/lesson/${lessonId}`,
+          method: 'DELETE'
+        };
+      },
+      invalidatesTags: ['Lessons']
+    }),
+    updateLesson: builder.mutation({
+      query: ({ lessonId, data }) => ({
+        url: `/lesson/${lessonId}`,
+        method: 'PATCH',
+        body: data
+      }),
+      invalidatesTags: ['Lessons']
+    }),
   }),
 });
 
-export const {
-  useSaveCourseMutation,
-  useSaveLessonMutation,
-  useGetLessonsByCourseIdQuery,
-  useGetCourseByIdQuery,
-  useGetCategoryForCourseQuery,
-  useGetCourseByTeacherQuery,
-  useGetCoursePreviewQuery,
-  useDeleteCourseMutation,
-  useGetCourseForAdminEndQuery,
-  useApproveCourseStatusMutation,
-} = courseApi;
+
+export const { useSaveCourseMutation, useSaveLessonMutation, useGetLessonsByCourseIdQuery, useGetCourseByIdQuery, useGetCategoryForCourseQuery, useGetCourseByTeacherQuery, useGetCoursePreviewQuery, useDeleteCourseMutation, useGetCourseForAdminEndQuery, useApproveCourseStatusMutation, useDeleteLessonFromDBMutation, useUpdateLessonMutation } = courseApi;

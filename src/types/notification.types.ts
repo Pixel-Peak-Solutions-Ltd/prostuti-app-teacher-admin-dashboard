@@ -23,7 +23,7 @@ export interface INotification {
     type: 'EditRequest' | 'CourseApproved' | 'General';
     title: string;
     message: string;
-    resourceType: 'Course' | 'Assignment' | 'RecodedClass' | 'Resource' | 'Test';
+    resourceType: 'Course' | 'Assignment' | 'RecodedClass' | 'Resource' | 'Test' | 'Flashcard';
     resourceId: string;
     isRead: boolean;
     metaData?: INotificationMetaData;
@@ -62,7 +62,7 @@ export interface INotificationFilter {
 }
 
 export interface IEditRequestPayload {
-    resourceType: 'Course' | 'Assignment' | 'RecodedClass' | 'Resource' | 'Test';
+    resourceType: 'Course' | 'Assignment' | 'RecodedClass' | 'Resource' | 'Test' | 'Flashcard';
     resourceId: string;
     title: string;
     message: string;
@@ -75,7 +75,7 @@ export interface IEditRequest {
     type: 'EditRequest';
     title: string;
     message: string;
-    resourceType: 'Course' | 'Assignment' | 'RecodedClass' | 'Resource' | 'Test';
+    resourceType: 'Course' | 'Assignment' | 'RecodedClass' | 'Resource' | 'Test' | 'Flashcard';
     resourceId: string;
     isRead: boolean;
     metaData: INotificationMetaData;

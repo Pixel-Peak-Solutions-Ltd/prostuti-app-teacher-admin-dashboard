@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import {
   Box,
   Button,
@@ -69,34 +69,45 @@ const couponSchema = z
 interface AddCouponModalProps {
   open: boolean;
   onClose: () => void;
+  courseId?: string; // Optional courseId prop
+  isCoursePreview?: boolean; // Optional isCoursePreview prop
 }
 
-const AddCouponModal: React.FC<AddCouponModalProps> = ({ open, onClose }) => {
+const AddCouponModal: React.FC<AddCouponModalProps> = ({ open, onClose, courseId, isCoursePreview = false }) => {
   const [createCoupon, { isLoading }] = useCreateCouponMutation();
-
+  console.log('recieved courseId in AddCouponModal', courseId);
+  console.log('recieved coursePreview in AddCouponModal', isCoursePreview);
   const {
     control,
     handleSubmit,
     formState: { errors },
     reset,
     watch,
+    setValue
   } = useForm<CouponFormData>({
     resolver: zodResolver(couponSchema),
     defaultValues: {
       title: "",
       discountType: "Percentage",
       discountValue: 0,
-      activeForAllCourses: true,
+      activeForAllCourses: isCoursePreview ? false : true,
       startDate: dayjs(),
       endDate: dayjs().add(1, "month"),
+      course_id: courseId || "", // Set default courseId if provided
     },
   });
 
   const activeForAllCourses = watch("activeForAllCourses");
+  useEffect(() => {
+    if (isCoursePreview && courseId) {
+      setValue("course_id", courseId);
+    }
+  }, [courseId, isCoursePreview, setValue]);
+
 
   const onSubmit = async (data: CouponFormData) => {
     try {
-      const {activeForAllCourses,...payload}=data
+      const { activeForAllCourses, ...payload } = data;
       const apiPayload: ICreateCouponPayload = {
         ...payload,
         startDate: data.startDate.toISOString(),
@@ -114,9 +125,18 @@ const AddCouponModal: React.FC<AddCouponModalProps> = ({ open, onClose }) => {
     } catch (error) {
       console.error("Failed to create coupon:", error);
     }
+    // const { activeForAllCourses, ...payload } = data;
+    // const apiPayload: ICreateCouponPayload = {
+    //   ...payload,
+    //   startDate: data.startDate.toISOString(),
+    //   endDate: data.endDate.toISOString(),
+    // };
+    // console.log('apiPayload', apiPayload);
+
   };
 
   const handleClose = () => {
+    console.log('clicked');
     reset();
     onClose();
   };
@@ -140,6 +160,7 @@ const AddCouponModal: React.FC<AddCouponModalProps> = ({ open, onClose }) => {
               name="title"
               control={control}
               render={({ field }) => (
+                // course title
                 <TextField
                   {...field}
                   fullWidth
@@ -197,8 +218,10 @@ const AddCouponModal: React.FC<AddCouponModalProps> = ({ open, onClose }) => {
                 render={({ field }) => (
                   <TextField
                     {...field}
+                    disabled={isCoursePreview}
+                    value={courseId || field.value}
                     fullWidth
-                    label="Course ID"
+                    label={isCoursePreview ? "" : "Course ID"}
                     error={!!errors.course_id}
                     helperText={errors.course_id?.message}
                     margin="normal"
@@ -251,25 +274,29 @@ const AddCouponModal: React.FC<AddCouponModalProps> = ({ open, onClose }) => {
               />
             </LocalizationProvider>
             <Box sx={{ gridColumn: "span 3" }}>
-  <Controller
-    name="activeForAllCourses"
-    control={control}
-    render={({ field: { onChange, value } }) => (
-      <FormControlLabel
-        control={
-          <Switch
-            checked={value}
-            onChange={(e) => onChange(e.target.checked)}
-            color="primary"
-          />
-        }
-        label="Active for all courses"
-        sx={{ marginTop: 2 }}
-      />
-    )}
-  />
-</Box>
-           
+              <Controller
+                name="activeForAllCourses"
+                control={control}
+                render={({ field: { onChange, value } }) => (
+                  <FormControlLabel
+                    control={
+                      <Switch
+                        disabled={isCoursePreview}
+                        checked={isCoursePreview ? false : value}
+                        onChange={(e) => {
+                          onChange(e.target.checked);
+                          console.log('from toggle switch', value);
+                        }}
+                        color="primary"
+                      />
+                    }
+                    label="Active for all courses"
+                    sx={{ marginTop: 2 }}
+                  />
+                )}
+              />
+            </Box>
+
           </Box>
         </DialogContent>
         <DialogActions>

@@ -21,6 +21,7 @@ import { TUser } from "../../../../types/types";
 import CustomAutoComplete from "../../../../shared/components/CustomAutoComplete";
 import CustomTextField from "../../../../shared/components/CustomTextField";
 import SuccessDialog from "../../../../shared/components/SuccessDialog";
+import AddCouponModal from "../../../admin/Pages/Coupon/AddCoupon";
 
 // Add props to accept courseId directly and control back button visibility
 interface CoursePreviewProps {
@@ -35,21 +36,27 @@ const CoursePreview = ({ course_id: propCourseId, hideBackButton = false }: Cour
     const [formErrors, setFormErrors] = useState({ priceType: false, price: false });
     const navigate = useNavigate();
     const location = useLocation();
-    const { hash, pathname, search } = location;
+    const { pathname } = location;
+    const [openCouponModal, setOpenCouponModal] = useState(false);
 
-    // Get courseId from props or from URL params as fallback
-    // const { course_id: paramCourseId } = useParams();
-    // const courseId = propCourseId || paramCourseId;
+    const handleCouponModalOpen = () => {
+        setOpenCouponModal(true);
+    };
+
+    const handleCouponModalClose = () => {
+        setOpenCouponModal(false);
+    };
 
     const courseId = course_id;
 
-    // console.log('course id from wrapper', propCourseId);
-    // console.log('course id from param', paramCourseId);
+    console.log('course id in preview', courseId);
+
     console.log('current route', pathname);
     const isFromCreateCourse = pathname === '/teacher/create-course/course-preview' ? true : false;
     const [fullText, setFullText] = useState<boolean>(false);
     const [priceType, setPriceType] = useState<string>("");
     const [price, setPrice] = useState<string>("");
+    const isApproved = priceType !== "" ? true : false;
 
     // Only fetch if courseId is available
     const { data: courseData, isLoading, error: fetchError } = useGetCoursePreviewQuery(
@@ -151,6 +158,8 @@ const CoursePreview = ({ course_id: propCourseId, hideBackButton = false }: Cour
             console.error("Course approval failed:", err);
         }
     };
+
+    console.log(courseData, "course data in preview");
 
     const { name, details, lessons } = courseData.data;
 
@@ -255,9 +264,10 @@ const CoursePreview = ({ course_id: propCourseId, hideBackButton = false }: Cour
                         {/* Add Coupon Button */}
                         <Box sx={{ mt: 2 }}>
                             <Button
+                                disabled={!isApproved}
                                 variant="text"
                                 color="primary"
-                                onClick={handleAddCoupon}
+                                onClick={handleCouponModalOpen}
                                 sx={{ px: 0 }}
                             >
                                 + Add Coupon
@@ -441,6 +451,12 @@ const CoursePreview = ({ course_id: propCourseId, hideBackButton = false }: Cour
                     </Paper>
                 </Box>
             </Paper>
+            <AddCouponModal
+                open={openCouponModal}
+                onClose={handleCouponModalClose}
+                courseId={course_id}
+                isCoursePreview={true}
+            />
             <SuccessDialog
                 open={successDialogOpen}
                 onClose={() => setSuccessDialogOpen(false)}
