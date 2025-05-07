@@ -2,13 +2,21 @@ import React from "react";
 import { Box, Typography } from "@mui/material";
 import Chart from "react-apexcharts";
 import { ApexOptions } from "apexcharts";
+import { useGetLast7DaysSalesQuery } from "../../../../redux/features/adminDashboard/adminDashboardApi";
+import Loader from "../../../../shared/components/Loader";
 
 const SalesChart = () => {
+  const { data, isLoading } = useGetLast7DaysSalesQuery({});
+
+  if (isLoading) {
+    return <Loader />;
+  }
+
   // Sample data for the line chart
   const series = [
     {
       name: "Sales",
-      data: [28, 29, 33, 36, 32, 32, 33, 35, 41, 46, 40, 30, 26],
+      data: data?.data?.dailySales || [0, 0, 0, 0, 0, 0, 0],
     },
   ];
 
@@ -54,8 +62,18 @@ const SalesChart = () => {
   };
 
   return (
-    <Box sx={{ p: 3, bgcolor: "white", borderRadius: 2, boxShadow: 1,display:"flex",direction:"row" ,height:"100%" }}>
-      <Box >
+    <Box
+      sx={{
+        p: 3,
+        bgcolor: "white",
+        borderRadius: 2,
+        boxShadow: 1,
+        display: "flex",
+        direction: "row",
+        height: "100%",
+      }}
+    >
+      <Box>
         <Box sx={{ mb: 2 }}>
           <Typography variant="h5" sx={{ fontWeight: "600" }}>
             Sales
@@ -66,10 +84,12 @@ const SalesChart = () => {
         </Box>
 
         <Typography variant="h4" sx={{ fontWeight: "bold", my: 2 }}>
-          16.5K
+          {data?.data?.totalSales
+            ? (data?.data?.totalSales / 1000).toFixed(2) + "K"
+            : "0.00K"}
         </Typography>
 
-        <Box sx={{ display: "flex", alignItems: "center", mb: 2 }}>
+        {/* <Box sx={{ display: "flex", alignItems: "center", mb: 2 }}>
           <Typography
             variant="body2"
             sx={{ color: "#dc3545", fontWeight: "medium", mr: 1 }}
@@ -79,10 +99,10 @@ const SalesChart = () => {
           <Typography variant="body2" color="textSecondary">
             vs last 7 days
           </Typography>
-        </Box>
+        </Box> */}
       </Box>
 
-      <Box >
+      <Box>
         <Chart options={options} series={series} type="line" height="100%" />
       </Box>
     </Box>
