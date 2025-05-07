@@ -24,7 +24,6 @@ interface Column {
     align?: 'right';
 }
 
-
 interface FlashcardItem {
     _id: string;
     term: string;

@@ -479,7 +479,7 @@ const AssignmentCreation = () => {
                                                 size='small'
                                                 startIcon={<CloudUploadIcon />}
                                                 disabled={isAdmin || (isExpired ? true : false)}
-                                                sx={{ width: '170px', height: '40px', borderRadius: '8px', fontSize: '14px' }}>
+                                                sx={{ width: 'auto', height: '40px', borderRadius: '8px', fontSize: '14px' }}>
                                                 {isEditing ? 'Update' : 'Upload Assignment'}
                                             </Button>
                                         </Box>

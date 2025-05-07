@@ -49,6 +49,8 @@ const CoursePreview = ({ course_id: propCourseId, hideBackButton = false }: Cour
 
     const courseId = course_id;
 
+    console.log('course id in preview', courseId);
+
     console.log('current route', pathname);
     const isFromCreateCourse = pathname === '/teacher/create-course/course-preview' ? true : false;
     const [fullText, setFullText] = useState<boolean>(false);
