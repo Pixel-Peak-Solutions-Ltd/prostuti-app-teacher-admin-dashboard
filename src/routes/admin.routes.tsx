@@ -4,7 +4,6 @@ import Category from "../features/admin/Pages/Category/Category";
 import Coupon from "../features/admin/Pages/Coupon/Coupon";
 import CourseApproved from "../features/admin/Pages/CourseManagement/CourseApproved/CourseApproved";
 import EditRequests from "../shared/components/EditRequest";
-import FlashCardManagement from "../features/admin/Pages/FlashCardManagement";
 import PaymentManagement from "../features/admin/Pages/PaymentManagement/PaymentManagement";
 import SinglePayment from "../features/admin/Pages/PaymentManagement/SinglePayment";
 import PracticeTest from "../features/admin/Pages/PracticeTest";
@@ -26,6 +25,8 @@ import RecordClassList from "../features/teacher/Pages/Materials/RecordClass/Rec
 import ResourcesCreation from "../features/teacher/Pages/Materials/Resource/ResourcesCreation";
 import ResourcesList from "../features/teacher/Pages/Materials/Resource/ResourcesList";
 import Routine from "../features/teacher/Pages/Materials/Routine";
+import FlashCard from "../features/teacher/Pages/Flashcard/FlashCard";
+import ChildFlashCards from "../features/teacher/Pages/Flashcard/ChildFlashCards";
 
 export const adminRoutes = [
   {
@@ -110,7 +111,11 @@ export const adminRoutes = [
   // individual material end
   {
     path: "flashcard-management",
-    element: <FlashCardManagement />,
+    element: <FlashCard />,
+  },
+  {
+    path: "flashcard-management/:flashcardId",
+    element: <ChildFlashCards />,
   },
   {
     path: "teacher-management",

@@ -6,7 +6,7 @@ import { useAppSelector } from '../../redux/hooks';
 import { TUser } from '../../types/types';
 
 interface EditRequestButtonProps {
-    resourceType: 'Assignment' | 'RecordedClass' | 'Resource' | 'Notice' | 'Test';
+    resourceType: 'Assignment' | 'RecordedClass' | 'Resource' | 'Notice' | 'Test' | 'Flashcard';
     resourceId?: string; // Add resourceId prop
 }
 

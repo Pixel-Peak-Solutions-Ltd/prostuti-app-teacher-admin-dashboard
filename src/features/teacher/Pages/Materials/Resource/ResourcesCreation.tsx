@@ -157,27 +157,34 @@ const ResourcesCreation = () => {
     //* handling the submit function
     const handleResourceSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        // removing lessonName field as it's not necessary
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        const selectedResourceDetails = (({ lessonName, ...rest }) => rest)(resourceDetails);
-        selectedResourceDetails.lesson_id = lesson_id[0]?._id;
-        selectedResourceDetails.course_id = courseId;
-
-        const updateData = {
-            ...resourceDetails,
-            canceledResources: finalCancellation
-        };
-        // creating a new form data
-        const resourceData = new FormData();
-
-        if (isEditing) {
-            resourceData.append('data', JSON.stringify(updateData));
-        } else {
-            resourceData.append('data', JSON.stringify(selectedResourceDetails));
+        // Validate if files are selected when not editing
+        if (!isEditing && files.length === 0) {
+            setFileError('Please select at least one file');
+            return;
         }
 
-        // inserting pdf files to the files key inside the formData
+        let formData;
+        if (isEditing) {
+            formData = {
+                ...resourceDetails,
+                canceledResources: finalCancellation
+            };
+        } else {
+            // removing lessonName field as it's not necessary
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
+            const { lessonName, ...rest } = resourceDetails;
+            formData = {
+                ...rest,
+                lesson_id: lesson_id[0]?._id,
+                course_id: courseId
+            };
+        }
 
+        // creating a new form data
+        const resourceData = new FormData();
+        resourceData.append('data', JSON.stringify(formData));
+
+        // inserting pdf files to the files key inside the formData
         if (Array.isArray(files)) {
             for (const pdf of files) {
                 resourceData.append('files', pdf);
@@ -194,7 +201,6 @@ const ResourcesCreation = () => {
                 setFiles([]);
             } else {
                 await createResource(resourceData);
-
                 setResourceDetails({});
                 setFiles([]);
             }
@@ -202,7 +208,6 @@ const ResourcesCreation = () => {
         } catch (err) {
             console.log(err);
         }
-
     };
 
     //*handling recordClass delete

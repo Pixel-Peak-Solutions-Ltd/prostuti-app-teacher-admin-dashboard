@@ -1,4 +1,4 @@
-import { Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TablePagination, IconButton, Box, Button, Typography, SnackbarCloseReason } from "@mui/material";
+import { Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TablePagination, IconButton, Box, Button, Typography, SnackbarCloseReason, Card } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useApproveFlashCardMutation, useDeleteChildFlashcardsMutation, useGetChildFlashcardsQuery, useUpdateChildFlashCardMutation } from "../../../../redux/features/flashcard/flashcardApi";
@@ -12,6 +12,10 @@ import { hasDataProperty } from "../../../../utils/TypeGuardForErrorMessage";
 import EditFlashcardModal from "./EditFlashCardModal";
 import CloseIcon from '@mui/icons-material/Close';
 import DoneIcon from '@mui/icons-material/Done';
+import Grid from '@mui/material/Grid2';
+import { CustomLabel, useAppSelector } from "../Materials/Create Test";
+import { TUser } from "../../../../types/types";
+import EditRequestButton from "../../../../shared/components/EditRequestButton";
 
 interface Column {
     id: 'sl' | 'question' | 'answer' | 'action';
@@ -19,7 +23,6 @@ interface Column {
     minWidth?: number;
     align?: 'right';
 }
-
 
 interface FlashcardItem {
     _id: string;
@@ -35,6 +38,8 @@ const columns: readonly Column[] = [
 ];
 
 const ChildFlashCards = () => {
+    const user = useAppSelector((state) => state.auth.user as TUser);
+    const isAdmin = user?.role === 'admin' ? true : false;
     const { flashcardId } = useParams();
     const navigate = useNavigate();
     const [page, setPage] = useState(0);
@@ -126,6 +131,8 @@ const ChildFlashCards = () => {
         return <Loader />;
     }
 
+    console.log('child cards:', data?.data);
+
     const rows = data?.data.items || [];
     const approved = data?.data.isApproved;
     const totalRows = rows.length;
@@ -199,7 +206,8 @@ const ChildFlashCards = () => {
                         </Box>
 
                         {/* buttons for pending flashcards */}
-                        <Box>
+                        <Box sx={{ display: 'flex', gap: 2, alignItems: 'center' }}>
+                            {user.role === 'admin' && <EditRequestButton resourceType="Flashcard" />}
                             {
                                 !approved && (
                                     <Box sx={{ display: 'flex', gap: 2 }}>
@@ -218,12 +226,35 @@ const ChildFlashCards = () => {
                                             Approve
                                         </Button>
                                     </Box>
-
-
                                 )
                             }
                         </Box>
                     </Box>
+                    {/* flashcard author information */}
+                    {
+                        isAdmin && (<Box sx={{ flexGrow: 1, mb: 4 }}>
+                            <Grid container spacing={2}>
+                                <Grid size={{ xs: 12, md: 6 }}>
+                                    <CustomLabel fieldName="Created By" />
+                                    <Card sx={{ p: 1, borderRadius: 2 }} variant="outlined">{data?.data.studentId.name}</Card>
+                                </Grid>
+                                <Grid size={{ xs: 12, md: 6 }}>
+                                    <CustomLabel fieldName="Created On" />
+                                    <Card sx={{ p: 1, borderRadius: 2 }} variant="outlined">{new Date(data?.data.createdAt).toLocaleDateString()}</Card>
+                                </Grid>
+                                <Grid size={{ xs: 12, md: 6 }}>
+                                    <CustomLabel fieldName="Approved By" />
+                                    <Card sx={{ p: 1, borderRadius: 2 }} variant="outlined">{data?.data.approvedBy}</Card>
+                                </Grid>
+                                <Grid size={{ xs: 12, md: 6 }}>
+                                    <CustomLabel fieldName="Approved On" />
+                                    <Card sx={{ p: 1, borderRadius: 2 }} variant="outlined">{new Date(data?.data.updatedAt).toLocaleDateString()}</Card>
+                                </Grid>
+                            </Grid>
+                        </Box>)
+                    }
+
+                    {/* end of flashcard author information */}
 
                     {/* child flashcard table starts*/}
                     {

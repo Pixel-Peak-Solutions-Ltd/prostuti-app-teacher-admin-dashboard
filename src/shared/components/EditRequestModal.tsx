@@ -9,7 +9,6 @@ import {
     TextField,
     IconButton,
     Typography,
-    Snackbar,
     CircularProgress
 } from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
@@ -20,7 +19,7 @@ import { IEditRequestPayload } from '../../types/notification.types';
 interface EditRequestModalProps {
     open: boolean;
     onClose: () => void;
-    resourceType: 'Assignment' | 'RecordedClass' | 'Resource' | 'Notice' | 'Test';
+    resourceType: 'Assignment' | 'RecordedClass' | 'Resource' | 'Notice' | 'Test' | 'Flashcard';
     resourceId?: string; // Add optional resourceId prop
 }
 
@@ -29,12 +28,13 @@ const EditRequestModal = ({ open, onClose, resourceType, resourceId: propResourc
     const [requestDescription, setRequestDescription] = useState('');
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [showSuccessMessage, setShowSuccessMessage] = useState(false);
-    const { assignmentId, recordId, resourceId, noticeId, testId } = useParams<{
+    const { assignmentId, recordId, resourceId, noticeId, testId, flashcardId } = useParams<{
         assignmentId?: string;
         recordId?: string;
         resourceId?: string;
         noticeId?: string;
         testId?: string;
+        flashcardId?: string;
     }>();
 
     // Use the requestEdit mutation hook
@@ -53,6 +53,8 @@ const EditRequestModal = ({ open, onClose, resourceType, resourceId: propResourc
                 return noticeId;
             case 'Test':
                 return testId;
+            case 'Flashcard':
+                return flashcardId;
             default:
                 return null;
         }
@@ -120,7 +122,7 @@ const EditRequestModal = ({ open, onClose, resourceType, resourceId: propResourc
                     </Box>
                 </DialogTitle>
 
-                <DialogContent sx={{ p: 2, pt: 0 }}>
+                <DialogContent>
                     <Box mb={1}>
                         <Typography variant="subtitle2" color="textSecondary" gutterBottom>
                             Request Title
@@ -158,7 +160,7 @@ const EditRequestModal = ({ open, onClose, resourceType, resourceId: propResourc
                     </Box>
                 </DialogContent>
 
-                <DialogActions sx={{ p: 2, pt: 0 }}>
+                <DialogActions>
                     <Button
                         onClick={handleSubmit}
                         variant="contained"
