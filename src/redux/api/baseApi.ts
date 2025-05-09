@@ -87,6 +87,7 @@ export const baseApi = createApi({
     "MonthlySalesStats",
     "Last7DaysSales",
     "FlashcardStats",
+    "StudentPerformance",
   ],
   endpoints: () => ({}),
 });
