@@ -145,8 +145,21 @@ const courseApi = baseApi.injectEndpoints({
       }),
       invalidatesTags: ['Lessons']
     }),
+    getAllStudentPerformance: builder.query({
+      query: ({ courseId }) => ({
+        url: `/leaderboard/course/${courseId}`,
+        method: 'GET'
+      }),
+      providesTags: ['StudentPerformance']
+    }),
+    getStudentPerformanceDetails: builder.query({
+      query: ({ studentId, courseId }) => ({
+        url: `/leaderboard/${courseId}/${studentId}`,
+        method: 'GET'
+      }),
+    })
   }),
 });
 
 
-export const { useSaveCourseMutation, useSaveLessonMutation, useGetLessonsByCourseIdQuery, useGetCourseByIdQuery, useGetCategoryForCourseQuery, useGetCourseByTeacherQuery, useGetCoursePreviewQuery, useDeleteCourseMutation, useGetCourseForAdminEndQuery, useApproveCourseStatusMutation, useDeleteLessonFromDBMutation, useUpdateLessonMutation } = courseApi;
+export const { useSaveCourseMutation, useSaveLessonMutation, useGetLessonsByCourseIdQuery, useGetCourseByIdQuery, useGetCategoryForCourseQuery, useGetCourseByTeacherQuery, useGetCoursePreviewQuery, useDeleteCourseMutation, useGetCourseForAdminEndQuery, useApproveCourseStatusMutation, useDeleteLessonFromDBMutation, useUpdateLessonMutation, useGetAllStudentPerformanceQuery, useGetStudentPerformanceDetailsQuery } = courseApi;

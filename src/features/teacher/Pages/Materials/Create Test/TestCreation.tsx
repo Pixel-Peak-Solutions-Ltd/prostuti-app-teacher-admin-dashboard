@@ -115,6 +115,25 @@ const TestCreation = () => {
             isValid = false;
         }
 
+        // Validate MCQ answers
+        if (testDetails?.type === 'MCQ') {
+            for (let i = 0; i < numOfForms; i++) {
+                const options = [];
+                for (let j = 1; j <= 4; j++) {
+                    const option = question[`option${j}_${i}`]?.trim();
+                    if (option) {
+                        options.push(option);
+                    }
+                }
+                const correctAnswer = question[`correctOption_${i}`]?.trim();
+
+                if (correctAnswer && !options.includes(correctAnswer)) {
+                    newErrors[`correctOption_${i}`] = ['Correct answer must match one of the provided options'];
+                    isValid = false;
+                }
+            }
+        }
+
         setErrors(newErrors);
         return isValid;
     };
@@ -322,8 +341,8 @@ const TestCreation = () => {
                                                     numOfForms={numOfForms}
                                                     setImageFile={setImageFile}
                                                     imageFile={imageFile}
-                                                    // handleFileInput={handleFileInput}
                                                     handleRemoveFile={handleRemoveFile}
+                                                    errors={errors}
                                                 />
                                             ))
                                         }
