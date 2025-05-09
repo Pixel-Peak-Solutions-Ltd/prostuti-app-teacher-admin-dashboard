@@ -32,6 +32,8 @@ import ViewAsSubmission from "../features/teacher/Pages/Materials/Assignment/Vie
 import ChildFlashCards from "../features/teacher/Pages/Flashcard/ChildFlashCards";
 import Routine from "../features/teacher/Pages/Materials/Routine";
 import EditLesson from "../features/teacher/Pages/Course/EditLesson";
+import StudentPerformanceList from "../features/teacher/Pages/Materials/StudentPerformance/StudentPerformanceList";
+import SingleStudentPerformance from "../features/teacher/Pages/Materials/StudentPerformance/SingleStudentPerformance";
 
 export const teacherRoutes = [
   {
@@ -117,6 +119,10 @@ export const teacherRoutes = [
     path: "routine",
     element: <Routine />,
   },
+  {
+    path: "student-performance/:studentId",
+    element: <SingleStudentPerformance />,
+  },
 
   // course material lists route
   {
@@ -160,6 +166,10 @@ export const teacherRoutes = [
   {
     path: "notice-list",
     element: <NoticeList />,
+  },
+  {
+    path: "student-performance-list",
+    element: <StudentPerformanceList />,
   },
 
   // course paths

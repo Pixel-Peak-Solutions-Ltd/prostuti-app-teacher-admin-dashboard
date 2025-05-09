@@ -23,6 +23,7 @@ type TTestQuestionForm = {
     setImageFile: React.Dispatch<React.SetStateAction<Record<string, File | null>>>;
     imageFile: Record<string, File | null>;
     handleRemoveFile: (e: React.MouseEvent, index: number) => void;
+    errors?: { [key: string]: string[]; };
 };
 const TestQuestionForm = (
     {
@@ -34,7 +35,8 @@ const TestQuestionForm = (
         numOfForms,
         setImageFile,
         imageFile,
-        handleRemoveFile
+        handleRemoveFile,
+        errors
     }
         : TTestQuestionForm
 ) => {
@@ -161,7 +163,6 @@ const TestQuestionForm = (
 
             {/* mcq row */}
             {
-
                 (testDetails?.type === 'MCQ') && (
                     <>
                         {Array.from(Array(4)).map((item, optionIndex) => (
@@ -172,20 +173,22 @@ const TestQuestionForm = (
                                     handleInput={handleTestQuestionInput}
                                     placeholder={`Option ${optionIndex + 1}`}
                                     value={question[`option${optionIndex + 1}_${index}`]}
-                                    required={true}
+                                    error={Array.isArray(errors?.[`option${optionIndex + 1}_${index}`]) && errors?.[`option${optionIndex + 1}_${index}`].length > 0}
+                                    helperText={errors?.[`option${optionIndex + 1}_${index}`]?.join(' ')}
                                 />
                             </Grid>
                         ))}
-                        < Grid size={12}>
+                        <Grid size={12}>
                             <CustomLabel fieldName='Correct Answer' />
                             <CustomTextField
                                 name={`correctOption_${index}`}
                                 handleInput={handleTestQuestionInput}
                                 placeholder='Write the correct answer'
                                 value={question[`correctOption_${index}`]}
-                                required={true}
+                                error={Array.isArray(errors?.[`correctOption_${index}`]) && errors?.[`correctOption_${index}`].length > 0}
+                                helperText={errors?.[`correctOption_${index}`]?.join(' ')}
                             />
-                        </ Grid>
+                        </Grid>
                     </>
                 )
             }
