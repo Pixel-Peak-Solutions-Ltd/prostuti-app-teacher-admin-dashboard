@@ -99,7 +99,7 @@ const CourseDetails = forwardRef<{ submitForm: () => void; }, CourseDetailsProps
     // setting the data to local redux store
     const dispatch = useAppDispatch();
 
-    // calling the imerative handle to execute submit handler from the parent component
+    // calling the imperative handle to execute submit handler from the parent component
     useImperativeHandle(ref, () => ({
         submitForm: () => {
             handleSubmit();
@@ -117,9 +117,9 @@ const CourseDetails = forwardRef<{ submitForm: () => void; }, CourseDetailsProps
     const chapters = getUniqueStrings(categoryData?.data || [], 'chapter');
     const universityNames = getUniqueStrings(categoryData?.data || [], 'universityName');
     const universityTypes = getUniqueStrings(categoryData?.data || [], 'universityType');
-    const units = unitsData?.data || [];
-    const jobTypes = jobTypesData?.data || [];
-    const jobNames = jobNamesData?.data || [];
+    const units = getUniqueStrings(unitsData?.data || [], 'unit');
+    const jobTypes = getUniqueStrings(jobTypesData?.data || [], 'jobType');
+    const jobNames = getUniqueStrings(jobNamesData?.data || [], 'jobName');
 
     const categoryId = categoryData?.data[0]?._id;
     console.log('filtered category id', categoryId);
@@ -159,64 +159,6 @@ const CourseDetails = forwardRef<{ submitForm: () => void; }, CourseDetailsProps
 
     };
 
-    // const handleSubmit = async (e?: React.FormEvent) => {
-    //     console.log('handleSubmit clicked');
-    //     e?.preventDefault();
-    //     // creating a formData variable
-    //     const courseData = new FormData();
-    //     // appending cover image to the courseData object
-    //     if (coverImg) courseData.append('coverImage', coverImg);
-    //     // ensure the teacher ID is added to courseDetails
-    //     const updatedCourseDetails = {
-    //         ...courseDetails,
-    //         // teacher_id: userId,
-    //         category_id: categoryId
-    //     };
-    //     // appending course details data to the courseDetails object
-    //     courseData.append('courseData', JSON.stringify(updatedCourseDetails));
-
-    //     // sending the course details to backend through redux toolkit
-    //     try {
-    //         const courseResponse = await saveCourse(courseData);
-    //         const course_id = courseResponse?.data.data?._id;
-    //         dispatch(saveCourseIdToStore({ course_id: course_id }));
-    //         // restoring previous category params
-    //         setCategoryParams({
-    //             category: '',
-    //             division: '',
-    //             subject: '',
-    //             chapter: '',
-    //             universityName: '',
-    //             universityType: '',
-    //         });
-    //         setCourseDetails({
-    //             name: "",
-    //             details: "",
-    //             isPending: true,
-    //             isPublished: false,
-    //             teacher_id: "",
-    //         });
-    //         //navigate user to the add lesson page once all the data has been saved
-    //         navigate('/teacher/create-course/create-lessons');
-    //         // checking whether setActiveSteps is available
-    //         setActiveSteps?.(prevStep => prevStep + 1);
-    //     } catch (err) {
-    //         console.log(err);
-    //         // Resetting previous errors
-    //         setErrors({});
-    //         // If it matches the error structure
-    //         if (err?.data?.errorSources) {
-    //             const errorMap: { [key: string]: string[]; } = {};
-    //             err.data.errorSources.forEach((source: { path: string, message: string; }) => {
-    //                 if (!errorMap[source.path]) {
-    //                     errorMap[source.path] = [];
-    //                 }
-    //                 errorMap[source.path].push(source.message);
-    //             });
-    //             setErrors(errorMap);
-    //         }
-    //     }
-    // };
 
     const handleSubmit = async (e?: React.FormEvent) => {
         e?.preventDefault();
