@@ -10,6 +10,7 @@ import { useGetAllCategoryTypesQuery } from "../../../../redux/features/category
 import Loader from "../../../../shared/components/Loader";
 import { saveCourseIdToStore } from "../../../../redux/features/course/courseSlice";
 import { useGetCategoryForCourseQuery, useSaveCourseMutation } from "../../../../redux/features/course/courseApi";
+import { useGetUnitsQuery, useGetJobTypesQuery, useGetJobNamesQuery } from "../../../../redux/features/category/categoryApi";
 // import Alert from "../../../../shared/components/Alert";
 import { useNavigate } from "react-router-dom";
 import { getUniqueStrings } from "../../../../utils/typeSafeUniqueArrays";
@@ -62,6 +63,9 @@ const CourseDetails = forwardRef<{ submitForm: () => void; }, CourseDetailsProps
         chapter: '',
         universityName: '',
         universityType: '',
+        unit: '', // new field for Admission category
+        jobType: '', // new field for Job category
+        jobName: '', // new field for Job category
     });
 
     // creating a query parameter object
@@ -72,6 +76,9 @@ const CourseDetails = forwardRef<{ submitForm: () => void; }, CourseDetailsProps
         ...(categoryParams.chapter && { chapter: categoryParams.chapter }),
         ...(categoryParams.universityName && { universityName: categoryParams.universityName }),
         ...(categoryParams.universityType && { universityType: categoryParams.universityType }),
+        ...(categoryParams.unit && { unit: categoryParams.unit }),
+        ...(categoryParams.jobType && { jobType: categoryParams.jobType }),
+        ...(categoryParams.jobName && { jobName: categoryParams.jobName }),
     };
 
     // modifying the categoryQueryParams
@@ -82,6 +89,10 @@ const CourseDetails = forwardRef<{ submitForm: () => void; }, CourseDetailsProps
     const { data: categoryTypes, isLoading } = useGetAllCategoryTypesQuery({});
     // redux api call for fetching all the categories
     const { data: categoryData, isLoading: categoryLoading } = useGetCategoryForCourseQuery(categoryQueryParams);
+    // fetching units, job types and job names
+    const { data: unitsData, isLoading: unitsLoading } = useGetUnitsQuery({});
+    const { data: jobTypesData, isLoading: jobTypesLoading } = useGetJobTypesQuery({});
+    const { data: jobNamesData, isLoading: jobNamesLoading } = useGetJobNamesQuery({});
     // calling the create course method from redux
     const [saveCourse, { isSuccess, isLoading: creationLoader }] = useSaveCourseMutation();
 
@@ -96,20 +107,22 @@ const CourseDetails = forwardRef<{ submitForm: () => void; }, CourseDetailsProps
     }));
 
     // when calling the mutation api
-
-    if (isLoading || categoryLoading || creationLoader) {
+    if (isLoading || categoryLoading || creationLoader || unitsLoading || jobTypesLoading || jobNamesLoading) {
         return <Loader />;
     }
 
     // extracting divisions subjects, chapter, universityType, universityName, from the category data and creating unique array. The getUniqueStrings is a custom function helping to provide type safety.
-
     const divisions = getUniqueStrings(categoryData?.data || [], 'division');
     const subjects = getUniqueStrings(categoryData?.data || [], 'subject');
     const chapters = getUniqueStrings(categoryData?.data || [], 'chapter');
     const universityNames = getUniqueStrings(categoryData?.data || [], 'universityName');
     const universityTypes = getUniqueStrings(categoryData?.data || [], 'universityType');
+    const units = unitsData?.data || [];
+    const jobTypes = jobTypesData?.data || [];
+    const jobNames = jobNamesData?.data || [];
 
     const categoryId = categoryData?.data[0]?._id;
+    console.log('filtered category id', categoryId);
 
     //^handling the cover image change
     const handleCoverChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -281,6 +294,9 @@ const CourseDetails = forwardRef<{ submitForm: () => void; }, CourseDetailsProps
             chapter: '',
             universityName: '',
             universityType: '',
+            unit: '',
+            jobType: '',
+            jobName: '',
         });
         setCourseDetails({
             name: "",
@@ -382,6 +398,20 @@ const CourseDetails = forwardRef<{ submitForm: () => void; }, CourseDetailsProps
                                                 value={categoryParams.universityName}
                                             />
                                         </Grid>
+                                        {categoryParams.universityType === 'University' && (
+                                            <Grid size={4}>
+                                                <CustomLabel fieldName="Unit*" />
+                                                <CustomAutoComplete
+                                                    options={units || []}
+                                                    name="unit"
+                                                    handleInput={handleCategory}
+                                                    required={true}
+                                                    value={categoryParams.unit}
+                                                    error={!!errors.unit?.length}
+                                                    helperText={errors.unit?.join(' ')}
+                                                />
+                                            </Grid>
+                                        )}
                                         <Grid size={4}>
                                             <CustomLabel fieldName="Subject*" />
                                             <CustomAutoComplete
@@ -392,13 +422,38 @@ const CourseDetails = forwardRef<{ submitForm: () => void; }, CourseDetailsProps
                                                 value={categoryParams.subject}
                                             />
                                         </Grid>
+
                                     </>)
                             }
                             {/* in case of job */}
                             {
                                 (categoryParams.category === 'Job') && (
                                     <>
-                                        <Grid size={12}>
+                                        <Grid size={4}>
+                                            <CustomLabel fieldName="Job Type*" />
+                                            <CustomAutoComplete
+                                                options={jobTypes || []}
+                                                name="jobType"
+                                                handleInput={handleCategory}
+                                                required={true}
+                                                value={categoryParams.jobType}
+                                                error={!!errors.jobType?.length}
+                                                helperText={errors.jobType?.join(' ')}
+                                            />
+                                        </Grid>
+                                        <Grid size={4}>
+                                            <CustomLabel fieldName="Job Name*" />
+                                            <CustomAutoComplete
+                                                options={jobNames || []}
+                                                name="jobName"
+                                                handleInput={handleCategory}
+                                                required={true}
+                                                value={categoryParams.jobName}
+                                                error={!!errors.jobName?.length}
+                                                helperText={errors.jobName?.join(' ')}
+                                            />
+                                        </Grid>
+                                        <Grid size={4}>
                                             <CustomLabel fieldName="Subject*" />
                                             <CustomAutoComplete
                                                 options={subjects || []}
